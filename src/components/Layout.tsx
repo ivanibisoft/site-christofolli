@@ -1,13 +1,131 @@
-/* Layout Component - A component that wraps the main content of the app
-   - Use this file to add a header, footer, or other elements that should be present on every page
-   - This component is used in the App.tsx file to wrap the main content of the app */
-
-import { Outlet } from 'react-router-dom'
+import { Outlet, Link, useLocation } from 'react-router-dom'
+import { Hexagon, Linkedin, Mail, Phone } from 'lucide-react'
+import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 
 export default function Layout() {
+  const location = useLocation()
+
+  const navItems = [
+    { name: 'Início', path: '/' },
+    { name: 'Para Construtoras', path: '/construtoras' },
+    { name: 'Para Concreteiras', path: '/concreteiras' },
+    { name: 'Portfólio', path: '/portfolio' },
+    { name: 'Sobre', path: '/sobre' },
+  ]
+
   return (
-    <main className="flex flex-col min-h-screen">
-      <Outlet />
-    </main>
+    <div className="flex flex-col min-h-screen bg-slate-50 pattern-grid">
+      <header className="sticky top-0 z-50 glass-header">
+        <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2 group">
+            <div className="bg-primary p-2 rounded-lg group-hover:bg-accent transition-colors">
+              <Hexagon className="h-6 w-6 text-white" />
+            </div>
+            <div className="flex flex-col">
+              <span className="font-bold text-xl leading-none tracking-tight text-primary">
+                TOP CON
+              </span>
+              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
+                Consultoria
+              </span>
+            </div>
+          </Link>
+
+          <nav className="hidden md:flex items-center gap-6">
+            {navItems.map((item) => (
+              <Link
+                key={item.path}
+                to={item.path}
+                className={cn(
+                  'text-sm font-medium transition-colors hover:text-accent relative py-2',
+                  location.pathname === item.path ? 'text-accent' : 'text-secondary',
+                )}
+              >
+                {item.name}
+                {location.pathname === item.path && (
+                  <span className="absolute bottom-0 left-0 w-full h-0.5 bg-accent rounded-full animate-fade-in" />
+                )}
+              </Link>
+            ))}
+          </nav>
+
+          <div className="hidden md:flex items-center gap-4">
+            <Button className="bg-accent hover:bg-accent/90 text-white font-semibold">
+              Solicitar Consultoria
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      <main className="flex-1 flex flex-col">
+        <Outlet />
+      </main>
+
+      <footer className="bg-slate-900 text-slate-300 py-12 border-t border-slate-800">
+        <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
+          <div className="col-span-1 md:col-span-2">
+            <div className="flex items-center gap-2 mb-4">
+              <Hexagon className="h-6 w-6 text-accent" />
+              <span className="font-bold text-xl text-white">TOP CON</span>
+            </div>
+            <p className="text-sm text-slate-400 max-w-sm mb-6">
+              Engenharia de Resultados. Consultoria técnica e operacional especializada em centrais
+              de concreto, focada em produtividade e excelência.
+            </p>
+            <div className="flex items-center gap-4">
+              <a href="#" className="hover:text-white transition-colors">
+                <Linkedin className="h-5 w-5" />
+              </a>
+              <a href="#" className="hover:text-white transition-colors">
+                <Mail className="h-5 w-5" />
+              </a>
+              <a href="#" className="hover:text-white transition-colors">
+                <Phone className="h-5 w-5" />
+              </a>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="font-semibold text-white mb-4">Serviços</h4>
+            <ul className="space-y-2 text-sm">
+              <li>
+                <Link to="/construtoras" className="hover:text-accent transition-colors">
+                  Para Construtoras
+                </Link>
+              </li>
+              <li>
+                <Link to="/concreteiras" className="hover:text-accent transition-colors">
+                  Para Concreteiras
+                </Link>
+              </li>
+              <li>
+                <Link to="/portfolio" className="hover:text-accent transition-colors">
+                  Portfólio
+                </Link>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="font-semibold text-white mb-4">Contato</h4>
+            <ul className="space-y-2 text-sm">
+              <li className="flex items-center gap-2">
+                <Mail className="h-4 w-4 text-accent" /> contato@topcon.eng.br
+              </li>
+              <li className="flex items-center gap-2">
+                <Phone className="h-4 w-4 text-accent" /> +55 (41) 99999-9999
+              </li>
+              <li className="flex items-center gap-2">
+                <Linkedin className="h-4 w-4 text-accent" /> /in/jorge-christofolli
+              </li>
+            </ul>
+          </div>
+        </div>
+        <div className="container mx-auto px-4 mt-12 pt-8 border-t border-slate-800 text-sm text-slate-500 text-center">
+          © {new Date().getFullYear()} TOP CON Consultoria. Todos os direitos reservados.
+        </div>
+      </footer>
+    </div>
   )
 }
