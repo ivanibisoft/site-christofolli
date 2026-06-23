@@ -24,10 +24,10 @@ export default function Layout() {
             </div>
             <div className="flex flex-col">
               <span className="font-bold text-xl leading-none tracking-tight text-primary">
-                TOP CON
+                Christófolli
               </span>
               <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
-                Consultoria
+                Consultoria de Engenharia
               </span>
             </div>
           </Link>
@@ -67,20 +67,28 @@ export default function Layout() {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <Hexagon className="h-6 w-6 text-accent" />
-              <span className="font-bold text-xl text-white">TOP CON</span>
+              <span className="font-bold text-xl text-white">Christófolli</span>
             </div>
             <p className="text-sm text-slate-400 max-w-sm mb-6">
               Engenharia de Resultados. Consultoria técnica e operacional especializada em centrais
               de concreto, focada em produtividade e excelência.
             </p>
             <div className="flex items-center gap-4">
-              <a href="#" className="hover:text-white transition-colors">
+              <a
+                href="https://linkedin.com/in/jorge-christofolli"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="hover:text-white transition-colors"
+              >
                 <Linkedin className="h-5 w-5" />
               </a>
-              <a href="#" className="hover:text-white transition-colors">
+              <a
+                href="mailto:jorge@christofolli.com.br"
+                className="hover:text-white transition-colors"
+              >
                 <Mail className="h-5 w-5" />
               </a>
-              <a href="#" className="hover:text-white transition-colors">
+              <a href="tel:+5541999211183" className="hover:text-white transition-colors">
                 <Phone className="h-5 w-5" />
               </a>
             </div>
@@ -109,21 +117,39 @@ export default function Layout() {
 
           <div>
             <h4 className="font-semibold text-white mb-4">Contato</h4>
-            <ul className="space-y-2 text-sm">
-              <li className="flex items-center gap-2">
-                <Mail className="h-4 w-4 text-accent" /> contato@topcon.eng.br
+            <ul className="space-y-3 text-sm">
+              <li>
+                <a
+                  href="mailto:jorge@christofolli.com.br"
+                  className="flex items-center gap-2 hover:text-accent transition-colors"
+                >
+                  <Mail className="h-4 w-4 text-accent" /> jorge@christofolli.com.br
+                </a>
               </li>
-              <li className="flex items-center gap-2">
-                <Phone className="h-4 w-4 text-accent" /> +55 (41) 99999-9999
+              <li>
+                <a
+                  href="tel:+5541999211183"
+                  className="flex items-center gap-2 hover:text-accent transition-colors"
+                >
+                  <Phone className="h-4 w-4 text-accent" /> (41) 99921-1183
+                </a>
               </li>
-              <li className="flex items-center gap-2">
-                <Linkedin className="h-4 w-4 text-accent" /> /in/jorge-christofolli
+              <li>
+                <a
+                  href="https://linkedin.com/in/jorge-christofolli"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center gap-2 hover:text-accent transition-colors"
+                >
+                  <Linkedin className="h-4 w-4 text-accent" /> Jorge Christofolli
+                </a>
               </li>
             </ul>
           </div>
         </div>
         <div className="container mx-auto px-4 mt-12 pt-8 border-t border-slate-800 text-sm text-slate-500 text-center">
-          © {new Date().getFullYear()} TOP CON Consultoria. Todos os direitos reservados.
+          © {new Date().getFullYear()} Christófolli Consultoria de Engenharia Ltda. Todos os
+          direitos reservados.
         </div>
       </footer>
     </div>

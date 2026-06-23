@@ -29,8 +29,9 @@ export default function Sobre() {
             <p className="text-slate-600 leading-relaxed">
               Atuou como Gerente Corporativo de Desenvolvimento Técnico em grandes indústrias de
               cimento e concreto (Cia de Cimento Itambé, Lafarge Concrebras). Atualmente é Diretor
-              da TOP CON Consultoria, com vasta experiência em controle de qualidade, estatística,
-              concretos especiais, CAD/CAA, comportamento térmico e sustentabilidade.
+              da Christófolli Consultoria de Engenharia Ltda., com vasta experiência em controle de
+              qualidade, estatística, concretos especiais, CAD/CAA, comportamento térmico e
+              sustentabilidade.
             </p>
           </div>
         </div>
