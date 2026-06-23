@@ -135,7 +135,7 @@ export default function Sobre() {
         <div className="mt-16">
           <h3 className="text-3xl font-bold mb-8 flex items-center gap-3 text-primary">
             <BookOpen className="h-8 w-8 text-accent" />
-            Publicações e Artigos
+            Publicações Técnicas
           </h3>
 
           <div className="grid gap-6">
