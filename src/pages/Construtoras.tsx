@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { Building2, ThermometerSun, Leaf, LineChart } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
@@ -92,8 +93,8 @@ export default function Construtoras() {
               pode impactar positivamente o cronograma e o custo global da sua obra.
             </p>
           </div>
-          <Button size="lg" className="bg-accent hover:bg-accent/90 shrink-0">
-            Agendar Reunião Técnica
+          <Button asChild size="lg" className="bg-accent hover:bg-accent/90 shrink-0">
+            <Link to="/#contato">Agendar Reunião Técnica</Link>
           </Button>
         </div>
       </div>
