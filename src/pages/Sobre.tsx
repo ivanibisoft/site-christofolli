@@ -11,8 +11,8 @@ export default function Sobre() {
 
         <div className="bg-white rounded-2xl p-8 shadow-sm border mb-12 flex flex-col md:flex-row gap-8 items-start">
           <img
-            src="https://img.usecurling.com/ppl/medium?gender=male&seed=99"
-            alt="Jorge Luiz Christofolli"
+            src="https://media.licdn.com/dms/image/v2/D4E03AQH0sLrr7QZUcQ/profile-displayphoto-crop_800_800/B4EZtLYlLZKUAI-/0/1766496294844?e=1783555200&v=beta&t=ozGphTIYAGPD6uMJEs2XZIOk8J2JGpyQ2HEnV4o__Cg"
+            alt="Jorge Christofolli - Christófolli Consultoria de Engenharia"
             className="w-48 h-48 rounded-xl object-cover shadow-md shrink-0"
           />
           <div>
