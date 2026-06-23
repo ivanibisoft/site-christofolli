@@ -89,7 +89,7 @@ export default function Layout() {
             </p>
             <div className="flex items-center gap-4">
               <a
-                href="https://linkedin.com/in/jorge-christofolli"
+                href="https://www.linkedin.com/in/jorge-christofolli-4b4aaa73/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="hover:text-white transition-colors"
@@ -150,7 +150,7 @@ export default function Layout() {
               </li>
               <li>
                 <a
-                  href="https://linkedin.com/in/jorge-christofolli"
+                  href="https://www.linkedin.com/in/jorge-christofolli-4b4aaa73/"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-center gap-2 hover:text-accent transition-colors"
