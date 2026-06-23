@@ -15,3 +15,22 @@ export const getPublications = async (): Promise<Publication[]> => {
     sort: '-created',
   })
 }
+
+export const getPublication = async (id: string): Promise<Publication> => {
+  return pb.collection('publications').getOne<Publication>(id)
+}
+
+export const createPublication = async (data: Partial<Publication>): Promise<Publication> => {
+  return pb.collection('publications').create<Publication>(data)
+}
+
+export const updatePublication = async (
+  id: string,
+  data: Partial<Publication>,
+): Promise<Publication> => {
+  return pb.collection('publications').update<Publication>(id, data)
+}
+
+export const deletePublication = async (id: string): Promise<void> => {
+  return pb.collection('publications').delete(id)
+}

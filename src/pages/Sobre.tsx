@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react'
+import { Link } from 'react-router-dom'
 import { Download, GraduationCap, Briefcase, FileText, BookOpen, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
@@ -185,6 +186,17 @@ export default function Sobre() {
                 <p className="text-slate-500">Carregando publicações...</p>
               </div>
             )}
+          </div>
+
+          <div className="mt-12 text-center">
+            <Button
+              variant="ghost"
+              size="sm"
+              asChild
+              className="text-slate-400 hover:text-slate-600"
+            >
+              <Link to="/admin">Acesso Administrativo</Link>
+            </Button>
           </div>
         </div>
       </div>

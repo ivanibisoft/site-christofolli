@@ -1,31 +1,47 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { Toaster } from '@/components/ui/toaster'
 import { Toaster as Sonner } from '@/components/ui/sonner'
 import { TooltipProvider } from '@/components/ui/tooltip'
+import { AuthProvider } from '@/hooks/use-auth'
 import Layout from './components/Layout'
+import AdminLayout from './components/AdminLayout'
 import Index from './pages/Index'
 import Construtoras from './pages/Construtoras'
 import Concreteiras from './pages/Concreteiras'
 import Portfolio from './pages/Portfolio'
 import Sobre from './pages/Sobre'
 import NotFound from './pages/NotFound'
+import Login from './pages/admin/Login'
+import PublicationsList from './pages/admin/PublicationsList'
+import PublicationForm from './pages/admin/PublicationForm'
 
 const App = () => (
   <BrowserRouter>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <Routes>
-        <Route element={<Layout />}>
-          <Route path="/" element={<Index />} />
-          <Route path="/construtoras" element={<Construtoras />} />
-          <Route path="/concreteiras" element={<Concreteiras />} />
-          <Route path="/portfolio" element={<Portfolio />} />
-          <Route path="/sobre" element={<Sobre />} />
-        </Route>
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <Routes>
+          <Route element={<Layout />}>
+            <Route path="/" element={<Index />} />
+            <Route path="/construtoras" element={<Construtoras />} />
+            <Route path="/concreteiras" element={<Concreteiras />} />
+            <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/sobre" element={<Sobre />} />
+          </Route>
+
+          <Route path="/admin/login" element={<Login />} />
+          <Route path="/admin" element={<AdminLayout />}>
+            <Route index element={<Navigate to="/admin/publications" replace />} />
+            <Route path="publications" element={<PublicationsList />} />
+            <Route path="publications/new" element={<PublicationForm />} />
+            <Route path="publications/:id" element={<PublicationForm />} />
+          </Route>
+
+          <Route path="*" element={<NotFound />} />
+        </Routes>
+      </TooltipProvider>
+    </AuthProvider>
   </BrowserRouter>
 )
 
