@@ -30,6 +30,8 @@ import { createContact } from '@/services/contacts'
 const contactSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório'),
   email: z.string().email('E-mail inválido'),
+  company_name: z.string().optional(),
+  whatsapp: z.string().optional(),
   subject: z.string().optional(),
   message: z.string().min(10, 'A mensagem deve ter pelo menos 10 caracteres'),
 })
@@ -52,7 +54,14 @@ export default function Index() {
 
   const form = useForm<z.infer<typeof contactSchema>>({
     resolver: zodResolver(contactSchema),
-    defaultValues: { name: '', email: '', subject: '', message: '' },
+    defaultValues: {
+      name: '',
+      email: '',
+      company_name: '',
+      whatsapp: '',
+      subject: '',
+      message: '',
+    },
   })
 
   const onSubmit = async (data: z.infer<typeof contactSchema>) => {

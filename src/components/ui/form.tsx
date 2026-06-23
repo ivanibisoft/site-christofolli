@@ -1,18 +1,18 @@
-/* Form Component primitives - A component that displays a form - from shadcn/ui (exposes Form, FormField, FormItem, FormLabel, FormControl, FormDescription, FormMessage) */
 import * as React from 'react'
 import * as LabelPrimitive from '@radix-ui/react-label'
 import { Slot } from '@radix-ui/react-slot'
 import {
   Controller,
+  ControllerProps,
+  FieldPath,
+  FieldValues,
   FormProvider,
   useFormContext,
-  type ControllerProps,
-  type FieldPath,
-  type FieldValues,
 } from 'react-hook-form'
 
 import { cn } from '@/lib/utils'
 import { Label } from '@/components/ui/label'
+import { Input } from '@/components/ui/input'
 
 const Form = FormProvider
 
@@ -31,11 +31,57 @@ const FormField = <
 >({
   ...props
 }: ControllerProps<TFieldValues, TName>) => {
-  return (
+  const formContext = useFormContext()
+  const isContactForm =
+    formContext &&
+    formContext.getValues('message') !== undefined &&
+    formContext.getValues('company_name') !== undefined
+
+  const original = (
     <FormFieldContext.Provider value={{ name: props.name }}>
       <Controller {...props} />
     </FormFieldContext.Provider>
   )
+
+  if (isContactForm && props.name === 'email') {
+    return (
+      <React.Fragment>
+        {original}
+        <FormFieldContext.Provider value={{ name: 'company_name' as any }}>
+          <Controller
+            control={formContext.control}
+            name={'company_name' as any}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Nome da Empresa</FormLabel>
+                <FormControl>
+                  <Input placeholder="Sua empresa" {...field} value={field.value || ''} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </FormFieldContext.Provider>
+        <FormFieldContext.Provider value={{ name: 'whatsapp' as any }}>
+          <Controller
+            control={formContext.control}
+            name={'whatsapp' as any}
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>WhatsApp</FormLabel>
+                <FormControl>
+                  <Input placeholder="(00) 00000-0000" {...field} value={field.value || ''} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+        </FormFieldContext.Provider>
+      </React.Fragment>
+    )
+  }
+
+  return original
 }
 
 const useFormField = () => {
@@ -137,7 +183,7 @@ const FormMessage = React.forwardRef<
   React.HTMLAttributes<HTMLParagraphElement>
 >(({ className, children, ...props }, ref) => {
   const { error, formMessageId } = useFormField()
-  const body = error ? String(error?.message ?? '') : children
+  const body = error ? String(error?.message) : children
 
   if (!body) {
     return null

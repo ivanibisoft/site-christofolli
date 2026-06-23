@@ -6,6 +6,8 @@ onRecordAfterCreateSuccess((e) => {
     const name = e.record.getString('name')
     const email = e.record.getString('email')
     const subject = e.record.getString('subject') || 'Sem Assunto'
+    const company = e.record.getString('company_name') || '-'
+    const whatsapp = e.record.getString('whatsapp') || '-'
     const messageText = e.record.getString('message')
 
     const htmlBody = `
@@ -20,6 +22,14 @@ onRecordAfterCreateSuccess((e) => {
           <tr>
             <th>E-mail:</th>
             <td><a href="mailto:${email}">${email}</a></td>
+          </tr>
+          <tr>
+            <th>Empresa:</th>
+            <td>${company}</td>
+          </tr>
+          <tr>
+            <th>WhatsApp:</th>
+            <td>${whatsapp}</td>
           </tr>
           <tr>
             <th>Assunto:</th>

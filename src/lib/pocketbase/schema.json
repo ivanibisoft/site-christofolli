@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-23T22:39:02.983Z",
+  "generatedAt": "2026-06-23T22:46:09.982Z",
   "collections": [
     {
       "name": "users",
@@ -144,6 +144,18 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "company_name",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "whatsapp",
+          "type": "text",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": []

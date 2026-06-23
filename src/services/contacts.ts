@@ -4,6 +4,8 @@ import type { RecordModel } from 'pocketbase'
 export interface Contact extends RecordModel {
   name: string
   email: string
+  company_name?: string
+  whatsapp?: string
   subject?: string
   message: string
 }
