@@ -188,6 +188,19 @@ export default function Sobre() {
             )}
           </div>
 
+          <div className="mt-16 bg-slate-900 rounded-2xl p-8 md:p-12 text-white flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl">
+            <div className="max-w-2xl">
+              <h3 className="text-2xl font-bold mb-4">Precisa de consultoria especializada?</h3>
+              <p className="text-slate-300">
+                Entre em contato para entendermos seus desafios e apresentarmos soluções sob medida
+                para sua construtora ou concreteira.
+              </p>
+            </div>
+            <Button asChild size="lg" className="bg-accent hover:bg-accent/90 shrink-0">
+              <Link to="/#contato">Fale Conosco</Link>
+            </Button>
+          </div>
+
           <div className="mt-12 text-center">
             <Button
               variant="ghost"
