@@ -1,3 +1,4 @@
+import { useEffect } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
 import { Hexagon, Linkedin, Mail, Phone } from 'lucide-react'
 import { Button } from '@/components/ui/button'
@@ -5,6 +6,19 @@ import { cn } from '@/lib/utils'
 
 export default function Layout() {
   const location = useLocation()
+
+  useEffect(() => {
+    if (location.hash) {
+      setTimeout(() => {
+        const element = document.querySelector(location.hash)
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' })
+        }
+      }, 100)
+    } else {
+      window.scrollTo({ top: 0, behavior: 'smooth' })
+    }
+  }, [location.pathname, location.hash])
 
   const navItems = [
     { name: 'Início', path: '/' },
@@ -51,8 +65,8 @@ export default function Layout() {
           </nav>
 
           <div className="hidden md:flex items-center gap-4">
-            <Button className="bg-accent hover:bg-accent/90 text-white font-semibold">
-              Solicitar Consultoria
+            <Button asChild className="bg-accent hover:bg-accent/90 text-white font-semibold">
+              <Link to="/#contato">Solicitar Consultoria</Link>
             </Button>
           </div>
         </div>

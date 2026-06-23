@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom'
 import { Factory, CheckCircle, FileText } from 'lucide-react'
 import {
   Accordion,
@@ -115,8 +116,12 @@ export default function Concreteiras() {
         </div>
 
         <div className="text-center">
-          <Button size="lg" className="bg-primary hover:bg-primary/90 h-14 px-8 text-lg shadow-xl">
-            Solicitar Proposta Comercial
+          <Button
+            asChild
+            size="lg"
+            className="bg-primary hover:bg-primary/90 h-14 px-8 text-lg shadow-xl"
+          >
+            <Link to="/#contato">Solicitar Proposta Comercial</Link>
           </Button>
           <p className="text-sm text-muted-foreground mt-4">
             Confidencialidade absoluta: todas as informações técnicas e financeiras são tratadas com
