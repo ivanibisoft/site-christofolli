@@ -4,17 +4,26 @@ import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { BIO_TIMELINE } from '@/lib/data'
 import { getPublications, type Publication } from '@/services/publications'
+import { useRealtime } from '@/hooks/use-realtime'
 
 export default function Sobre() {
   const [publications, setPublications] = useState<Publication[]>([])
   const [loading, setLoading] = useState(true)
 
-  useEffect(() => {
+  const loadData = () => {
     getPublications()
       .then(setPublications)
       .catch(console.error)
       .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    loadData()
   }, [])
+
+  useRealtime('publications', () => {
+    loadData()
+  })
 
   return (
     <div className="py-12 animate-fade-in">
