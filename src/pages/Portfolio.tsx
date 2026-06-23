@@ -10,8 +10,10 @@ import {
   Line,
   Legend,
 } from 'recharts'
+import { Link } from 'react-router-dom'
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
 
 const strengthData = [
   { month: 'Jan', original: 30, otimizado: 31, cimentoOrig: 350, cimentoOtim: 320 },
@@ -155,6 +157,23 @@ export default function Portfolio() {
               </ChartContainer>
             </CardContent>
           </Card>
+        </div>
+
+        <div className="text-center mt-16 bg-slate-50 rounded-2xl p-8 md:p-12 border border-slate-100 shadow-sm">
+          <h3 className="text-2xl font-bold text-primary mb-4">
+            Pronto para otimizar seus resultados?
+          </h3>
+          <p className="text-muted-foreground mb-8 max-w-2xl mx-auto">
+            Descubra como nossa expertise técnica e inteligência de dados podem trazer economia e
+            eficiência para o seu projeto estrutural ou central dosadora.
+          </p>
+          <Button
+            asChild
+            size="lg"
+            className="bg-primary hover:bg-primary/90 h-14 px-8 text-lg shadow-xl"
+          >
+            <Link to="/#contato">Entre em Contato</Link>
+          </Button>
         </div>
       </div>
     </div>
