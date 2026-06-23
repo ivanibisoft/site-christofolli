@@ -1,6 +1,14 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Download, GraduationCap, Briefcase, FileText, BookOpen, ExternalLink } from 'lucide-react'
+import {
+  Download,
+  GraduationCap,
+  Briefcase,
+  FileText,
+  BookOpen,
+  ExternalLink,
+  Linkedin,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { BIO_TIMELINE } from '@/lib/data'
@@ -33,7 +41,7 @@ export default function Sobre() {
 
         <div className="bg-white rounded-2xl p-8 shadow-sm border mb-12 flex flex-col md:flex-row gap-8 items-start">
           <img
-            src="https://media.licdn.com/dms/image/v2/D4E03AQH0sLrr7QZUcQ/profile-displayphoto-crop_800_800/B4EZtLYlLZKUAI-/0/1766496294844?e=1783555200&v=beta&t=ozGphTIYAGPD6uMJEs2XZIOk8J2JGpyQ2HEnV4o__Cg"
+            src="https://img.usecurling.com/ppl/large?gender=male&seed=99"
             alt="Jorge Christofolli - Christófolli Consultoria de Engenharia"
             className="w-48 h-48 rounded-xl object-cover shadow-md shrink-0"
           />
@@ -120,6 +128,15 @@ export default function Sobre() {
                 </div>
 
                 <div className="space-y-3">
+                  <Button className="w-full bg-[#0A66C2] hover:bg-[#004182] text-white" asChild>
+                    <a
+                      href="https://www.linkedin.com/in/jorge-christofolli-4b4aaa73/"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      <Linkedin className="mr-2 h-4 w-4" /> Perfil no LinkedIn
+                    </a>
+                  </Button>
                   <Button className="w-full bg-accent hover:bg-accent/90" asChild>
                     <a
                       href="https://lattes.cnpq.br/7640138691992722"

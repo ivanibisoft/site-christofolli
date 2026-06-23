@@ -8,6 +8,8 @@ import {
   TrendingDown,
   ShieldCheck,
   Leaf,
+  Linkedin,
+  Mail,
 } from 'lucide-react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -228,11 +230,26 @@ export default function Index() {
                 ))}
               </div>
 
-              <Button asChild>
-                <Link to="/sobre">
-                  Ver Currículo Completo <ArrowRight className="ml-2 h-4 w-4" />
-                </Link>
-              </Button>
+              <div className="flex flex-wrap gap-4">
+                <Button asChild>
+                  <Link to="/sobre">
+                    Ver Currículo Completo <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+                <Button
+                  asChild
+                  variant="outline"
+                  className="text-[#0A66C2] border-[#0A66C2] hover:bg-[#0A66C2] hover:text-white"
+                >
+                  <a
+                    href="https://www.linkedin.com/in/jorge-christofolli-4b4aaa73/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <Linkedin className="mr-2 h-4 w-4" /> Conectar no LinkedIn
+                  </a>
+                </Button>
+              </div>
             </div>
           </div>
         </div>
@@ -243,9 +260,27 @@ export default function Index() {
         <div className="container max-w-4xl">
           <div className="text-center mb-12">
             <h2 className="text-3xl font-bold text-primary mb-4">Entre em Contato</h2>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground mb-6">
               Preencha o formulário abaixo para enviar sua mensagem ou solicitar uma consultoria.
             </p>
+            <div className="flex flex-wrap items-center justify-center gap-6">
+              <a
+                href="mailto:jorge@christofolli.com.br"
+                className="flex items-center gap-2 text-slate-600 hover:text-primary transition-colors"
+              >
+                <Mail className="h-5 w-5" />
+                <span>jorge@christofolli.com.br</span>
+              </a>
+              <a
+                href="https://www.linkedin.com/in/jorge-christofolli-4b4aaa73/"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center gap-2 text-[#0A66C2] hover:text-[#004182] transition-colors font-medium"
+              >
+                <Linkedin className="h-5 w-5" />
+                <span>LinkedIn</span>
+              </a>
+            </div>
           </div>
 
           <Card className="border-none shadow-elevation">
