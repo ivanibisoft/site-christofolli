@@ -34,6 +34,12 @@ export default function AdminLayout() {
               >
                 Publicações
               </Link>
+              <Link
+                to="/admin/contacts"
+                className="text-slate-600 hover:text-primary transition-colors px-3 py-2 rounded-md hover:bg-slate-100"
+              >
+                Contatos
+              </Link>
             </nav>
           </div>
           <div className="flex items-center gap-2 sm:gap-4">

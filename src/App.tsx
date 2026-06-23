@@ -14,6 +14,7 @@ import NotFound from './pages/NotFound'
 import Login from './pages/admin/Login'
 import PublicationsList from './pages/admin/PublicationsList'
 import PublicationForm from './pages/admin/PublicationForm'
+import ContactsList from './pages/admin/ContactsList'
 
 const App = () => (
   <BrowserRouter>
@@ -36,6 +37,7 @@ const App = () => (
             <Route path="publications" element={<PublicationsList />} />
             <Route path="publications/new" element={<PublicationForm />} />
             <Route path="publications/:id" element={<PublicationForm />} />
+            <Route path="contacts" element={<ContactsList />} />
           </Route>
 
           <Route path="*" element={<NotFound />} />
