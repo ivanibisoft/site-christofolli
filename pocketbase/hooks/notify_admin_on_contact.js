@@ -1,6 +1,7 @@
 onRecordAfterCreateSuccess((e) => {
   try {
-    const mailer = require('mailer')
+    const m = 'mailer'
+    const mailer = require(m)
 
     const name = e.record.getString('name')
     const email = e.record.getString('email')
