@@ -15,6 +15,8 @@ import Login from './pages/admin/Login'
 import PublicationsList from './pages/admin/PublicationsList'
 import PublicationForm from './pages/admin/PublicationForm'
 import ContactsList from './pages/admin/ContactsList'
+import GalleryList from './pages/admin/GalleryList'
+import GalleryForm from './pages/admin/GalleryForm'
 
 const App = () => (
   <BrowserRouter>
@@ -37,6 +39,9 @@ const App = () => (
             <Route path="publications" element={<PublicationsList />} />
             <Route path="publications/new" element={<PublicationForm />} />
             <Route path="publications/:id" element={<PublicationForm />} />
+            <Route path="gallery" element={<GalleryList />} />
+            <Route path="gallery/new" element={<GalleryForm />} />
+            <Route path="gallery/:id" element={<GalleryForm />} />
             <Route path="contacts" element={<ContactsList />} />
           </Route>
 

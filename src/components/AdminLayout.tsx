@@ -1,65 +1,144 @@
-import { Navigate, Outlet, Link } from 'react-router-dom'
-import { LogOut, LayoutDashboard, Globe } from 'lucide-react'
+import { useEffect } from 'react'
+import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom'
+import { FileText, Mail, LogOut, Menu, Image as ImageIcon } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { Button } from '@/components/ui/button'
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
+import { cn } from '@/lib/utils'
+
+const navigation = [
+  { name: 'Publicações', href: '/admin/publications', icon: FileText },
+  { name: 'Galeria', href: '/admin/gallery', icon: ImageIcon },
+  { name: 'Contatos', href: '/admin/contacts', icon: Mail },
+]
 
 export default function AdminLayout() {
-  const { isAuthenticated, loading, signOut } = useAuth()
+  const { user, isAuthenticated, loading, signOut } = useAuth()
+  const navigate = useNavigate()
+  const location = useLocation()
 
-  if (loading) {
-    return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-50">
-        <div className="animate-pulse text-slate-500">Carregando painel...</div>
-      </div>
-    )
+  useEffect(() => {
+    if (!loading && !isAuthenticated) {
+      navigate('/admin/login')
+    }
+  }, [loading, isAuthenticated, navigate])
+
+  if (loading || !isAuthenticated) {
+    return null
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/admin/login" replace />
+  const handleSignOut = () => {
+    signOut()
+    navigate('/admin/login')
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 flex flex-col">
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
-        <div className="container mx-auto px-4 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-6">
-            <Link to="/admin" className="font-bold text-xl text-primary flex items-center gap-2">
-              <LayoutDashboard className="h-5 w-5 text-accent" />
-              Admin
-            </Link>
-            <nav className="hidden md:flex items-center gap-4 text-sm font-medium">
-              <Link
-                to="/admin/publications"
-                className="text-slate-600 hover:text-primary transition-colors px-3 py-2 rounded-md hover:bg-slate-100"
-              >
-                Publicações
-              </Link>
-              <Link
-                to="/admin/contacts"
-                className="text-slate-600 hover:text-primary transition-colors px-3 py-2 rounded-md hover:bg-slate-100"
-              >
-                Contatos
-              </Link>
-            </nav>
-          </div>
-          <div className="flex items-center gap-2 sm:gap-4">
-            <Button variant="ghost" size="sm" asChild className="hidden sm:flex">
-              <Link to="/">
-                <Globe className="h-4 w-4 mr-2 text-slate-500" />
-                Ver Site
-              </Link>
-            </Button>
-            <div className="w-px h-6 bg-slate-200 hidden sm:block"></div>
-            <Button variant="outline" size="sm" onClick={signOut} className="text-slate-600">
-              <LogOut className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Sair</span>
-            </Button>
-          </div>
+    <div className="min-h-screen bg-slate-50 flex">
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex w-64 flex-col bg-slate-900 border-r border-slate-800">
+        <div className="h-16 flex items-center px-6 border-b border-slate-800">
+          <span className="text-lg font-bold text-white tracking-tight">Admin Panel</span>
         </div>
-      </header>
+        <nav className="flex-1 px-4 py-6 space-y-1">
+          {navigation.map((item) => {
+            const isActive = location.pathname.startsWith(item.href)
+            return (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={cn(
+                  'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
+                  isActive
+                    ? 'bg-primary text-primary-foreground'
+                    : 'text-slate-300 hover:bg-slate-800 hover:text-white',
+                )}
+              >
+                <item.icon className="h-4 w-4" />
+                {item.name}
+              </Link>
+            )
+          })}
+        </nav>
+        <div className="p-4 border-t border-slate-800">
+          <div className="flex items-center gap-3 px-3 mb-4">
+            <div className="h-8 w-8 rounded-full bg-slate-800 flex items-center justify-center text-primary font-bold text-sm uppercase">
+              {user?.name?.charAt(0) || 'A'}
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-white truncate">{user?.name || 'Admin'}</p>
+              <p className="text-xs text-slate-400 truncate">{user?.email}</p>
+            </div>
+          </div>
+          <Button
+            variant="ghost"
+            className="w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800"
+            onClick={handleSignOut}
+          >
+            <LogOut className="h-4 w-4 mr-2" />
+            Sair
+          </Button>
+        </div>
+      </aside>
 
-      <main className="flex-1 container mx-auto px-4 py-8 max-w-5xl">
-        <Outlet />
+      {/* Mobile Header */}
+      <div className="md:hidden fixed top-0 left-0 right-0 h-16 bg-slate-900 border-b border-slate-800 z-50 flex items-center justify-between px-4">
+        <span className="text-lg font-bold text-white tracking-tight">Admin Panel</span>
+        <Sheet>
+          <SheetTrigger asChild>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="text-slate-300 hover:text-white hover:bg-slate-800"
+            >
+              <Menu className="h-5 w-5" />
+            </Button>
+          </SheetTrigger>
+          <SheetContent
+            side="left"
+            className="w-64 bg-slate-900 border-r-slate-800 p-0 text-slate-300"
+          >
+            <div className="h-16 flex items-center px-6 border-b border-slate-800">
+              <span className="text-lg font-bold text-white tracking-tight">Menu</span>
+            </div>
+            <nav className="p-4 space-y-1">
+              {navigation.map((item) => {
+                const isActive = location.pathname.startsWith(item.href)
+                return (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    className={cn(
+                      'flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors',
+                      isActive
+                        ? 'bg-primary text-primary-foreground'
+                        : 'text-slate-300 hover:bg-slate-800 hover:text-white',
+                    )}
+                  >
+                    <item.icon className="h-4 w-4" />
+                    {item.name}
+                  </Link>
+                )
+              })}
+            </nav>
+            <div className="absolute bottom-0 left-0 right-0 p-4 border-t border-slate-800">
+              <Button
+                variant="ghost"
+                className="w-full justify-start text-slate-300 hover:text-white hover:bg-slate-800"
+                onClick={handleSignOut}
+              >
+                <LogOut className="h-4 w-4 mr-2" />
+                Sair
+              </Button>
+            </div>
+          </SheetContent>
+        </Sheet>
+      </div>
+
+      {/* Main Content */}
+      <main className="flex-1 min-w-0 md:pt-0 pt-16">
+        <div className="max-w-6xl mx-auto p-4 md:p-8">
+          <Outlet />
+        </div>
       </main>
     </div>
   )
