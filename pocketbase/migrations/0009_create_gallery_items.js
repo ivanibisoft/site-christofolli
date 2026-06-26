@@ -3,8 +3,8 @@ migrate(
     const collection = new Collection({
       name: 'gallery_items',
       type: 'base',
-      listRule: '""',
-      viewRule: '""',
+      listRule: '',
+      viewRule: '',
       createRule: null,
       updateRule: null,
       deleteRule: null,
