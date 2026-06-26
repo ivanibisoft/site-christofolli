@@ -1,10 +1,11 @@
+import { useState, useEffect } from 'react'
 import {
   Bar,
   BarChart,
   CartesianGrid,
   XAxis,
   YAxis,
-  Tooltip,
+  Tooltip as RechartsTooltip,
   ResponsiveContainer,
   LineChart,
   Line,
@@ -14,6 +15,19 @@ import { Link } from 'react-router-dom'
 import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog'
+import { Skeleton } from '@/components/ui/skeleton'
+import { useRealtime } from '@/hooks/use-realtime'
+import pb from '@/lib/pocketbase/client'
+import { getGalleryItems, type GalleryItem } from '@/services/gallery'
 
 const strengthData = [
   { month: 'Jan', original: 30, otimizado: 31, cimentoOrig: 350, cimentoOtim: 320 },
@@ -34,6 +48,32 @@ const thermalData = [
 ]
 
 export default function Portfolio() {
+  const [items, setItems] = useState<GalleryItem[]>([])
+  const [loading, setLoading] = useState(true)
+  const [category, setCategory] = useState<string>('Todos')
+
+  const loadData = async () => {
+    try {
+      const data = await getGalleryItems()
+      setItems(data)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  useRealtime('gallery_items', () => {
+    loadData()
+  })
+
+  const filteredItems =
+    category === 'Todos' ? items : items.filter((item) => item.category === category)
+
   return (
     <div className="py-12 animate-fade-in">
       <div className="container">
@@ -45,28 +85,96 @@ export default function Portfolio() {
           </p>
         </div>
 
-        {/* Gallery */}
-        <h2 className="text-2xl font-bold text-primary mb-6">Galeria de Obras Assessoradas</h2>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-16">
-          {[
-            { img: 'foundation', title: 'Fundações Massivas', q: 'construction%20foundation' },
-            { img: 'bridge', title: 'Infraestrutura Viária', q: 'concrete%20bridge' },
-            { img: 'tower', title: 'Edifícios Altos (CAD)', q: 'modern%20skyscraper' },
-          ].map((item, i) => (
-            <div
-              key={i}
-              className="group relative overflow-hidden rounded-xl aspect-[4/3] bg-muted"
-            >
-              <img
-                src={`https://img.usecurling.com/p/600/450?q=${item.q}&color=gray`}
-                alt={item.title}
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex items-end p-6">
-                <h3 className="text-white font-semibold text-lg">{item.title}</h3>
-              </div>
+        {/* Dynamic Gallery */}
+        <div className="mb-16">
+          <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
+            <h2 className="text-2xl font-bold text-primary">Galeria de Imagens</h2>
+            <Tabs defaultValue="Todos" onValueChange={setCategory}>
+              <TabsList>
+                <TabsTrigger value="Todos">Todos</TabsTrigger>
+                <TabsTrigger value="Ensaios">Ensaios</TabsTrigger>
+                <TabsTrigger value="Obras">Obras</TabsTrigger>
+              </TabsList>
+            </Tabs>
+          </div>
+
+          {loading ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="aspect-[4/3] rounded-xl w-full" />
+              ))}
             </div>
-          ))}
+          ) : filteredItems.length === 0 ? (
+            <div className="text-center py-12 bg-muted/30 rounded-xl border border-dashed">
+              <p className="text-muted-foreground">
+                Nenhuma imagem encontrada para esta categoria.
+              </p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {filteredItems.map((item) => (
+                <Dialog key={item.id}>
+                  <DialogTrigger asChild>
+                    <div className="group relative overflow-hidden rounded-xl aspect-[4/3] bg-muted cursor-pointer">
+                      <img
+                        src={
+                          item.image
+                            ? pb.files.getUrl(item, item.image)
+                            : `https://img.usecurling.com/p/600/450?q=${encodeURIComponent(
+                                item.category === 'Ensaios'
+                                  ? 'concrete laboratory'
+                                  : 'construction',
+                              )}&color=gray`
+                        }
+                        alt={item.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6">
+                        <span className="text-xs font-medium text-white/80 uppercase tracking-wider mb-1">
+                          {item.category}
+                        </span>
+                        <h3 className="text-white font-semibold text-lg leading-tight">
+                          {item.title}
+                        </h3>
+                      </div>
+                    </div>
+                  </DialogTrigger>
+                  <DialogContent className="max-w-4xl bg-transparent border-none shadow-none p-0 flex flex-col justify-center items-center">
+                    <DialogHeader className="sr-only">
+                      <DialogTitle>{item.title}</DialogTitle>
+                      <DialogDescription>{item.description}</DialogDescription>
+                    </DialogHeader>
+                    <div className="bg-background rounded-xl overflow-hidden shadow-2xl w-full max-w-4xl">
+                      <img
+                        src={
+                          item.image
+                            ? pb.files.getUrl(item, item.image)
+                            : `https://img.usecurling.com/p/1200/800?q=${encodeURIComponent(
+                                item.category === 'Ensaios'
+                                  ? 'concrete laboratory'
+                                  : 'construction',
+                              )}&color=gray`
+                        }
+                        alt={item.title}
+                        className="w-full max-h-[60vh] object-cover bg-black/5"
+                      />
+                      <div className="p-6">
+                        <div className="flex items-center gap-2 mb-2">
+                          <span className="bg-primary/10 text-primary text-xs font-semibold px-2 py-1 rounded">
+                            {item.category}
+                          </span>
+                        </div>
+                        <h3 className="text-2xl font-bold text-foreground mb-2">{item.title}</h3>
+                        {item.description && (
+                          <p className="text-muted-foreground">{item.description}</p>
+                        )}
+                      </div>
+                    </div>
+                  </DialogContent>
+                </Dialog>
+              ))}
+            </div>
+          )}
         </div>
 
         {/* Charts Section */}
@@ -95,7 +203,7 @@ export default function Portfolio() {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                     <XAxis dataKey="month" tickLine={false} axisLine={false} />
                     <YAxis tickLine={false} axisLine={false} domain={[250, 400]} />
-                    <Tooltip content={<ChartTooltipContent />} />
+                    <RechartsTooltip content={<ChartTooltipContent />} />
                     <Legend />
                     <Bar
                       dataKey="cimentoOrig"
@@ -136,7 +244,7 @@ export default function Portfolio() {
                     <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
                     <XAxis dataKey="hora" tickLine={false} axisLine={false} />
                     <YAxis tickLine={false} axisLine={false} />
-                    <Tooltip content={<ChartTooltipContent />} />
+                    <RechartsTooltip content={<ChartTooltipContent />} />
                     <Legend />
                     <Line
                       type="monotone"
