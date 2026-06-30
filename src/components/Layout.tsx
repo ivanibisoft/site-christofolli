@@ -74,13 +74,13 @@ export default function Layout() {
       <footer className="bg-slate-900 text-slate-300 py-12 border-t border-slate-800">
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center gap-2 mb-4">
+            <Link to="/" className="flex items-center gap-2 mb-4 group">
               <img
                 src={logoImg}
                 alt="Christófolli Consultoria de Engenharia"
-                className="h-[3.75rem] w-auto brightness-0 invert opacity-90"
+                className="h-[3.75rem] w-auto md:h-[4.5rem] transition-opacity hover:opacity-80"
               />
-            </div>
+            </Link>
             <p className="text-sm text-slate-400 max-w-sm mb-6">
               Engenharia de Resultados. Consultoria técnica e operacional especializada em centrais
               de concreto, focada em produtividade e excelência.
