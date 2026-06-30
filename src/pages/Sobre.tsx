@@ -14,11 +14,25 @@ import { Card, CardContent } from '@/components/ui/card'
 import { BIO_TIMELINE } from '@/lib/data'
 import pb from '@/lib/pocketbase/client'
 import { getPublications, type Publication } from '@/services/publications'
+import {
+  getCompanyProfile,
+  getDirectorPhotoUrl,
+  type CompanyProfile,
+} from '@/services/company-profile'
 import { useRealtime } from '@/hooks/use-realtime'
 
 export default function Sobre() {
   const [publications, setPublications] = useState<Publication[]>([])
   const [loading, setLoading] = useState(true)
+  const [directorPhoto, setDirectorPhoto] = useState<string | null>(null)
+
+  const loadProfile = () => {
+    getCompanyProfile()
+      .then((profile) => {
+        setDirectorPhoto(getDirectorPhotoUrl(profile))
+      })
+      .catch(() => {})
+  }
 
   const loadData = () => {
     getPublications()
@@ -29,10 +43,15 @@ export default function Sobre() {
 
   useEffect(() => {
     loadData()
+    loadProfile()
   }, [])
 
   useRealtime('publications', () => {
     loadData()
+  })
+
+  useRealtime('company_profile', () => {
+    loadProfile()
   })
 
   return (
@@ -42,7 +61,7 @@ export default function Sobre() {
 
         <div className="bg-white rounded-2xl p-8 shadow-sm border mb-12 flex flex-col md:flex-row gap-8 items-start">
           <img
-            src="https://img.usecurling.com/ppl/large?gender=male&seed=99"
+            src={directorPhoto || 'https://img.usecurling.com/ppl/large?gender=male&seed=99'}
             alt="Jorge Christofolli - Christófolli Consultoria de Engenharia"
             className="w-48 h-48 rounded-xl object-cover shadow-md shrink-0"
           />

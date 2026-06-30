@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-30T23:11:23.465Z",
+  "generatedAt": "2026-06-30T23:19:18.440Z",
   "collections": [
     {
       "name": "users",
@@ -199,6 +199,40 @@
           "name": "image",
           "type": "file",
           "required": true,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": []
+    },
+    {
+      "name": "company_profile",
+      "type": "base",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": null,
+        "update": "@request.auth.id != ''",
+        "delete": null
+      },
+      "fields": [
+        {
+          "name": "director_photo",
+          "type": "file",
+          "required": false,
           "system": false
         },
         {

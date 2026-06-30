@@ -17,6 +17,7 @@ import PublicationForm from './pages/admin/PublicationForm'
 import ContactsList from './pages/admin/ContactsList'
 import GalleryList from './pages/admin/GalleryList'
 import GalleryForm from './pages/admin/GalleryForm'
+import CompanyProfilePage from './pages/admin/CompanyProfile'
 
 const App = () => (
   <BrowserRouter>
@@ -42,6 +43,7 @@ const App = () => (
             <Route path="gallery" element={<GalleryList />} />
             <Route path="gallery/new" element={<GalleryForm />} />
             <Route path="gallery/:id" element={<GalleryForm />} />
+            <Route path="company-profile" element={<CompanyProfilePage />} />
             <Route path="contacts" element={<ContactsList />} />
           </Route>
 

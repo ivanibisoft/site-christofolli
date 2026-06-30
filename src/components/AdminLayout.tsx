@@ -1,12 +1,13 @@
 import { useEffect } from 'react'
 import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom'
-import { FileText, Mail, LogOut, Menu, Image as ImageIcon } from 'lucide-react'
+import { FileText, Mail, LogOut, Menu, Image as ImageIcon, Building2 } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
 
 const navigation = [
+  { name: 'Perfil da Empresa', href: '/admin/company-profile', icon: Building2 },
   { name: 'Publicações', href: '/admin/publications', icon: FileText },
   { name: 'Galeria', href: '/admin/gallery', icon: ImageIcon },
   { name: 'Contatos', href: '/admin/contacts', icon: Mail },
