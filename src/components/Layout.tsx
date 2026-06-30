@@ -32,12 +32,12 @@ export default function Layout() {
   return (
     <div className="flex flex-col min-h-screen bg-slate-50 pattern-grid">
       <header className="sticky top-0 z-50 glass-header">
-        <div className="container mx-auto px-4 h-20 flex items-center justify-between">
+        <div className="container mx-auto px-4 h-24 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 group">
             <img
               src={logoImg}
               alt="Christófolli Consultoria de Engenharia"
-              className="h-10 w-auto md:h-12"
+              className="h-[3.75rem] w-auto md:h-[4.5rem]"
             />
           </Link>
 
@@ -78,7 +78,7 @@ export default function Layout() {
               <img
                 src={logoImg}
                 alt="Christófolli Consultoria de Engenharia"
-                className="h-10 w-auto brightness-0 invert opacity-90"
+                className="h-[3.75rem] w-auto brightness-0 invert opacity-90"
               />
             </div>
             <p className="text-sm text-slate-400 max-w-sm mb-6">
