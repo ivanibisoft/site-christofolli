@@ -3,7 +3,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom'
 import { Linkedin, Mail, Phone } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import logoImg from '@/assets/logo-2dhsf-christofolli-consultoria-7b02a.png'
+import logoImg from '@/assets/logo-2dhsf2-christofolli-consultoria-a4665.png'
 
 export default function Layout() {
   const location = useLocation()
@@ -32,12 +32,12 @@ export default function Layout() {
   return (
     <div className="flex flex-col min-h-screen bg-slate-50 pattern-grid">
       <header className="sticky top-0 z-50 glass-header">
-        <div className="container mx-auto px-4 h-24 flex items-center justify-between">
+        <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 group">
             <img
               src={logoImg}
               alt="Christófolli Consultoria de Engenharia"
-              className="h-[3.75rem] w-auto md:h-[4.5rem]"
+              className="h-[5.625rem] w-auto md:h-[6.75rem]"
             />
           </Link>
 
@@ -74,11 +74,11 @@ export default function Layout() {
       <footer className="bg-slate-900 text-slate-300 py-12 border-t border-slate-800">
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
-            <Link to="/" className="flex items-center gap-2 mb-4 group">
+            <Link to="/" className="flex items-center gap-2 mb-6 group">
               <img
                 src={logoImg}
                 alt="Christófolli Consultoria de Engenharia"
-                className="h-[3.75rem] w-auto md:h-[4.5rem] transition-opacity hover:opacity-80"
+                className="h-[5.625rem] w-auto md:h-[6.75rem] transition-opacity hover:opacity-80"
               />
             </Link>
             <p className="text-sm text-slate-400 max-w-sm mb-6">
