@@ -28,6 +28,12 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { createContact } from '@/services/contacts'
+import {
+  getCompanyProfile,
+  getDirectorPhotoUrl,
+  type CompanyProfile,
+} from '@/services/company-profile'
+import { useRealtime } from '@/hooks/use-realtime'
 
 const contactSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório'),
@@ -41,6 +47,7 @@ const contactSchema = z.object({
 export default function Index() {
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [directorPhoto, setDirectorPhoto] = useState<string | null>(null)
   const location = useLocation()
 
   useEffect(() => {
@@ -53,6 +60,23 @@ export default function Index() {
       }
     }
   }, [location])
+
+  const loadDirectorPhoto = async () => {
+    try {
+      const profile = await getCompanyProfile()
+      setDirectorPhoto(getDirectorPhotoUrl(profile))
+    } catch {
+      setDirectorPhoto(null)
+    }
+  }
+
+  useEffect(() => {
+    loadDirectorPhoto()
+  }, [])
+
+  useRealtime('company_profile', () => {
+    loadDirectorPhoto()
+  })
 
   const form = useForm<z.infer<typeof contactSchema>>({
     resolver: zodResolver(contactSchema),
@@ -203,7 +227,7 @@ export default function Index() {
             <div className="lg:w-1/3 relative">
               <div className="aspect-square rounded-2xl overflow-hidden shadow-2xl relative z-10 border-4 border-white">
                 <img
-                  src="https://img.usecurling.com/ppl/large?gender=male&seed=99"
+                  src={directorPhoto || 'https://img.usecurling.com/ppl/large?gender=male&seed=99'}
                   alt="Jorge Luiz Christofolli"
                   className="w-full h-full object-cover"
                 />
