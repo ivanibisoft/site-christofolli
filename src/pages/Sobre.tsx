@@ -12,6 +12,7 @@ import {
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { BIO_TIMELINE } from '@/lib/data'
+import pb from '@/lib/pocketbase/client'
 import { getPublications, type Publication } from '@/services/publications'
 import { useRealtime } from '@/hooks/use-realtime'
 
@@ -182,12 +183,25 @@ export default function Sobre() {
                       </p>
                     )}
                   </div>
-                  <Button asChild className="shrink-0 bg-primary hover:bg-primary/90 group">
-                    <a href={pub.link} target="_blank" rel="noopener noreferrer">
-                      Ler Artigo
-                      <ExternalLink className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-                    </a>
-                  </Button>
+                  {pub.pdf_file ? (
+                    <Button asChild className="shrink-0 bg-primary hover:bg-primary/90 group">
+                      <a
+                        href={pb.files.getUrl(pub as any, pub.pdf_file)}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
+                        Visualizar PDF
+                        <ExternalLink className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                      </a>
+                    </Button>
+                  ) : pub.link ? (
+                    <Button asChild className="shrink-0 bg-primary hover:bg-primary/90 group">
+                      <a href={pub.link} target="_blank" rel="noopener noreferrer">
+                        Ler Artigo
+                        <ExternalLink className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
+                      </a>
+                    </Button>
+                  ) : null}
                 </CardContent>
               </Card>
             ))}

@@ -1,8 +1,9 @@
 import { useEffect } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
-import { Hexagon, Linkedin, Mail, Phone } from 'lucide-react'
+import { Linkedin, Mail, Phone } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
+import logoImg from '@/assets/logo-3dh-christofolli-consultoria-568f4.png'
 
 export default function Layout() {
   const location = useLocation()
@@ -33,17 +34,7 @@ export default function Layout() {
       <header className="sticky top-0 z-50 glass-header">
         <div className="container mx-auto px-4 h-20 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 group">
-            <div className="bg-primary p-2 rounded-lg group-hover:bg-accent transition-colors">
-              <Hexagon className="h-6 w-6 text-white" />
-            </div>
-            <div className="flex flex-col">
-              <span className="font-bold text-xl leading-none tracking-tight text-primary">
-                Christófolli
-              </span>
-              <span className="text-[10px] uppercase tracking-wider text-muted-foreground font-semibold">
-                Consultoria de Engenharia
-              </span>
-            </div>
+            <img src={logoImg} alt="Christófolli Consultoria" className="h-10 w-auto md:h-12" />
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">
@@ -80,8 +71,11 @@ export default function Layout() {
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-              <Hexagon className="h-6 w-6 text-accent" />
-              <span className="font-bold text-xl text-white">Christófolli</span>
+              <img
+                src={logoImg}
+                alt="Christófolli Consultoria"
+                className="h-10 w-auto brightness-0 invert opacity-90"
+              />
             </div>
             <p className="text-sm text-slate-400 max-w-sm mb-6">
               Engenharia de Resultados. Consultoria técnica e operacional especializada em centrais

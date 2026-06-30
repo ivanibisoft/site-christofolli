@@ -1,9 +1,9 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useRef } from 'react'
 import { useNavigate, useParams, Link } from 'react-router-dom'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, Save, Loader2 } from 'lucide-react'
+import { ArrowLeft, Save, Loader2, UploadCloud, X, FileText, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -19,13 +19,11 @@ import {
 import { useToast } from '@/hooks/use-toast'
 import { getPublication, createPublication, updatePublication } from '@/services/publications'
 import { extractFieldErrors } from '@/lib/pocketbase/errors'
+import pb from '@/lib/pocketbase/client'
 
 const formSchema = z.object({
   title: z.string().min(1, 'O título é obrigatório'),
-  link: z
-    .string()
-    .url('Deve ser uma URL válida começando com http:// ou https://')
-    .min(1, 'O link é obrigatório'),
+  link: z.string().optional(),
   description: z.string().optional(),
   published_date: z.string().optional(),
 })
@@ -37,6 +35,11 @@ export default function PublicationForm() {
   const { toast } = useToast()
   const [loading, setLoading] = useState(isEditing)
   const [saving, setSaving] = useState(false)
+
+  const [pdfFile, setPdfFile] = useState<File | null>(null)
+  const [existingPdf, setExistingPdf] = useState<{ url: string; name: string } | null>(null)
+  const [removeExistingPdf, setRemoveExistingPdf] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,10 +57,16 @@ export default function PublicationForm() {
         .then((pub) => {
           form.reset({
             title: pub.title,
-            link: pub.link,
+            link: pub.link || '',
             description: pub.description || '',
             published_date: pub.published_date ? pub.published_date.substring(0, 10) : '',
           })
+          if (pub.pdf_file) {
+            setExistingPdf({
+              url: pb.files.getUrl(pub as any, pub.pdf_file),
+              name: pub.pdf_file,
+            })
+          }
         })
         .catch(() => {
           toast({ title: 'Publicação não encontrada', variant: 'destructive' })
@@ -67,22 +76,76 @@ export default function PublicationForm() {
     }
   }, [id, isEditing, form, navigate, toast])
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0]
+      if (file.type !== 'application/pdf') {
+        toast({
+          title: 'Formato inválido',
+          description: 'Por favor, selecione um arquivo PDF.',
+          variant: 'destructive',
+        })
+        return
+      }
+      if (file.size > 52428800) {
+        toast({
+          title: 'Arquivo muito grande',
+          description: 'O tamanho máximo permitido é 50MB.',
+          variant: 'destructive',
+        })
+        return
+      }
+      setPdfFile(file)
+      setRemoveExistingPdf(false)
+    }
+  }
+
+  const handleRemoveFile = () => {
+    setPdfFile(null)
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ''
+    }
+    if (existingPdf) {
+      setRemoveExistingPdf(true)
+    }
+  }
+
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    const hasLink = !!values.link?.trim()
+    const hasPdf = !!pdfFile || (!!existingPdf && !removeExistingPdf)
+
+    if (!hasLink && !hasPdf) {
+      form.setError('link', { message: 'Forneça um Link de Acesso ou envie um Arquivo PDF' })
+      return
+    }
+
     setSaving(true)
 
-    const payload = {
-      ...values,
-      published_date: values.published_date
-        ? new Date(`${values.published_date}T12:00:00Z`).toISOString()
-        : '',
+    const formData = new FormData()
+    formData.append('title', values.title)
+    formData.append('link', values.link || '')
+    formData.append('description', values.description || '')
+    if (values.published_date) {
+      formData.append(
+        'published_date',
+        new Date(`${values.published_date}T12:00:00Z`).toISOString(),
+      )
+    } else {
+      formData.append('published_date', '')
+    }
+
+    if (pdfFile) {
+      formData.append('pdf_file', pdfFile)
+    } else if (removeExistingPdf) {
+      formData.append('pdf_file', '')
     }
 
     try {
       if (isEditing) {
-        await updatePublication(id!, payload)
+        await updatePublication(id!, formData)
         toast({ title: 'Publicação atualizada com sucesso!' })
       } else {
-        await createPublication(payload)
+        await createPublication(formData)
         toast({ title: 'Publicação cadastrada com sucesso!' })
       }
       navigate('/admin/publications')
@@ -90,7 +153,15 @@ export default function PublicationForm() {
       const fieldErrors = extractFieldErrors(error)
       if (Object.keys(fieldErrors).length > 0) {
         Object.entries(fieldErrors).forEach(([field, msg]) => {
-          form.setError(field as any, { message: msg })
+          if (field === 'pdf_file') {
+            toast({
+              title: 'Erro no arquivo PDF',
+              description: msg as string,
+              variant: 'destructive',
+            })
+          } else {
+            form.setError(field as any, { message: msg as string })
+          }
         })
       } else {
         toast({ title: 'Erro ao salvar os dados', variant: 'destructive' })
@@ -108,6 +179,13 @@ export default function PublicationForm() {
       </div>
     )
   }
+
+  const showFileUploader = !pdfFile && (!existingPdf || removeExistingPdf)
+  const currentFileName = pdfFile
+    ? pdfFile.name
+    : existingPdf && !removeExistingPdf
+      ? existingPdf.name
+      : ''
 
   return (
     <div className="max-w-2xl mx-auto space-y-6 pb-12 animate-in slide-in-from-bottom-4 duration-500">
@@ -153,6 +231,82 @@ export default function PublicationForm() {
               )}
             />
 
+            <div className="space-y-3">
+              <FormLabel className="text-slate-800">Arquivo PDF</FormLabel>
+              {showFileUploader ? (
+                <div className="border-2 border-dashed border-slate-200 rounded-lg p-6 flex flex-col items-center justify-center text-center bg-slate-50 hover:bg-slate-100/50 transition-colors">
+                  <div className="h-10 w-10 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-3">
+                    <UploadCloud className="h-5 w-5" />
+                  </div>
+                  <p className="text-sm font-medium text-slate-700 mb-1">
+                    Clique para selecionar um arquivo PDF
+                  </p>
+                  <p className="text-xs text-slate-500 mb-4">Tamanho máximo: 50MB</p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => fileInputRef.current?.click()}
+                  >
+                    Procurar arquivo
+                  </Button>
+                  <input
+                    type="file"
+                    ref={fileInputRef}
+                    className="hidden"
+                    accept="application/pdf"
+                    onChange={handleFileChange}
+                  />
+                </div>
+              ) : (
+                <div className="flex items-center justify-between p-3 border rounded-lg bg-slate-50">
+                  <div className="flex items-center gap-3 overflow-hidden">
+                    <div className="h-10 w-10 bg-red-100 text-red-600 rounded-lg flex items-center justify-center shrink-0">
+                      <FileText className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-slate-800 truncate">
+                        {currentFileName}
+                      </p>
+                      <p className="text-xs text-slate-500">
+                        {pdfFile
+                          ? `${(pdfFile.size / 1024 / 1024).toFixed(2)} MB`
+                          : 'Arquivo salvo'}
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-2 pl-2">
+                    {existingPdf && !removeExistingPdf && !pdfFile && (
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        asChild
+                        className="h-8 w-8 text-slate-500"
+                      >
+                        <a href={existingPdf.url} target="_blank" rel="noopener noreferrer">
+                          <ExternalLink className="h-4 w-4" />
+                        </a>
+                      </Button>
+                    )}
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      onClick={handleRemoveFile}
+                      className="h-8 w-8 text-slate-500 hover:text-red-600 hover:bg-red-50"
+                    >
+                      <X className="h-4 w-4" />
+                      <span className="sr-only">Remover arquivo</span>
+                    </Button>
+                  </div>
+                </div>
+              )}
+              <FormDescription>
+                Se um arquivo for enviado, o Link de Acesso não será obrigatório.
+              </FormDescription>
+            </div>
+
             <div className="grid sm:grid-cols-2 gap-6">
               <FormField
                 control={form.control}
@@ -160,7 +314,10 @@ export default function PublicationForm() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel className="text-slate-800">
-                      Link de Acesso (DOI ou URL) <span className="text-red-500">*</span>
+                      Link de Acesso (DOI ou URL){' '}
+                      {!pdfFile && (!existingPdf || removeExistingPdf) && (
+                        <span className="text-red-500">*</span>
+                      )}
                     </FormLabel>
                     <FormControl>
                       <Input

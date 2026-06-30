@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-26T23:24:16.369Z",
+  "generatedAt": "2026-06-30T23:11:23.465Z",
   "collections": [
     {
       "name": "users",
@@ -92,6 +92,12 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "pdf_file",
+          "type": "file",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": []

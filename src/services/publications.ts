@@ -2,10 +2,13 @@ import pb from '@/lib/pocketbase/client'
 
 export interface Publication {
   id: string
+  collectionId: string
+  collectionName: string
   title: string
   link: string
   description?: string
   published_date?: string
+  pdf_file?: string
   created: string
   updated: string
 }
@@ -20,13 +23,15 @@ export const getPublication = async (id: string): Promise<Publication> => {
   return pb.collection('publications').getOne<Publication>(id)
 }
 
-export const createPublication = async (data: Partial<Publication>): Promise<Publication> => {
+export const createPublication = async (
+  data: FormData | Partial<Publication>,
+): Promise<Publication> => {
   return pb.collection('publications').create<Publication>(data)
 }
 
 export const updatePublication = async (
   id: string,
-  data: Partial<Publication>,
+  data: FormData | Partial<Publication>,
 ): Promise<Publication> => {
   return pb.collection('publications').update<Publication>(id, data)
 }
