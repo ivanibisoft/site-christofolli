@@ -3,7 +3,7 @@ import { Outlet, Link, useLocation } from 'react-router-dom'
 import { Linkedin, Mail, Phone } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
-import logoImg from '@/assets/logo-3dh-christofolli-consultoria-568f4.png'
+import logoImg from '@/assets/logo-2dhsf-christofolli-consultoria-7b02a.png'
 
 export default function Layout() {
   const location = useLocation()
@@ -34,7 +34,11 @@ export default function Layout() {
       <header className="sticky top-0 z-50 glass-header">
         <div className="container mx-auto px-4 h-20 flex items-center justify-between">
           <Link to="/" className="flex items-center gap-2 group">
-            <img src={logoImg} alt="Christófolli Consultoria" className="h-10 w-auto md:h-12" />
+            <img
+              src={logoImg}
+              alt="Christófolli Consultoria de Engenharia"
+              className="h-10 w-auto md:h-12"
+            />
           </Link>
 
           <nav className="hidden md:flex items-center gap-6">
@@ -73,7 +77,7 @@ export default function Layout() {
             <div className="flex items-center gap-2 mb-4">
               <img
                 src={logoImg}
-                alt="Christófolli Consultoria"
+                alt="Christófolli Consultoria de Engenharia"
                 className="h-10 w-auto brightness-0 invert opacity-90"
               />
             </div>
