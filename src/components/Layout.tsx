@@ -71,7 +71,7 @@ export default function Layout() {
         <Outlet />
       </main>
 
-      <footer className="bg-slate-900 text-slate-300 py-12 border-t border-slate-800">
+      <footer className="bg-slate-100 text-slate-700 py-12 border-t border-slate-200">
         <div className="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
             <Link to="/" className="flex items-center gap-2 mb-6 group">
@@ -81,7 +81,7 @@ export default function Layout() {
                 className="h-[5.625rem] w-auto md:h-[6.75rem] transition-opacity hover:opacity-80"
               />
             </Link>
-            <p className="text-sm text-slate-400 max-w-sm mb-6">
+            <p className="text-sm text-slate-600 max-w-sm mb-6">
               Engenharia de Resultados. Consultoria técnica e operacional especializada em centrais
               de concreto, focada em produtividade e excelência.
             </p>
@@ -90,37 +90,49 @@ export default function Layout() {
                 href="https://www.linkedin.com/in/jorge-christofolli-4b4aaa73/"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="hover:text-white transition-colors"
+                className="text-slate-700 hover:text-accent transition-colors"
               >
                 <Linkedin className="h-5 w-5" />
               </a>
               <a
                 href="mailto:jorge@christofolli.com.br"
-                className="hover:text-white transition-colors"
+                className="text-slate-700 hover:text-accent transition-colors"
               >
                 <Mail className="h-5 w-5" />
               </a>
-              <a href="tel:+5541999211183" className="hover:text-white transition-colors">
+              <a
+                href="tel:+5541999211183"
+                className="text-slate-700 hover:text-accent transition-colors"
+              >
                 <Phone className="h-5 w-5" />
               </a>
             </div>
           </div>
 
           <div>
-            <h4 className="font-semibold text-white mb-4">Serviços</h4>
+            <h4 className="font-semibold text-primary mb-4">Serviços</h4>
             <ul className="space-y-2 text-sm">
               <li>
-                <Link to="/construtoras" className="hover:text-accent transition-colors">
+                <Link
+                  to="/construtoras"
+                  className="text-slate-600 hover:text-accent transition-colors"
+                >
                   Para Construtoras
                 </Link>
               </li>
               <li>
-                <Link to="/concreteiras" className="hover:text-accent transition-colors">
+                <Link
+                  to="/concreteiras"
+                  className="text-slate-600 hover:text-accent transition-colors"
+                >
                   Para Concreteiras
                 </Link>
               </li>
               <li>
-                <Link to="/portfolio" className="hover:text-accent transition-colors">
+                <Link
+                  to="/portfolio"
+                  className="text-slate-600 hover:text-accent transition-colors"
+                >
                   Portfólio
                 </Link>
               </li>
@@ -128,12 +140,12 @@ export default function Layout() {
           </div>
 
           <div>
-            <h4 className="font-semibold text-white mb-4">Contato</h4>
+            <h4 className="font-semibold text-primary mb-4">Contato</h4>
             <ul className="space-y-3 text-sm">
               <li>
                 <a
                   href="mailto:jorge@christofolli.com.br"
-                  className="flex items-center gap-2 hover:text-accent transition-colors"
+                  className="flex items-center gap-2 text-slate-600 hover:text-accent transition-colors"
                 >
                   <Mail className="h-4 w-4 text-accent" /> jorge@christofolli.com.br
                 </a>
@@ -141,7 +153,7 @@ export default function Layout() {
               <li>
                 <a
                   href="tel:+5541999211183"
-                  className="flex items-center gap-2 hover:text-accent transition-colors"
+                  className="flex items-center gap-2 text-slate-600 hover:text-accent transition-colors"
                 >
                   <Phone className="h-4 w-4 text-accent" /> (41) 99921-1183
                 </a>
@@ -151,7 +163,7 @@ export default function Layout() {
                   href="https://www.linkedin.com/in/jorge-christofolli-4b4aaa73/"
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center gap-2 hover:text-accent transition-colors"
+                  className="flex items-center gap-2 text-slate-600 hover:text-accent transition-colors"
                 >
                   <Linkedin className="h-4 w-4 text-accent" /> Jorge Christofolli
                 </a>
@@ -159,7 +171,7 @@ export default function Layout() {
             </ul>
           </div>
         </div>
-        <div className="container mx-auto px-4 mt-12 pt-8 border-t border-slate-800 text-sm text-slate-500 text-center">
+        <div className="container mx-auto px-4 mt-12 pt-8 border-t border-slate-200 text-sm text-slate-500 text-center">
           © {new Date().getFullYear()} Christófolli Consultoria de Engenharia Ltda. Todos os
           direitos reservados.
         </div>
