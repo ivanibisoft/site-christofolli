@@ -113,7 +113,7 @@ export default function PublicationForm() {
     if (!hasPdf) {
       toast({
         title: 'Arquivo obrigatório',
-        description: 'Por favor, selecione um arquivo PDF para a publicação.',
+        description: 'O anexo do PDF é obrigatório.',
         variant: 'destructive',
       })
       return
@@ -123,7 +123,6 @@ export default function PublicationForm() {
 
     const formData = new FormData()
     formData.append('title', values.title)
-    formData.append('link', '')
     formData.append('description', values.description || '')
     if (values.published_date) {
       formData.append(

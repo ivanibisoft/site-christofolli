@@ -5,7 +5,6 @@ export interface Publication {
   collectionId: string
   collectionName: string
   title: string
-  link: string
   description?: string
   published_date?: string
   pdf_file?: string

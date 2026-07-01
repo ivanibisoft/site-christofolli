@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Edit2, Plus, Trash2, FileText } from 'lucide-react'
+import { Edit2, Plus, Trash2, FileText, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -24,6 +24,7 @@ import {
 import { useToast } from '@/hooks/use-toast'
 import { getPublications, deletePublication, type Publication } from '@/services/publications'
 import { useRealtime } from '@/hooks/use-realtime'
+import pb from '@/lib/pocketbase/client'
 
 export default function PublicationsList() {
   const [publications, setPublications] = useState<Publication[]>([])
@@ -77,9 +78,9 @@ export default function PublicationsList() {
             <TableHeader className="bg-slate-50">
               <TableRow>
                 <TableHead className="w-[50px]"></TableHead>
-                <TableHead>Título e Link</TableHead>
+                <TableHead>Título</TableHead>
                 <TableHead className="w-[180px]">Data de Publicação</TableHead>
-                <TableHead className="w-[120px] text-right pr-6">Ações</TableHead>
+                <TableHead className="w-[160px] text-right pr-6">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -117,11 +118,9 @@ export default function PublicationsList() {
                         {pub.title}
                       </div>
                       {pub.pdf_file && (
-                        <div className="flex items-center gap-3">
-                          <span className="inline-flex items-center text-xs font-medium bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
-                            PDF
-                          </span>
-                        </div>
+                        <span className="inline-flex items-center text-xs font-medium bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+                          PDF
+                        </span>
                       )}
                     </TableCell>
                     <TableCell className="text-slate-600 font-medium">
@@ -133,6 +132,23 @@ export default function PublicationsList() {
                     </TableCell>
                     <TableCell className="text-right pr-4">
                       <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity focus-within:opacity-100">
+                        {pub.pdf_file && (
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            asChild
+                            className="h-8 w-8 text-slate-500 hover:text-primary"
+                          >
+                            <a
+                              href={pb.files.getUrl(pub as any, pub.pdf_file)}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                            >
+                              <ExternalLink className="h-4 w-4" />
+                              <span className="sr-only">Abrir PDF</span>
+                            </a>
+                          </Button>
+                        )}
                         <Button
                           variant="ghost"
                           size="icon"
