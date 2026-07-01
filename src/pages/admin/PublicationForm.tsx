@@ -97,6 +97,7 @@ export default function PublicationForm() {
       }
       setPdfFile(file)
       setRemoveExistingPdf(false)
+      form.clearErrors('link')
     }
   }
 
@@ -115,7 +116,9 @@ export default function PublicationForm() {
     const hasPdf = !!pdfFile || (!!existingPdf && !removeExistingPdf)
 
     if (!hasLink && !hasPdf) {
-      form.setError('link', { message: 'Forneça um Link de Acesso ou envie um Arquivo PDF' })
+      form.setError('link', {
+        message: 'Por favor, forneça um link de acesso ou anexe um arquivo PDF.',
+      })
       return
     }
 

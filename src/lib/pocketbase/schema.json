@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-06-30T23:49:35.453Z",
+  "generatedAt": "2026-07-01T00:02:24.120Z",
   "collections": [
     {
       "name": "users",
@@ -64,7 +64,7 @@
         {
           "name": "link",
           "type": "text",
-          "required": true,
+          "required": false,
           "system": false
         },
         {
