@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Edit2, Plus, Trash2, ExternalLink, FileText } from 'lucide-react'
+import { Edit2, Plus, Trash2, FileText } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import {
   Table,
@@ -116,24 +116,11 @@ export default function PublicationsList() {
                       <div className="font-semibold text-slate-800 mb-1 leading-snug">
                         {pub.title}
                       </div>
-                      {(pub.pdf_file || pub.link) && (
+                      {pub.pdf_file && (
                         <div className="flex items-center gap-3">
-                          {pub.pdf_file && (
-                            <span className="inline-flex items-center text-xs font-medium bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
-                              PDF
-                            </span>
-                          )}
-                          {pub.link && (
-                            <a
-                              href={pub.link}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="inline-flex items-center text-sm text-slate-500 hover:text-primary hover:underline transition-colors"
-                            >
-                              <ExternalLink className="h-3 w-3 mr-1.5" />
-                              <span className="truncate max-w-[200px] sm:max-w-xs">{pub.link}</span>
-                            </a>
-                          )}
+                          <span className="inline-flex items-center text-xs font-medium bg-red-100 text-red-700 px-2 py-0.5 rounded-full">
+                            PDF
+                          </span>
                         </div>
                       )}
                     </TableCell>

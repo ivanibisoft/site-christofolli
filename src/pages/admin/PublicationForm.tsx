@@ -23,7 +23,6 @@ import pb from '@/lib/pocketbase/client'
 
 const formSchema = z.object({
   title: z.string().min(1, 'O título é obrigatório'),
-  link: z.string().optional(),
   description: z.string().optional(),
   published_date: z.string().optional(),
 })
@@ -45,7 +44,6 @@ export default function PublicationForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
-      link: '',
       description: '',
       published_date: '',
     },
@@ -57,7 +55,6 @@ export default function PublicationForm() {
         .then((pub) => {
           form.reset({
             title: pub.title,
-            link: pub.link || '',
             description: pub.description || '',
             published_date: pub.published_date ? pub.published_date.substring(0, 10) : '',
           })
@@ -97,7 +94,6 @@ export default function PublicationForm() {
       }
       setPdfFile(file)
       setRemoveExistingPdf(false)
-      form.clearErrors('link')
     }
   }
 
@@ -112,12 +108,13 @@ export default function PublicationForm() {
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const hasLink = !!values.link?.trim()
     const hasPdf = !!pdfFile || (!!existingPdf && !removeExistingPdf)
 
-    if (!hasLink && !hasPdf) {
-      form.setError('link', {
-        message: 'Por favor, forneça um link de acesso ou anexe um arquivo PDF.',
+    if (!hasPdf) {
+      toast({
+        title: 'Arquivo obrigatório',
+        description: 'Por favor, selecione um arquivo PDF para a publicação.',
+        variant: 'destructive',
       })
       return
     }
@@ -126,7 +123,7 @@ export default function PublicationForm() {
 
     const formData = new FormData()
     formData.append('title', values.title)
-    formData.append('link', values.link || '')
+    formData.append('link', '')
     formData.append('description', values.description || '')
     if (values.published_date) {
       formData.append(
@@ -305,53 +302,26 @@ export default function PublicationForm() {
                   </div>
                 </div>
               )}
-              <FormDescription>
-                Se um arquivo for enviado, o Link de Acesso não será obrigatório.
-              </FormDescription>
+              <FormDescription>O arquivo PDF é obrigatório para cada publicação.</FormDescription>
             </div>
 
-            <div className="grid sm:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="link"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-slate-800">
-                      Link de Acesso (DOI ou URL){' '}
-                      {!pdfFile && (!existingPdf || removeExistingPdf) && (
-                        <span className="text-red-500">*</span>
-                      )}
-                    </FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="https://doi.org/..."
-                        className="bg-slate-50 focus:bg-white"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="published_date"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel className="text-slate-800">Data de Publicação</FormLabel>
-                    <FormControl>
-                      <Input
-                        type="date"
-                        className="bg-slate-50 focus:bg-white text-slate-700"
-                        {...field}
-                      />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <FormField
+              control={form.control}
+              name="published_date"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-slate-800">Data de Publicação</FormLabel>
+                  <FormControl>
+                    <Input
+                      type="date"
+                      className="bg-slate-50 focus:bg-white text-slate-700"
+                      {...field}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}
