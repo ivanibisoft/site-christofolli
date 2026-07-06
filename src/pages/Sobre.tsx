@@ -1,19 +1,9 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  Download,
-  GraduationCap,
-  Briefcase,
-  FileText,
-  BookOpen,
-  ExternalLink,
-  Linkedin,
-} from 'lucide-react'
+import { Download, GraduationCap, Briefcase, FileText, Linkedin } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { BIO_TIMELINE } from '@/lib/data'
-import pb from '@/lib/pocketbase/client'
-import { getPublications, type Publication } from '@/services/publications'
 import {
   getCompanyProfile,
   getDirectorPhotoUrl,
@@ -22,8 +12,6 @@ import {
 import { useRealtime } from '@/hooks/use-realtime'
 
 export default function Sobre() {
-  const [publications, setPublications] = useState<Publication[]>([])
-  const [loading, setLoading] = useState(true)
   const [directorPhoto, setDirectorPhoto] = useState<string | null>(null)
 
   const loadProfile = () => {
@@ -34,21 +22,9 @@ export default function Sobre() {
       .catch(() => {})
   }
 
-  const loadData = () => {
-    getPublications()
-      .then(setPublications)
-      .catch(console.error)
-      .finally(() => setLoading(false))
-  }
-
   useEffect(() => {
-    loadData()
     loadProfile()
   }, [])
-
-  useRealtime('publications', () => {
-    loadData()
-  })
 
   useRealtime('company_profile', () => {
     loadProfile()
@@ -180,58 +156,7 @@ export default function Sobre() {
         </div>
 
         <div className="mt-16">
-          <h3 className="text-3xl font-bold mb-8 flex items-center gap-3 text-primary">
-            <BookOpen className="h-8 w-8 text-accent" />
-            Publicações Técnicas
-          </h3>
-
-          <div className="grid gap-6">
-            {publications.map((pub) => (
-              <Card key={pub.id} className="hover:border-accent transition-colors shadow-sm">
-                <CardContent className="p-6 flex flex-col md:flex-row gap-6 items-start md:items-center justify-between">
-                  <div className="space-y-2 flex-1">
-                    <h4 className="text-xl font-bold text-slate-800 leading-tight">{pub.title}</h4>
-                    {pub.description && <p className="text-slate-600">{pub.description}</p>}
-                    {pub.published_date && (
-                      <p className="text-sm text-slate-400 font-medium">
-                        Publicado em:{' '}
-                        {new Date(pub.published_date).toLocaleDateString('pt-BR', {
-                          year: 'numeric',
-                          month: 'long',
-                        })}
-                      </p>
-                    )}
-                  </div>
-                  {pub.pdf_file ? (
-                    <Button asChild className="shrink-0 bg-primary hover:bg-primary/90 group">
-                      <a
-                        href={pb.files.getUrl(pub as any, pub.pdf_file)}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                      >
-                        Visualizar PDF
-                        <ExternalLink className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1 group-hover:-translate-y-1" />
-                      </a>
-                    </Button>
-                  ) : null}
-                </CardContent>
-              </Card>
-            ))}
-
-            {!loading && publications.length === 0 && (
-              <div className="text-center py-12 bg-slate-50 rounded-xl border border-dashed border-slate-200">
-                <p className="text-slate-500">Nenhuma publicação cadastrada no momento.</p>
-              </div>
-            )}
-
-            {loading && (
-              <div className="text-center py-12 bg-slate-50 rounded-xl border border-dashed border-slate-200 animate-pulse">
-                <p className="text-slate-500">Carregando publicações...</p>
-              </div>
-            )}
-          </div>
-
-          <div className="mt-16 bg-slate-900 rounded-2xl p-8 md:p-12 text-white flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl">
+          <div className="bg-slate-900 rounded-2xl p-8 md:p-12 text-white flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl">
             <div className="max-w-2xl">
               <h3 className="text-2xl font-bold mb-4">Precisa de consultoria especializada?</h3>
               <p className="text-slate-300">
