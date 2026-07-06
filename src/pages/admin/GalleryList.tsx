@@ -124,7 +124,7 @@ export default function GalleryList() {
                         {item.title}
                       </div>
                       <div className="inline-flex items-center text-xs font-medium text-slate-500 bg-slate-100 px-2 py-0.5 rounded">
-                        {item.category}
+                        {item.expand?.category_id?.name || item.category}
                       </div>
                     </TableCell>
                     <TableCell className="text-slate-600 font-medium text-sm">

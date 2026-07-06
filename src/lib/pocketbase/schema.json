@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-01T00:14:52.067Z",
+  "generatedAt": "2026-07-06T22:23:40.988Z",
   "collections": [
     {
       "name": "users",
@@ -208,6 +208,13 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "category_id",
+          "type": "relation",
+          "required": false,
+          "system": false,
+          "collectionRef": "gallery_categories"
         }
       ],
       "indexes": []
@@ -245,6 +252,40 @@
         }
       ],
       "indexes": []
+    },
+    {
+      "name": "gallery_categories",
+      "type": "base",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": "@request.auth.id != ''",
+        "update": "@request.auth.id != ''",
+        "delete": "@request.auth.id != ''"
+      },
+      "fields": [
+        {
+          "name": "name",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": ["CREATE UNIQUE INDEX idx_gallery_categories_name ON gallery_categories (name)"]
     }
   ]
 }

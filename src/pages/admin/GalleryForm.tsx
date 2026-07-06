@@ -24,12 +24,13 @@ import {
 } from '@/components/ui/select'
 import { useToast } from '@/hooks/use-toast'
 import { getGalleryItem, createGalleryItem, updateGalleryItem } from '@/services/gallery'
+import { getGalleryCategories, type GalleryCategory } from '@/services/gallery-categories'
 import { extractFieldErrors } from '@/lib/pocketbase/errors'
 import pb from '@/lib/pocketbase/client'
 
 const formSchema = z.object({
   title: z.string().min(1, 'O título é obrigatório'),
-  category: z.string().min(1, 'A categoria é obrigatória'),
+  category_id: z.string().min(1, 'A categoria é obrigatória'),
   description: z.string().optional(),
 })
 
@@ -44,16 +45,27 @@ export default function GalleryForm() {
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [currentImageUrl, setCurrentImageUrl] = useState<string | null>(null)
+  const [categories, setCategories] = useState<GalleryCategory[]>([])
+  const [categoriesLoading, setCategoriesLoading] = useState(true)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
-      category: 'Ensaios',
+      category_id: '',
       description: '',
     },
   })
+
+  useEffect(() => {
+    getGalleryCategories()
+      .then(setCategories)
+      .catch(() => {
+        toast({ title: 'Erro ao carregar categorias', variant: 'destructive' })
+      })
+      .finally(() => setCategoriesLoading(false))
+  }, [toast])
 
   useEffect(() => {
     if (isEditing) {
@@ -61,7 +73,7 @@ export default function GalleryForm() {
         .then((item) => {
           form.reset({
             title: item.title,
-            category: item.category,
+            category_id: item.category_id || '',
             description: item.description || '',
           })
           if (item.image) {
@@ -105,7 +117,7 @@ export default function GalleryForm() {
     setSaving(true)
     const formData = new FormData()
     formData.append('title', values.title)
-    formData.append('category', values.category)
+    formData.append('category_id', values.category_id)
     if (values.description) {
       formData.append('description', values.description)
     }
@@ -136,7 +148,7 @@ export default function GalleryForm() {
     }
   }
 
-  if (loading) {
+  if (loading || categoriesLoading) {
     return (
       <div className="py-20 flex flex-col items-center justify-center text-slate-500">
         <Loader2 className="h-8 w-8 animate-spin mb-4 text-primary" />
@@ -253,21 +265,24 @@ export default function GalleryForm() {
 
                 <FormField
                   control={form.control}
-                  name="category"
+                  name="category_id"
                   render={({ field }) => (
                     <FormItem>
                       <FormLabel className="text-slate-800">
                         Categoria <span className="text-red-500">*</span>
                       </FormLabel>
-                      <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger className="bg-slate-50 focus:bg-white">
                             <SelectValue placeholder="Selecione uma categoria" />
                           </SelectTrigger>
                         </FormControl>
                         <SelectContent>
-                          <SelectItem value="Ensaios">Ensaios</SelectItem>
-                          <SelectItem value="Obras">Obras</SelectItem>
+                          {categories.map((cat) => (
+                            <SelectItem key={cat.id} value={cat.id}>
+                              {cat.name}
+                            </SelectItem>
+                          ))}
                         </SelectContent>
                       </Select>
                       <FormMessage />
