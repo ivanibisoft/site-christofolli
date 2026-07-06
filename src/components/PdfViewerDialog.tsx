@@ -65,26 +65,10 @@ export function PdfViewerDialog({ open, onOpenChange, url, fileName }: PdfViewer
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[95vw] w-full h-[92vh] sm:max-w-5xl p-0 flex flex-col gap-0 overflow-hidden">
         <DialogHeader className="px-4 py-3 border-b shrink-0">
-          <div className="flex items-center justify-between gap-4">
-            <DialogTitle className="flex items-center gap-2 text-base font-bold text-primary truncate">
-              <FileText className="h-5 w-5 text-accent shrink-0" />
-              <span className="truncate">{fileName}</span>
-            </DialogTitle>
-            <div className="flex items-center gap-2 shrink-0">
-              <Button size="sm" variant="outline" asChild>
-                <a href={url} target="_blank" rel="noopener noreferrer">
-                  <ExternalLink className="h-4 w-4 mr-1.5" />
-                  <span className="hidden sm:inline">Abrir em nova aba</span>
-                </a>
-              </Button>
-              <Button size="sm" variant="outline" asChild>
-                <a href={url} download={fileName}>
-                  <Download className="h-4 w-4 mr-1.5" />
-                  <span className="hidden sm:inline">Baixar</span>
-                </a>
-              </Button>
-            </div>
-          </div>
+          <DialogTitle className="flex items-center gap-2 text-base font-bold text-primary truncate">
+            <FileText className="h-5 w-5 text-accent shrink-0" />
+            <span className="truncate">{fileName}</span>
+          </DialogTitle>
         </DialogHeader>
 
         {!url ? (
