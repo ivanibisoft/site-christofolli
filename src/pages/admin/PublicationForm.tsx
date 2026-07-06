@@ -129,17 +129,6 @@ export default function PublicationForm() {
   }
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
-    const hasPdf = !!pdfFile || (!!existingPdf && !removeExistingPdf)
-
-    if (!hasPdf) {
-      setFileError('O anexo do PDF é obrigatório.')
-      toast({
-        title: 'Arquivo obrigatório',
-        description: 'O anexo do PDF é obrigatório.',
-        variant: 'destructive',
-      })
-      return
-    }
     setFileError(null)
     setSaving(true)
 
@@ -343,7 +332,9 @@ export default function PublicationForm() {
                   </div>
                 </div>
               )}
-              <FormDescription>O arquivo PDF é obrigatório para cada publicação.</FormDescription>
+              <FormDescription>
+                O arquivo PDF é opcional. Você pode cadastrá-lo agora ou adicioná-lo posteriormente.
+              </FormDescription>
               {fileError && <p className="text-sm font-medium text-destructive">{fileError}</p>}
             </div>
 
