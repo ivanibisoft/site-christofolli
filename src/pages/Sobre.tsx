@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
-import { Download, GraduationCap, Briefcase, FileText, Linkedin } from 'lucide-react'
+import { Download, GraduationCap, Briefcase, FileText, Linkedin, ExternalLink } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { BIO_TIMELINE } from '@/lib/data'
@@ -9,10 +9,13 @@ import {
   getDirectorPhotoUrl,
   type CompanyProfile,
 } from '@/services/company-profile'
+import { getPublications, type Publication } from '@/services/publications'
 import { useRealtime } from '@/hooks/use-realtime'
+import pb from '@/lib/pocketbase/client'
 
 export default function Sobre() {
   const [directorPhoto, setDirectorPhoto] = useState<string | null>(null)
+  const [publications, setPublications] = useState<Publication[]>([])
 
   const loadProfile = () => {
     getCompanyProfile()
@@ -22,12 +25,23 @@ export default function Sobre() {
       .catch(() => {})
   }
 
+  const loadPublications = () => {
+    getPublications()
+      .then(setPublications)
+      .catch(() => {})
+  }
+
   useEffect(() => {
     loadProfile()
+    loadPublications()
   }, [])
 
   useRealtime('company_profile', () => {
     loadProfile()
+  })
+
+  useRealtime('publications', () => {
+    loadPublications()
   })
 
   return (
@@ -154,6 +168,58 @@ export default function Sobre() {
             </Card>
           </div>
         </div>
+
+        {publications.length > 0 && (
+          <div className="mt-16">
+            <h3 className="text-2xl font-bold mb-6 flex items-center gap-2">
+              <FileText className="h-6 w-6 text-accent" />
+              Publicações
+            </h3>
+            <div className="grid sm:grid-cols-2 gap-4">
+              {publications.map((pub) => (
+                <Card
+                  key={pub.id}
+                  className="group hover:border-primary hover:shadow-md transition-all duration-300"
+                >
+                  <CardContent className="p-5 flex items-start gap-4">
+                    <div className="h-11 w-11 rounded-lg bg-red-100 text-red-600 flex items-center justify-center shrink-0">
+                      <FileText className="h-5 w-5" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <h4 className="font-bold text-primary mb-1 leading-snug line-clamp-2">
+                        {pub.title}
+                      </h4>
+                      {pub.published_date && (
+                        <p className="text-xs text-slate-500 mb-3">
+                          {new Date(pub.published_date).toLocaleDateString('pt-BR', {
+                            timeZone: 'UTC',
+                          })}
+                        </p>
+                      )}
+                      {pub.pdf_file && (
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          asChild
+                          className="group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                        >
+                          <a
+                            href={pb.files.getUrl(pub as any, pub.pdf_file)}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                          >
+                            <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                            Abrir PDF
+                          </a>
+                        </Button>
+                      )}
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        )}
 
         <div className="mt-16">
           <div className="bg-slate-900 rounded-2xl p-8 md:p-12 text-white flex flex-col md:flex-row items-center justify-between gap-8 shadow-xl">
