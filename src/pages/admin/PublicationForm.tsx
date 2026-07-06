@@ -3,7 +3,17 @@ import { useNavigate, useParams, Link } from 'react-router-dom'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, Save, Loader2, UploadCloud, X, FileText, ExternalLink } from 'lucide-react'
+import {
+  ArrowLeft,
+  Save,
+  Loader2,
+  UploadCloud,
+  X,
+  FileText,
+  ExternalLink,
+  CheckCircle2,
+} from 'lucide-react'
+import { cn } from '@/lib/utils'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -77,13 +87,18 @@ export default function PublicationForm() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0]
-      if (file.type !== 'application/pdf') {
+      const isPdf =
+        file.type === 'application/pdf' ||
+        file.type === 'application/x-pdf' ||
+        file.name.toLowerCase().endsWith('.pdf')
+      if (!isPdf) {
         setFileError('Apenas arquivos PDF são permitidos.')
         toast({
           title: 'Formato inválido',
           description: 'Apenas arquivos PDF são permitidos.',
           variant: 'destructive',
         })
+        if (fileInputRef.current) fileInputRef.current.value = ''
         return
       }
       if (file.size > 52428800) {
@@ -93,6 +108,7 @@ export default function PublicationForm() {
           description: 'O tamanho máximo permitido é 50MB.',
           variant: 'destructive',
         })
+        if (fileInputRef.current) fileInputRef.current.value = ''
         return
       }
       setFileError(null)
@@ -265,19 +281,38 @@ export default function PublicationForm() {
                   />
                 </div>
               ) : (
-                <div className="flex items-center justify-between p-3 border rounded-lg bg-slate-50">
+                <div
+                  className={cn(
+                    'flex items-center justify-between p-3 border rounded-lg transition-colors',
+                    pdfFile ? 'bg-green-50 border-green-200' : 'bg-slate-50',
+                  )}
+                >
                   <div className="flex items-center gap-3 overflow-hidden">
-                    <div className="h-10 w-10 bg-red-100 text-red-600 rounded-lg flex items-center justify-center shrink-0">
-                      <FileText className="h-5 w-5" />
+                    <div
+                      className={cn(
+                        'h-10 w-10 rounded-lg flex items-center justify-center shrink-0',
+                        pdfFile ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600',
+                      )}
+                    >
+                      {pdfFile ? (
+                        <CheckCircle2 className="h-5 w-5" />
+                      ) : (
+                        <FileText className="h-5 w-5" />
+                      )}
                     </div>
                     <div className="min-w-0">
                       <p className="text-sm font-medium text-slate-800 truncate">
                         {currentFileName}
                       </p>
-                      <p className="text-xs text-slate-500">
+                      <p
+                        className={cn(
+                          'text-xs',
+                          pdfFile ? 'text-green-600 font-medium' : 'text-slate-500',
+                        )}
+                      >
                         {pdfFile
-                          ? `${(pdfFile.size / 1024 / 1024).toFixed(2)} MB`
-                          : 'Arquivo salvo'}
+                          ? `${(pdfFile.size / 1024 / 1024).toFixed(2)} MB — arquivo selecionado`
+                          : 'Arquivo salvo no servidor'}
                       </p>
                     </div>
                   </div>
