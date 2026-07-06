@@ -20,7 +20,7 @@ import {
 } from '@/services/company-profile'
 import { getPublications, type Publication } from '@/services/publications'
 import { useRealtime } from '@/hooks/use-realtime'
-import pb from '@/lib/pocketbase/client'
+import { getFileUrl } from '@/lib/file-url'
 
 export default function Sobre() {
   const [directorPhoto, setDirectorPhoto] = useState<string | null>(null)
@@ -28,9 +28,7 @@ export default function Sobre() {
   const [pdfViewer, setPdfViewer] = useState<{ url: string; fileName: string } | null>(null)
 
   const getPdfUrl = useCallback((pub: Publication): string => {
-    if (!pub.pdf_file) return ''
-    const url = pb.files.getUrl(pub as any, pub.pdf_file)
-    return typeof url === 'string' ? url : url?.toString() || ''
+    return getFileUrl(pub, pub.pdf_file || '')
   }, [])
 
   const loadProfile = () => {
@@ -221,7 +219,7 @@ export default function Sobre() {
                             onClick={() =>
                               setPdfViewer({
                                 url: getPdfUrl(pub),
-                                fileName: pub.pdf_file,
+                                fileName: pub.pdf_file || 'documento.pdf',
                               })
                             }
                           >

@@ -29,7 +29,7 @@ import {
 import { useToast } from '@/hooks/use-toast'
 import { getPublication, createPublication, updatePublication } from '@/services/publications'
 import { extractFieldErrors } from '@/lib/pocketbase/errors'
-import pb from '@/lib/pocketbase/client'
+import { getFileUrl } from '@/lib/file-url'
 
 const formSchema = z.object({
   title: z.string().min(1, 'O título é obrigatório'),
@@ -71,7 +71,7 @@ export default function PublicationForm() {
           })
           if (pub.pdf_file) {
             setExistingPdf({
-              url: pb.files.getUrl(pub as any, pub.pdf_file),
+              url: getFileUrl(pub, pub.pdf_file),
               name: pub.pdf_file,
             })
           }
