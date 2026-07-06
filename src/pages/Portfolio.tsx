@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import {
   Bar,
   BarChart,
@@ -28,6 +28,7 @@ import { Skeleton } from '@/components/ui/skeleton'
 import { useRealtime } from '@/hooks/use-realtime'
 import pb from '@/lib/pocketbase/client'
 import { getGalleryItems, type GalleryItem } from '@/services/gallery'
+import { getGalleryCategories, type GalleryCategory } from '@/services/gallery-categories'
 
 const strengthData = [
   { month: 'Jan', original: 30, otimizado: 31, cimentoOrig: 350, cimentoOtim: 320 },
@@ -47,32 +48,43 @@ const thermalData = [
   { hora: '120h', nucleo: 40, superficie: 32, ambiente: 19 },
 ]
 
+const ALL_CATEGORIES = 'Todas'
+
 export default function Portfolio() {
   const [items, setItems] = useState<GalleryItem[]>([])
+  const [categories, setCategories] = useState<GalleryCategory[]>([])
   const [loading, setLoading] = useState(true)
-  const [category, setCategory] = useState<string>('Todos')
+  const [category, setCategory] = useState<string>(ALL_CATEGORIES)
 
-  const loadData = async () => {
+  const loadData = useCallback(async () => {
     try {
-      const data = await getGalleryItems()
-      setItems(data)
+      const [galleryData, catData] = await Promise.all([getGalleryItems(), getGalleryCategories()])
+      setItems(galleryData)
+      setCategories(catData)
     } catch (error) {
       console.error(error)
     } finally {
       setLoading(false)
     }
-  }
+  }, [])
 
   useEffect(() => {
     loadData()
-  }, [])
+  }, [loadData])
 
   useRealtime('gallery_items', () => {
     loadData()
   })
 
+  useRealtime('gallery_categories', () => {
+    loadData()
+  })
+
   const filteredItems =
-    category === 'Todos' ? items : items.filter((item) => item.category === category)
+    category === ALL_CATEGORIES ? items : items.filter((item) => item.category_id === category)
+
+  const getCategoryName = (item: GalleryItem) =>
+    item.expand?.category_id?.name || item.category || 'Geral'
 
   return (
     <div className="py-12 animate-fade-in">
@@ -89,11 +101,14 @@ export default function Portfolio() {
         <div className="mb-16">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <h2 className="text-2xl font-bold text-primary">Galeria de Imagens</h2>
-            <Tabs defaultValue="Todos" onValueChange={setCategory}>
-              <TabsList>
-                <TabsTrigger value="Todos">Todos</TabsTrigger>
-                <TabsTrigger value="Ensaios">Ensaios</TabsTrigger>
-                <TabsTrigger value="Obras">Obras</TabsTrigger>
+            <Tabs defaultValue={ALL_CATEGORIES} value={category} onValueChange={setCategory}>
+              <TabsList className="flex flex-wrap h-auto">
+                <TabsTrigger value={ALL_CATEGORIES}>{ALL_CATEGORIES}</TabsTrigger>
+                {categories.map((cat) => (
+                  <TabsTrigger key={cat.id} value={cat.id}>
+                    {cat.name}
+                  </TabsTrigger>
+                ))}
               </TabsList>
             </Tabs>
           </div>
@@ -106,9 +121,7 @@ export default function Portfolio() {
             </div>
           ) : filteredItems.length === 0 ? (
             <div className="text-center py-12 bg-muted/30 rounded-xl border border-dashed">
-              <p className="text-muted-foreground">
-                Nenhuma imagem encontrada para esta categoria.
-              </p>
+              <p className="text-muted-foreground">Nenhuma imagem encontrada nesta categoria.</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -121,7 +134,7 @@ export default function Portfolio() {
                           item.image
                             ? pb.files.getUrl(item, item.image)
                             : `https://img.usecurling.com/p/600/450?q=${encodeURIComponent(
-                                item.category === 'Ensaios'
+                                getCategoryName(item) === 'Ensaios'
                                   ? 'concrete laboratory'
                                   : 'construction',
                               )}&color=gray`
@@ -131,7 +144,7 @@ export default function Portfolio() {
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6">
                         <span className="text-xs font-medium text-white/80 uppercase tracking-wider mb-1">
-                          {item.category}
+                          {getCategoryName(item)}
                         </span>
                         <h3 className="text-white font-semibold text-lg leading-tight">
                           {item.title}
@@ -150,7 +163,7 @@ export default function Portfolio() {
                           item.image
                             ? pb.files.getUrl(item, item.image)
                             : `https://img.usecurling.com/p/1200/800?q=${encodeURIComponent(
-                                item.category === 'Ensaios'
+                                getCategoryName(item) === 'Ensaios'
                                   ? 'concrete laboratory'
                                   : 'construction',
                               )}&color=gray`
@@ -161,7 +174,7 @@ export default function Portfolio() {
                       <div className="p-6">
                         <div className="flex items-center gap-2 mb-2">
                           <span className="bg-primary/10 text-primary text-xs font-semibold px-2 py-1 rounded">
-                            {item.category}
+                            {getCategoryName(item)}
                           </span>
                         </div>
                         <h3 className="text-2xl font-bold text-foreground mb-2">{item.title}</h3>
