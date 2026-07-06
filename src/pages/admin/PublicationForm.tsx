@@ -38,6 +38,7 @@ export default function PublicationForm() {
   const [pdfFile, setPdfFile] = useState<File | null>(null)
   const [existingPdf, setExistingPdf] = useState<{ url: string; name: string } | null>(null)
   const [removeExistingPdf, setRemoveExistingPdf] = useState(false)
+  const [fileError, setFileError] = useState<string | null>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -77,14 +78,16 @@ export default function PublicationForm() {
     if (e.target.files && e.target.files.length > 0) {
       const file = e.target.files[0]
       if (file.type !== 'application/pdf') {
+        setFileError('Apenas arquivos PDF são permitidos.')
         toast({
           title: 'Formato inválido',
-          description: 'Por favor, selecione um arquivo PDF.',
+          description: 'Apenas arquivos PDF são permitidos.',
           variant: 'destructive',
         })
         return
       }
       if (file.size > 52428800) {
+        setFileError('O tamanho máximo permitido é 50MB.')
         toast({
           title: 'Arquivo muito grande',
           description: 'O tamanho máximo permitido é 50MB.',
@@ -92,6 +95,7 @@ export default function PublicationForm() {
         })
         return
       }
+      setFileError(null)
       setPdfFile(file)
       setRemoveExistingPdf(false)
     }
@@ -99,6 +103,7 @@ export default function PublicationForm() {
 
   const handleRemoveFile = () => {
     setPdfFile(null)
+    setFileError(null)
     if (fileInputRef.current) {
       fileInputRef.current.value = ''
     }
@@ -111,6 +116,7 @@ export default function PublicationForm() {
     const hasPdf = !!pdfFile || (!!existingPdf && !removeExistingPdf)
 
     if (!hasPdf) {
+      setFileError('O anexo do PDF é obrigatório.')
       toast({
         title: 'Arquivo obrigatório',
         description: 'O anexo do PDF é obrigatório.',
@@ -118,7 +124,7 @@ export default function PublicationForm() {
       })
       return
     }
-
+    setFileError(null)
     setSaving(true)
 
     const formData = new FormData()
@@ -153,6 +159,7 @@ export default function PublicationForm() {
       if (Object.keys(fieldErrors).length > 0) {
         Object.entries(fieldErrors).forEach(([field, msg]) => {
           if (field === 'pdf_file') {
+            setFileError(msg as string)
             toast({
               title: 'Erro no arquivo PDF',
               description: msg as string,
@@ -302,6 +309,7 @@ export default function PublicationForm() {
                 </div>
               )}
               <FormDescription>O arquivo PDF é obrigatório para cada publicação.</FormDescription>
+              {fileError && <p className="text-sm font-medium text-destructive">{fileError}</p>}
             </div>
 
             <FormField
