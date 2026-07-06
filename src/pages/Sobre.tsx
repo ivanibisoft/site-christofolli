@@ -1,8 +1,17 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import { Download, GraduationCap, Briefcase, FileText, Linkedin, ExternalLink } from 'lucide-react'
+import {
+  Download,
+  GraduationCap,
+  Briefcase,
+  FileText,
+  Linkedin,
+  ExternalLink,
+  Eye,
+} from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
+import { PdfViewerDialog } from '@/components/PdfViewerDialog'
 import { BIO_TIMELINE } from '@/lib/data'
 import {
   getCompanyProfile,
@@ -16,6 +25,13 @@ import pb from '@/lib/pocketbase/client'
 export default function Sobre() {
   const [directorPhoto, setDirectorPhoto] = useState<string | null>(null)
   const [publications, setPublications] = useState<Publication[]>([])
+  const [pdfViewer, setPdfViewer] = useState<{ url: string; fileName: string } | null>(null)
+
+  const getPdfUrl = useCallback((pub: Publication): string => {
+    if (!pub.pdf_file) return ''
+    const url = pb.files.getUrl(pub as any, pub.pdf_file)
+    return typeof url === 'string' ? url : url?.toString() || ''
+  }, [])
 
   const loadProfile = () => {
     getCompanyProfile()
@@ -197,21 +213,33 @@ export default function Sobre() {
                         </p>
                       )}
                       {pub.pdf_file && (
-                        <Button
-                          size="sm"
-                          variant="outline"
-                          asChild
-                          className="group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
-                        >
-                          <a
-                            href={pb.files.getUrl(pub as any, pub.pdf_file)}
-                            target="_blank"
-                            rel="noopener noreferrer"
+                        <div className="flex items-center gap-2">
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            className="group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                            onClick={() =>
+                              setPdfViewer({
+                                url: getPdfUrl(pub),
+                                fileName: pub.pdf_file,
+                              })
+                            }
                           >
-                            <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
-                            Abrir PDF
-                          </a>
-                        </Button>
+                            <Eye className="h-3.5 w-3.5 mr-1.5" />
+                            Visualizar
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            asChild
+                            className="group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                          >
+                            <a href={getPdfUrl(pub)} target="_blank" rel="noopener noreferrer">
+                              <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
+                              Abrir PDF
+                            </a>
+                          </Button>
+                        </div>
                       )}
                     </div>
                   </CardContent>
@@ -246,6 +274,17 @@ export default function Sobre() {
             </Button>
           </div>
         </div>
+
+        {pdfViewer && (
+          <PdfViewerDialog
+            open={true}
+            onOpenChange={(open) => {
+              if (!open) setPdfViewer(null)
+            }}
+            url={pdfViewer.url}
+            fileName={pdfViewer.fileName}
+          />
+        )}
       </div>
     </div>
   )
