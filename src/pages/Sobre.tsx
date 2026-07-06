@@ -1,14 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  Download,
-  GraduationCap,
-  Briefcase,
-  FileText,
-  Linkedin,
-  ExternalLink,
-  Eye,
-} from 'lucide-react'
+import { GraduationCap, Briefcase, FileText, Linkedin, ExternalLink, Eye } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { PdfViewerDialog } from '@/components/PdfViewerDialog'
@@ -211,33 +203,20 @@ export default function Sobre() {
                         </p>
                       )}
                       {pub.pdf_file && (
-                        <div className="flex items-center gap-2">
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            className="group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
-                            onClick={() =>
-                              setPdfViewer({
-                                url: getPdfUrl(pub),
-                                fileName: pub.pdf_file || 'documento.pdf',
-                              })
-                            }
-                          >
-                            <Eye className="h-3.5 w-3.5 mr-1.5" />
-                            Visualizar
-                          </Button>
-                          <Button
-                            size="sm"
-                            variant="outline"
-                            asChild
-                            className="group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
-                          >
-                            <a href={getPdfUrl(pub)} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="h-3.5 w-3.5 mr-1.5" />
-                              Abrir PDF
-                            </a>
-                          </Button>
-                        </div>
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          className="group-hover:bg-primary group-hover:text-primary-foreground transition-colors"
+                          onClick={() =>
+                            setPdfViewer({
+                              url: getPdfUrl(pub),
+                              fileName: pub.pdf_file || 'documento.pdf',
+                            })
+                          }
+                        >
+                          <Eye className="h-3.5 w-3.5 mr-1.5" />
+                          Visualizar
+                        </Button>
                       )}
                     </div>
                   </CardContent>
