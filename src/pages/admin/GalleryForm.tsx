@@ -90,14 +90,36 @@ export default function GalleryForm() {
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selected = e.target.files?.[0]
-    if (selected) {
-      setFile(selected)
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setPreview(reader.result as string)
-      }
-      reader.readAsDataURL(selected)
+    if (!selected) return
+
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp']
+    if (!allowedTypes.includes(selected.type)) {
+      toast({
+        title: 'Formato inválido',
+        description: 'Formatos suportados: JPG, PNG, WebP.',
+        variant: 'destructive',
+      })
+      if (fileInputRef.current) fileInputRef.current.value = ''
+      return
     }
+
+    const maxSize = 5 * 1024 * 1024
+    if (selected.size > maxSize) {
+      toast({
+        title: 'Arquivo muito grande',
+        description: 'O tamanho máximo permitido é 5MB.',
+        variant: 'destructive',
+      })
+      if (fileInputRef.current) fileInputRef.current.value = ''
+      return
+    }
+
+    setFile(selected)
+    const reader = new FileReader()
+    reader.onloadend = () => {
+      setPreview(reader.result as string)
+    }
+    reader.readAsDataURL(selected)
   }
 
   const clearFile = () => {
@@ -110,6 +132,7 @@ export default function GalleryForm() {
 
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!isEditing && !file) {
+      form.setError('root', { message: 'Selecione uma imagem' })
       toast({ title: 'Selecione uma imagem', variant: 'destructive' })
       return
     }
@@ -118,6 +141,12 @@ export default function GalleryForm() {
     const formData = new FormData()
     formData.append('title', values.title)
     formData.append('category_id', values.category_id)
+
+    const selectedCategory = categories.find((c) => c.id === values.category_id)
+    if (selectedCategory) {
+      formData.append('category', selectedCategory.name)
+    }
+
     if (values.description) {
       formData.append('description', values.description)
     }
