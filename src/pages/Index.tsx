@@ -179,7 +179,7 @@ export default function Index() {
           <div className="text-center mb-16">
             <h2 className="text-3xl font-bold text-primary mb-4">Pilares de Atuação</h2>
             <p className="text-muted-foreground max-w-2xl mx-auto">
-              Soluções baseadas em dados, experiência empírica e rigor científico para garantir os
+              Soluções baseadas em dados, experiência prática e rigor científico para garantir os
               melhores resultados na sua obra ou central.
             </p>
           </div>
