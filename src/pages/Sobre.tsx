@@ -85,7 +85,7 @@ export default function Sobre() {
                 <p dir="ltr">
                   <span>
                     Atuou como Gerente Corporativo de Desenvolvimento Técnico na (Cia de Cimento
-                    Itambé e Concrebras), como engenheiro de pesquisa na Lafarge - Concreto).
+                    Itambé e Concrebras), como engenheiro de pesquisa na Lafarge - Concreto.
                     Atualmente é Diretor da Christófolli Consultoria de Engenharia Ltda, com vasta
                     experiência em gestão de controle de qualidade, automação de centrais de
                     concreto, treinamento de mão de obra, estatística aplicada, concretos especiais,
