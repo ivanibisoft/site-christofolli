@@ -81,9 +81,55 @@ export default function Construtoras() {
                 </span>
               </p>
               <ul className="text-sm space-y-2 font-medium text-slate-700">
-                <li>• Redução de emissões de CO2</li>
-                <li>• Certificações LEED/AQUA</li>
-                <li>• Uso otimizado de adições</li>
+                <li dir="ltr" aria-level="1">
+                  <p dir="ltr" role="presentation">
+                    <span>Redução das emissões de CO</span>
+                    <span>
+                      <span>2</span>
+                    </span>
+                    <span> na estrutura</span>
+                  </p>
+                </li>
+                <li dir="ltr" aria-level="1">
+                  <p dir="ltr" role="presentation">
+                    <span>Menor volume de concreto</span>
+                  </p>
+                </li>
+                <li dir="ltr" aria-level="1">
+                  <p dir="ltr" role="presentation">
+                    <span>Menor peso estrutural</span>
+                  </p>
+                </li>
+                <li dir="ltr" aria-level="1">
+                  <p dir="ltr" role="presentation">
+                    <span>Menor quantidade de aço</span>
+                  </p>
+                </li>
+                <li dir="ltr" aria-level="1">
+                  <p dir="ltr" role="presentation">
+                    <span>Aumento de área útil da edificação</span>
+                  </p>
+                </li>
+                <li dir="ltr" aria-level="1">
+                  <p dir="ltr" role="presentation">
+                    <span>Menor área de fôrmas</span>
+                  </p>
+                </li>
+                <li dir="ltr" aria-level="1">
+                  <p dir="ltr" role="presentation">
+                    <span>Redução da mão de obra para aplicação</span>
+                  </p>
+                </li>
+                <li dir="ltr" aria-level="1">
+                  <p dir="ltr" role="presentation">
+                    <span>Maior durabilidade e vida útil da estrutura</span>
+                  </p>
+                </li>
+                <li dir="ltr" aria-level="1">
+                  <p dir="ltr" role="presentation">
+                    <span>Uso otimizado de adições</span>
+                  </p>
+                </li>
               </ul>
             </CardContent>
           </Card>
