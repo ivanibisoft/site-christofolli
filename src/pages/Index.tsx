@@ -199,7 +199,7 @@ export default function Index() {
               {
                 icon: Leaf,
                 title: 'Sustentabilidade',
-                desc: 'Minimização da emissão de GEE com adições minerais e argilas calcinadas.',
+                desc: 'Minimização da emissão de GEE com adições minerais e aditivos de alta performance.',
               },
               {
                 icon: CheckCircle2,
