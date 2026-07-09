@@ -81,11 +81,24 @@ export default function Sobre() {
               Construção Civil pelo PPGECC da Universidade Federal do Paraná.
             </p>
             <p className="text-slate-600 leading-relaxed">
-              Atuou como Gerente Corporativo de Desenvolvimento Técnico em grandes indústrias de
-              cimento e concreto (Cia de Cimento Itambé, Lafarge Concrebras). Atualmente é Diretor
-              da Christófolli Consultoria de Engenharia Ltda., com vasta experiência em controle de
-              qualidade, estatística, concretos especiais, CAD/CAA, comportamento térmico e
-              sustentabilidade.
+              <span id="docs-internal-guid-19e5a441-7fff-bc17-3494-314597a0970b">
+                <p dir="ltr">
+                  <span>
+                    Atuou como Gerente Corporativo de Desenvolvimento Técnico na (Cia de Cimento
+                    Itambé e Concrebras), como engenheiro de pesquisa na Lafarge - Concreto).
+                    Atualmente é Diretor da Christófolli Consultoria de Engenharia Ltda, com vasta
+                    experiência em gestão de controle de qualidade, automação de centrais de
+                    concreto, treinamento de mão de obra, estatística aplicada, concretos especiais,
+                    CAD/CAA, comportamento térmico do concreto em blocos de fundação e
+                    sustentabilidade na construção.
+                  </span>
+                </p>
+                <div>
+                  <span>
+                    <br />
+                  </span>
+                </div>
+              </span>
             </p>
           </div>
         </div>
