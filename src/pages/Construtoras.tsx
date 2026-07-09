@@ -1,7 +1,16 @@
 import { Link } from 'react-router-dom'
-import { Building2, ThermometerSun, Leaf, LineChart } from 'lucide-react'
+import { Building2, ThermometerSun, Leaf, LineChart, Check } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+
+function StandardListItem({ children }: { children: React.ReactNode }) {
+  return (
+    <li className="text-sm flex items-start gap-2 space-y-0">
+      <Check className="h-4 w-4 text-accent shrink-0 mt-0.5" />
+      <span>{children}</span>
+    </li>
+  )
+}
 
 export default function Construtoras() {
   return (
@@ -34,10 +43,10 @@ export default function Construtoras() {
                 Especificação de Concreto de Alto Desempenho (CAD) para permitir pilares mais
                 esbeltos, resultando em maior área útil e menor consumo de aço e formas.
               </p>
-              <ul className="text-sm space-y-2 font-medium text-slate-700">
-                <li>• Redução de volume de concreto</li>
-                <li>• Velocidade na desforma</li>
-                <li>• Acabamento superior</li>
+              <ul className="space-y-2 font-medium text-slate-700">
+                <StandardListItem>Redução de volume de concreto</StandardListItem>
+                <StandardListItem>Velocidade na desforma</StandardListItem>
+                <StandardListItem>Acabamento superior</StandardListItem>
               </ul>
             </CardContent>
           </Card>
@@ -55,10 +64,10 @@ export default function Construtoras() {
                 Simulação e controle de temperatura em blocos de fundação para evitar fissuração de
                 origem térmica. Cálculo de adições e necessidade de resfriamento.
               </p>
-              <ul className="text-sm space-y-2 font-medium text-slate-700">
-                <li>• Modelagem térmica preditiva</li>
-                <li>• Especificação de gelo/nitrogênio</li>
-                <li>• Prevenção de RAA e DEF</li>
+              <ul className="space-y-2 font-medium text-slate-700">
+                <StandardListItem>Modelagem térmica preditiva</StandardListItem>
+                <StandardListItem>Especificação de gelo/nitrogênio</StandardListItem>
+                <StandardListItem>Prevenção de RAA e DEF</StandardListItem>
               </ul>
             </CardContent>
           </Card>
@@ -73,63 +82,19 @@ export default function Construtoras() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                <span id="docs-internal-guid-8f25ad87-7fff-c44c-30e9-5ddd611d2b48">
-                  <span>
-                    Estudos específicos desde a participação na concepção do projeto estrutural até
-                    a aplicação do concreto, visando:
-                  </span>
-                </span>
+                Estudos específicos desde a participação na concepção do projeto estrutural até a
+                aplicação do concreto, visando:
               </p>
-              <ul className="text-sm space-y-2 font-medium text-slate-700">
-                <li dir="ltr" aria-level="1">
-                  <p dir="ltr" role="presentation">
-                    <span>Redução das emissões de CO</span>
-                    <span>
-                      <span>2</span>
-                    </span>
-                    <span> na estrutura</span>
-                  </p>
-                </li>
-                <li dir="ltr" aria-level="1">
-                  <p dir="ltr" role="presentation">
-                    <span>Menor volume de concreto</span>
-                  </p>
-                </li>
-                <li dir="ltr" aria-level="1">
-                  <p dir="ltr" role="presentation">
-                    <span>Menor peso estrutural</span>
-                  </p>
-                </li>
-                <li dir="ltr" aria-level="1">
-                  <p dir="ltr" role="presentation">
-                    <span>Menor quantidade de aço</span>
-                  </p>
-                </li>
-                <li dir="ltr" aria-level="1">
-                  <p dir="ltr" role="presentation">
-                    <span>Aumento de área útil da edificação</span>
-                  </p>
-                </li>
-                <li dir="ltr" aria-level="1">
-                  <p dir="ltr" role="presentation">
-                    <span>Menor área de fôrmas</span>
-                  </p>
-                </li>
-                <li dir="ltr" aria-level="1">
-                  <p dir="ltr" role="presentation">
-                    <span>Redução da mão de obra para aplicação</span>
-                  </p>
-                </li>
-                <li dir="ltr" aria-level="1">
-                  <p dir="ltr" role="presentation">
-                    <span>Maior durabilidade e vida útil da estrutura</span>
-                  </p>
-                </li>
-                <li dir="ltr" aria-level="1">
-                  <p dir="ltr" role="presentation">
-                    <span>Uso otimizado de adições</span>
-                  </p>
-                </li>
+              <ul className="space-y-2 font-medium text-slate-700">
+                <StandardListItem>Redução das emissões de CO2 na estrutura</StandardListItem>
+                <StandardListItem>Menor volume de concreto</StandardListItem>
+                <StandardListItem>Menor peso estrutural</StandardListItem>
+                <StandardListItem>Menor quantidade de aço</StandardListItem>
+                <StandardListItem>Aumento de área útil da edificação</StandardListItem>
+                <StandardListItem>Menor área de fôrmas</StandardListItem>
+                <StandardListItem>Redução da mão de obra para aplicação</StandardListItem>
+                <StandardListItem>Maior durabilidade e vida útil da estrutura</StandardListItem>
+                <StandardListItem>Uso otimizado de adições</StandardListItem>
               </ul>
             </CardContent>
           </Card>
