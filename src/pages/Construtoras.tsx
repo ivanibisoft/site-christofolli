@@ -73,8 +73,12 @@ export default function Construtoras() {
             </CardHeader>
             <CardContent>
               <p className="text-sm text-muted-foreground mb-4">
-                Estudo de empacotamento de partículas para redução do consumo de cimento Portland,
-                utilizando misturas quaternárias e argilas calcinadas.
+                <span id="docs-internal-guid-8f25ad87-7fff-c44c-30e9-5ddd611d2b48">
+                  <span>
+                    Estudos específicos desde a participação na concepção do projeto estrutural até
+                    a aplicação do concreto, visando:
+                  </span>
+                </span>
               </p>
               <ul className="text-sm space-y-2 font-medium text-slate-700">
                 <li>• Redução de emissões de CO2</li>
