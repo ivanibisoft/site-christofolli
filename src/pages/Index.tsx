@@ -194,7 +194,7 @@ export default function Index() {
               {
                 icon: ShieldCheck,
                 title: 'Controle Estatístico',
-                desc: 'Redução do desvio padrão e garantia de resistência com confiabilidade.',
+                desc: 'Análise consolidada do desvio padrão dos concretos, cálculo do fckest e garantia de conformidade da resistência com confiabilidade e economia.',
               },
               {
                 icon: Leaf,
