@@ -138,8 +138,12 @@ export default function Index() {
             Engenharia de Concreto de <span className="text-accent">Alta Performance</span>
           </h1>
           <p className="text-lg md:text-xl text-slate-300 max-w-3xl mx-auto mb-10 animate-fade-in-up">
-            Consultoria técnica e operacional para construtoras e concreteiras. Otimização de
-            custos, excelência em qualidade e sustentabilidade estrutural.
+            <span id="docs-internal-guid-47857bd7-7fff-7f45-797c-4964dbeda775">
+              <span>
+                Consultoria técnica e operacional para CONCRETEIRAS e concretos especiais para
+                CONSTRUTORAS. Otimização de custos, excelência em qualidade e sustentabilidade.
+              </span>
+            </span>
           </p>
 
           <div
