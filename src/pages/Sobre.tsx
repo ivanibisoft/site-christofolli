@@ -1,14 +1,6 @@
 import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
-import {
-  GraduationCap,
-  Briefcase,
-  FileText,
-  Linkedin,
-  ExternalLink,
-  Eye,
-  Download,
-} from 'lucide-react'
+import { GraduationCap, Briefcase, FileText, Linkedin, Eye, Download, User } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { PdfViewerDialog } from '@/components/PdfViewerDialog'
@@ -24,6 +16,7 @@ import { getFileUrl } from '@/lib/file-url'
 
 export default function Sobre() {
   const [directorPhoto, setDirectorPhoto] = useState<string | null>(null)
+  const [profileLoading, setProfileLoading] = useState(true)
   const [publications, setPublications] = useState<Publication[]>([])
   const [pdfViewer, setPdfViewer] = useState<{ url: string; fileName: string } | null>(null)
 
@@ -36,7 +29,12 @@ export default function Sobre() {
       .then((profile) => {
         setDirectorPhoto(getDirectorPhotoUrl(profile))
       })
-      .catch(() => {})
+      .catch(() => {
+        setDirectorPhoto(null)
+      })
+      .finally(() => {
+        setProfileLoading(false)
+      })
   }
 
   const loadPublications = () => {
@@ -64,11 +62,21 @@ export default function Sobre() {
         <h1 className="text-4xl font-bold mb-8 text-primary">Sobre o Consultor</h1>
 
         <div className="bg-white rounded-2xl p-8 shadow-sm border mb-12 flex flex-col md:flex-row gap-8 items-start">
-          <img
-            src={directorPhoto || 'https://img.usecurling.com/ppl/large?gender=male&seed=99'}
-            alt="Jorge Christofolli - Christófolli Consultoria de Engenharia"
-            className="w-48 h-48 rounded-xl object-cover shadow-md shrink-0"
-          />
+          {profileLoading ? (
+            <div className="w-48 h-48 rounded-xl bg-slate-100 animate-pulse shrink-0 flex items-center justify-center">
+              <User className="h-16 w-16 text-slate-300" />
+            </div>
+          ) : directorPhoto ? (
+            <img
+              src={directorPhoto}
+              alt="Jorge Christofolli - Christófolli Consultoria de Engenharia"
+              className="w-48 h-48 rounded-xl object-cover shadow-md shrink-0"
+            />
+          ) : (
+            <div className="w-48 h-48 rounded-xl bg-slate-100 shrink-0 flex items-center justify-center">
+              <User className="h-16 w-16 text-slate-300" />
+            </div>
+          )}
           <div>
             <h2 className="text-2xl font-bold mb-2">Jorge Luiz Christofolli</h2>
             <h3 className="text-muted-foreground font-medium mb-6">
