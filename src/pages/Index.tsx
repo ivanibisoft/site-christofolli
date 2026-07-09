@@ -204,7 +204,7 @@ export default function Index() {
               {
                 icon: CheckCircle2,
                 title: 'Mitigação de Riscos',
-                desc: 'Prevenção de patologias (DEF/RAA) e controle térmico em blocos massivos.',
+                desc: 'Prevenção de patologias como: (DEF/RAA), carbonatação, ataque por cloretos, sulfatos, cálculo prévio do comportamento térmico em blocos massivos e avaliação da necessidade do uso de gelo e/ou nitrogênio (kg/m3).',
               },
             ].map((prop, i) => (
               <Card
