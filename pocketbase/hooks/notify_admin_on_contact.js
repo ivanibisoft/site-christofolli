@@ -49,7 +49,7 @@ onRecordAfterCreateSuccess((e) => {
         address: $app.settings().meta.senderAddress,
         name: $app.settings().meta.senderName || 'Site Christófolli Consultoria',
       },
-      to: [{ address: 'ivan@ibisoft.com.br' }],
+      to: [{ address: 'jorge@christofolli.com.br' }],
       subject: `Novo Contato Recebido: ${subject}`,
       html: htmlBody,
     })
