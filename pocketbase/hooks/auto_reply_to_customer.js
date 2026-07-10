@@ -3,11 +3,21 @@ onRecordAfterCreateSuccess((e) => {
     const m = 'mailer'
     const mailer = require(m)
 
-    const name = e.record.getString('name')
-    const email = e.record.getString('email')
-    const subject = e.record.getString('subject') || 'Sem Assunto'
+    const escapeHtml = (str) => {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+    }
 
-    const firstName = name.split(' ')[0] || name
+    const rawName = e.record.getString('name')
+    const email = e.record.getString('email')
+    const rawSubject = e.record.getString('subject') || 'Sem Assunto'
+
+    const firstName = escapeHtml(rawName.split(' ')[0] || rawName)
+    const subject = escapeHtml(rawSubject)
 
     const htmlBody = `
       <div style="font-family: sans-serif; color: #333; max-width: 600px; margin: 0 auto;">

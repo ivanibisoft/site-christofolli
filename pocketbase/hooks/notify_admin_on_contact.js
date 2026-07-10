@@ -3,12 +3,28 @@ onRecordAfterCreateSuccess((e) => {
     const m = 'mailer'
     const mailer = require(m)
 
-    const name = e.record.getString('name')
-    const email = e.record.getString('email')
-    const subject = e.record.getString('subject') || 'Sem Assunto'
-    const company = e.record.getString('company_name') || '-'
-    const whatsapp = e.record.getString('whatsapp') || '-'
-    const messageText = e.record.getString('message')
+    const escapeHtml = (str) => {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+    }
+
+    const rawName = e.record.getString('name')
+    const rawEmail = e.record.getString('email')
+    const rawSubject = e.record.getString('subject') || 'Sem Assunto'
+    const rawCompany = e.record.getString('company_name') || '-'
+    const rawWhatsapp = e.record.getString('whatsapp') || '-'
+    const rawMessage = e.record.getString('message')
+
+    const name = escapeHtml(rawName)
+    const email = escapeHtml(rawEmail)
+    const subject = escapeHtml(rawSubject)
+    const company = escapeHtml(rawCompany)
+    const whatsapp = escapeHtml(rawWhatsapp)
+    const messageText = escapeHtml(rawMessage).replace(/\n/g, '<br />')
 
     const htmlBody = `
       <div style="font-family: sans-serif; color: #333;">
@@ -21,7 +37,7 @@ onRecordAfterCreateSuccess((e) => {
           </tr>
           <tr>
             <th>E-mail:</th>
-            <td><a href="mailto:${email}">${email}</a></td>
+            <td><a href="mailto:${rawEmail}">${email}</a></td>
           </tr>
           <tr>
             <th>Empresa:</th>
@@ -39,7 +55,7 @@ onRecordAfterCreateSuccess((e) => {
         <br />
         <p><strong>Mensagem:</strong></p>
         <div style="background: #f4f4f5; padding: 15px; border-radius: 6px; border: 1px solid #e4e4e7;">
-          ${messageText.replace(/\n/g, '<br />')}
+          ${messageText}
         </div>
       </div>
     `
@@ -50,7 +66,7 @@ onRecordAfterCreateSuccess((e) => {
         name: $app.settings().meta.senderName || 'Site Christófolli Consultoria',
       },
       to: [{ address: 'jorge@christofolli.com.br' }],
-      subject: `Novo Contato Recebido: ${subject}`,
+      subject: `Novo Contato Recebido: ${rawSubject}`,
       html: htmlBody,
     })
 
