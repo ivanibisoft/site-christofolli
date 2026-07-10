@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-09T23:57:33.738Z",
+  "generatedAt": "2026-07-10T00:12:47.159Z",
   "collections": [
     {
       "name": "users",
@@ -286,6 +286,76 @@
         }
       ],
       "indexes": ["CREATE UNIQUE INDEX idx_gallery_categories_name ON gallery_categories (name)"]
+    },
+    {
+      "name": "smtp_settings",
+      "type": "base",
+      "apiRules": {
+        "list": "@request.auth.id != ''",
+        "view": "@request.auth.id != ''",
+        "create": "@request.auth.id != ''",
+        "update": "@request.auth.id != ''",
+        "delete": "@request.auth.id != ''"
+      },
+      "fields": [
+        {
+          "name": "host",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "port",
+          "type": "number",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "username",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "password",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "encryption",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "from_email",
+          "type": "email",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "from_name",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": []
     }
   ]
 }

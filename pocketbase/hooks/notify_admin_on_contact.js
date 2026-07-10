@@ -26,6 +26,29 @@ onRecordAfterCreateSuccess((e) => {
     const whatsapp = escapeHtml(rawWhatsapp)
     const messageText = escapeHtml(rawMessage).replace(/\n/g, '<br />')
 
+    let smtpSettings = null
+    try {
+      const records = $app.findRecordsByFilter('smtp_settings', "id != ''", '-created', 1, 0)
+      if (records.length > 0) {
+        smtpSettings = records[0]
+      }
+    } catch (fetchErr) {
+      $app.logger().warn('Failed to fetch SMTP settings', 'error', fetchErr.message)
+    }
+
+    if (!smtpSettings) {
+      $app.logger().warn('No SMTP settings found, using default platform mailer')
+    }
+
+    let fromAddress, fromName
+    if (smtpSettings) {
+      fromAddress = smtpSettings.getString('from_email')
+      fromName = smtpSettings.getString('from_name')
+    } else {
+      fromAddress = $app.settings().meta.senderAddress
+      fromName = $app.settings().meta.senderName || 'Site Christófolli Consultoria'
+    }
+
     const htmlBody = `
       <div style="font-family: sans-serif; color: #333;">
         <h2>Novo Contato Recebido</h2>
@@ -61,16 +84,25 @@ onRecordAfterCreateSuccess((e) => {
     `
 
     const msg = new mailer.Message({
-      from: {
-        address: $app.settings().meta.senderAddress,
-        name: $app.settings().meta.senderName || 'Site Christófolli Consultoria',
-      },
+      from: { address: fromAddress, name: fromName },
       to: [{ address: 'jorge@christofolli.com.br' }],
       subject: `Novo Contato Recebido: ${rawSubject}`,
       html: htmlBody,
     })
 
-    $app.newMailClient().send(msg)
+    if (smtpSettings) {
+      const encryption = smtpSettings.getString('encryption')
+      const client = new mailer.SmtpClient({
+        host: smtpSettings.getString('host'),
+        port: smtpSettings.getInt('port'),
+        username: smtpSettings.getString('username'),
+        password: smtpSettings.getString('password'),
+        ssl: encryption === 'SSL',
+      })
+      client.send(msg)
+    } else {
+      $app.newMailClient().send(msg)
+    }
   } catch (err) {
     $app
       .logger()

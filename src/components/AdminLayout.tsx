@@ -1,6 +1,15 @@
 import { useEffect } from 'react'
 import { Outlet, useNavigate, Link, useLocation } from 'react-router-dom'
-import { FileText, Mail, LogOut, Menu, Image as ImageIcon, Building2, Tag } from 'lucide-react'
+import {
+  FileText,
+  Mail,
+  LogOut,
+  Menu,
+  Image as ImageIcon,
+  Building2,
+  Tag,
+  Server,
+} from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
@@ -12,6 +21,7 @@ const navigation = [
   { name: 'Galeria', href: '/admin/gallery', icon: ImageIcon },
   { name: 'Categorias', href: '/admin/categories', icon: Tag },
   { name: 'Contatos', href: '/admin/contacts', icon: Mail },
+  { name: 'Configurações de E-mail', href: '/admin/smtp-settings', icon: Server },
 ]
 
 export default function AdminLayout() {

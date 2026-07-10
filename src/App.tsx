@@ -19,6 +19,7 @@ import GalleryList from './pages/admin/GalleryList'
 import GalleryForm from './pages/admin/GalleryForm'
 import CategoriesList from './pages/admin/CategoriesList'
 import CompanyProfilePage from './pages/admin/CompanyProfile'
+import SmtpSettingsPage from './pages/admin/SmtpSettings'
 
 const App = () => (
   <BrowserRouter>
@@ -46,6 +47,7 @@ const App = () => (
             <Route path="gallery/:id" element={<GalleryForm />} />
             <Route path="categories" element={<CategoriesList />} />
             <Route path="company-profile" element={<CompanyProfilePage />} />
+            <Route path="smtp-settings" element={<SmtpSettingsPage />} />
             <Route path="contacts" element={<ContactsList />} />
           </Route>
 
