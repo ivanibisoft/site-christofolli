@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Server, Save, Loader2, Send } from 'lucide-react'
+import { Server, Save, Loader2, Send, Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -27,6 +27,7 @@ export default function SmtpSettingsPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [testing, setTesting] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [form, setForm] = useState({
     host: '',
@@ -194,13 +195,26 @@ export default function SmtpSettingsPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                type="password"
-                value={form.password}
-                onChange={(e) => handleChange('password', e.target.value)}
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={form.password}
+                  onChange={(e) => handleChange('password', e.target.value)}
+                  placeholder="••••••••"
+                  className="pr-10"
+                />
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-0 top-0 h-full w-10 hover:bg-transparent text-slate-400 hover:text-slate-600"
+                  tabIndex={-1}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </Button>
+              </div>
               {fieldErrors.password && (
                 <p className="text-sm text-red-500">{fieldErrors.password}</p>
               )}
