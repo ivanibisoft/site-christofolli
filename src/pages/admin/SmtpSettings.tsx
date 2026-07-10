@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Server, Save, Loader2 } from 'lucide-react'
+import { Server, Save, Loader2, Send } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -13,7 +13,12 @@ import {
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { useToast } from '@/hooks/use-toast'
 import { useRealtime } from '@/hooks/use-realtime'
-import { getSmtpSettings, updateSmtpSettings, createSmtpSettings } from '@/services/smtp-settings'
+import {
+  getSmtpSettings,
+  updateSmtpSettings,
+  createSmtpSettings,
+  testSmtpSettings,
+} from '@/services/smtp-settings'
 import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
 
 export default function SmtpSettingsPage() {
@@ -21,6 +26,7 @@ export default function SmtpSettingsPage() {
   const [settingsId, setSettingsId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [testing, setTesting] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [form, setForm] = useState({
     host: '',
@@ -83,6 +89,36 @@ export default function SmtpSettingsPage() {
       toast({ title: 'Erro ao salvar configurações', variant: 'destructive' })
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleTest = async () => {
+    setTesting(true)
+    try {
+      const data = { ...form, port: Number(form.port) }
+      const result = await testSmtpSettings(data)
+      if (result.success) {
+        toast({
+          title: 'E-mail de teste enviado com sucesso!',
+          description: `Verifique a caixa de entrada de ${form.from_email}.`,
+        })
+      } else {
+        toast({
+          title: 'Falha no teste de configuração',
+          description: result.error || 'Erro desconhecido',
+          variant: 'destructive',
+        })
+      }
+    } catch (error: any) {
+      const errorMsg =
+        error?.response?.error || error?.message || 'Erro ao testar configuração SMTP'
+      toast({
+        title: 'Falha no teste de configuração',
+        description: errorMsg,
+        variant: 'destructive',
+      })
+    } finally {
+      setTesting(false)
     }
   }
 
@@ -216,8 +252,30 @@ export default function SmtpSettingsPage() {
             </div>
           </div>
 
-          <div className="flex justify-end pt-2">
-            <Button onClick={handleSubmit} disabled={saving} className="min-w-[140px] shadow-sm">
+          <div className="flex justify-end gap-3 pt-2">
+            <Button
+              onClick={handleTest}
+              disabled={testing || saving}
+              variant="outline"
+              className="min-w-[140px] shadow-sm"
+            >
+              {testing ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Testando...
+                </>
+              ) : (
+                <>
+                  <Send className="h-4 w-4 mr-2" />
+                  Testar Configuração
+                </>
+              )}
+            </Button>
+            <Button
+              onClick={handleSubmit}
+              disabled={saving || testing}
+              className="min-w-[140px] shadow-sm"
+            >
               {saving ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />

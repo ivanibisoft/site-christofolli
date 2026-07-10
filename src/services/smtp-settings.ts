@@ -25,3 +25,18 @@ export const createSmtpSettings = (data: Partial<SmtpSettings>) =>
 
 export const updateSmtpSettings = (id: string, data: Partial<SmtpSettings>) =>
   pb.collection<SmtpSettings>('smtp_settings').update(id, data)
+
+export const testSmtpSettings = (data: {
+  host: string
+  port: number
+  username: string
+  password: string
+  encryption: string
+  from_email: string
+  from_name: string
+}) =>
+  pb.send('/backend/v1/smtp/test', {
+    method: 'POST',
+    body: JSON.stringify(data),
+    headers: { 'Content-Type': 'application/json' },
+  })
