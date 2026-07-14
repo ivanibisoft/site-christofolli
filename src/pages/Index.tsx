@@ -34,6 +34,7 @@ import {
   type CompanyProfile,
 } from '@/services/company-profile'
 import { useRealtime } from '@/hooks/use-realtime'
+import heroBg from '@/assets/logo-3d-sem-texto-27f6f.png'
 
 const contactSchema = z.object({
   name: z.string().min(1, 'Nome é obrigatório'),
@@ -126,8 +127,8 @@ export default function Index() {
       <section className="relative h-[600px] flex items-center justify-center overflow-hidden">
         <div className="absolute inset-0 z-0">
           <img
-            src="https://img.usecurling.com/p/1920/1080?q=massive%20concrete%20foundation&color=gray"
-            alt="Concrete Foundation"
+            src={heroBg}
+            alt="Christófolli Consultoria Logo"
             className="w-full h-full object-cover opacity-30"
           />
           <div className="absolute inset-0 bg-gradient-to-r from-slate-900/90 to-slate-900/50 mix-blend-multiply" />
