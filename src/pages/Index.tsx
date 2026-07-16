@@ -129,15 +129,12 @@ export default function Index() {
 
   const keywords = [
     'Concreto de Alta Resistência',
-    'CAD',
-    'Autoadensável',
-    'CAA',
     'Controle Térmico',
-    'Massivo',
-    'Metacaulim',
     'Argila Calcinada',
     'Redução de GEE',
     'Estatística Aplicada',
+    'Concreto Auto Adensável CAA',
+    'Módulo de Elasticidade',
   ]
 
   return (
