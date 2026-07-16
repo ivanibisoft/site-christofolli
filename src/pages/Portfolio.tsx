@@ -36,7 +36,7 @@ export default function Portfolio() {
         getGalleryItemsExcludingStatistical(),
         getGalleryCategories(),
       ])
-      const filteredCats = catData.filter((c) => c.name !== 'Resultados Estatísticos')
+      const filteredCats = catData.filter((c) => c.name !== 'Gráficos Estatísticos')
       setItems(galleryData)
       setCategories(filteredCats)
     } catch (error) {
@@ -187,7 +187,7 @@ export default function Portfolio() {
         </div>
 
         {/* Statistical Results Section */}
-        <h2 className="text-2xl font-bold text-primary mb-6">Resultados Estatísticos (Exemplos)</h2>
+        <h2 className="text-2xl font-bold text-primary mb-6">Gráficos Estatísticos</h2>
         {statLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
             {[1, 2].map((i) => (
