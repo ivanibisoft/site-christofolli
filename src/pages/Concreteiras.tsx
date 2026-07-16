@@ -10,7 +10,17 @@ import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { AUDIT_MODULES } from '@/lib/data'
 
+const EXCLUDED_TITLES = [
+  'Auditoria de Custos Operacionais',
+  'Auditoria de Gestão, Comercial e Processos Internos',
+]
+
 export default function Concreteiras() {
+  const filteredModules = AUDIT_MODULES.filter(
+    (module: { id: string; title: string; description: string }) =>
+      !EXCLUDED_TITLES.some((t) => module.title.includes(t)),
+  )
+
   return (
     <div className="py-12 animate-fade-in">
       <div className="container max-w-5xl">
@@ -34,7 +44,7 @@ export default function Concreteiras() {
           </h3>
 
           <Accordion type="single" collapsible className="w-full">
-            {AUDIT_MODULES.map((module) => (
+            {filteredModules.map((module) => (
               <AccordionItem
                 value={module.id}
                 key={module.id}
