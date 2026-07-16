@@ -135,6 +135,9 @@ export default function Index() {
     'Estatística Aplicada',
     'Concreto Auto Adensável CAA',
     'Módulo de Elasticidade',
+    'Centrais de Concreto',
+    'Concretos Especiais',
+    'Obras Especiais',
   ]
 
   return (
