@@ -5,13 +5,10 @@ export const AUDIT_MODULES = [
     description:
       'Avaliação dos processos de aquisição, recebimento e consumo de materiais utilizados na produção de concreto.',
     items: [
-      'Controle de compra de cimento',
-      'Controle de agregados (brita, areia e pó de pedra)',
-      'Controle de aditivos químicos e adições minerais',
-      'Avaliação de fornecedores',
-      'Análise comparativa de custos de matérias-primas',
+      'Critérios para escolha e compra de cimento',
+      'Critérios para escolha e compra de agregados (britas e areias)',
+      'Critérios para escolha e compra de aditivos químicos e adições minerais',
       'Verificação de desperdícios e perdas operacionais',
-      'Compatibilidade entre materiais e desempenho técnico',
       'Análise de consumo específico por m³ produzido',
     ],
     objectives: [
