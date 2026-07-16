@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom'
-import { Factory, CheckCircle, FileText } from 'lucide-react'
+import { Factory, CheckCircle, FileText, CircleCheckBig } from 'lucide-react'
 import {
   Accordion,
   AccordionContent,
@@ -101,11 +101,18 @@ export default function Concreteiras() {
                         <CheckCircle className="h-4 w-4" /> Objetivos e Entregas
                       </h4>
                       <ul className="space-y-2">
-                        {module.objectives.map((obj, i) => (
-                          <li key={i} className="text-sm flex items-start gap-2">
-                            <CheckCircle className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />
-                          </li>
-                        ))}
+                        <li className="text-sm flex items-start gap-2">
+                          <CircleCheckBig className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />
+                          <span>Redução do consumo de cimento</span>
+                        </li>
+                        <li className="text-sm flex items-start gap-2">
+                          <CircleCheckBig className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />
+                          <span>Otimização de traços</span>
+                        </li>
+                        <li className="text-sm flex items-start gap-2">
+                          <CircleCheckBig className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />
+                          <span>Melhoria da qualidade final e redução da variabilidade</span>
+                        </li>
                       </ul>
                     </div>
                   </div>
