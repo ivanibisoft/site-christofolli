@@ -47,6 +47,9 @@ const App = () => (
             <Route path="gallery" element={<GalleryList />} />
             <Route path="gallery/new" element={<GalleryForm />} />
             <Route path="gallery/:id" element={<GalleryForm />} />
+            <Route path="statistical-results" element={<StatisticalResultsList />} />
+            <Route path="statistical-results/new" element={<StatisticalResultsForm />} />
+            <Route path="statistical-results/:id" element={<StatisticalResultsForm />} />
             <Route path="categories" element={<CategoriesList />} />
             <Route path="company-profile" element={<CompanyProfilePage />} />
             <Route path="smtp-settings" element={<SmtpSettingsPage />} />
