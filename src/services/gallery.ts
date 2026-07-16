@@ -44,11 +44,25 @@ export const getStatisticalResultsCategory = async (): Promise<GalleryCategory |
 }
 
 export const getStatisticalResults = async (): Promise<GalleryItem[]> => {
-  const category = await getStatisticalResultsCategory()
-  if (!category) return []
-  return pb.collection<GalleryItem>('gallery_items').getFullList({
-    sort: '-created',
-    expand: 'category_id',
-    filter: `category_id = "${category.id}"`,
-  })
+  try {
+    return await pb.collection<GalleryItem>('gallery_items').getFullList({
+      sort: '-created',
+      expand: 'category_id',
+      filter: `category_id.name = "${STATISTICAL_RESULTS_CATEGORY}"`,
+    })
+  } catch {
+    return []
+  }
+}
+
+export const getGalleryItemsExcludingStatistical = async (): Promise<GalleryItem[]> => {
+  try {
+    return await pb.collection<GalleryItem>('gallery_items').getFullList({
+      sort: '-created',
+      expand: 'category_id',
+      filter: `category_id.name != "${STATISTICAL_RESULTS_CATEGORY}" || category_id = null`,
+    })
+  } catch {
+    return []
+  }
 }

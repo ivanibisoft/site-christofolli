@@ -13,7 +13,11 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { useRealtime } from '@/hooks/use-realtime'
 import pb from '@/lib/pocketbase/client'
-import { getGalleryItems, getStatisticalResults, type GalleryItem } from '@/services/gallery'
+import {
+  getGalleryItemsExcludingStatistical,
+  getStatisticalResults,
+  type GalleryItem,
+} from '@/services/gallery'
 import { getGalleryCategories, type GalleryCategory } from '@/services/gallery-categories'
 
 const ALL_CATEGORIES = 'Todas'
@@ -28,9 +32,13 @@ export default function Portfolio() {
 
   const loadData = useCallback(async () => {
     try {
-      const [galleryData, catData] = await Promise.all([getGalleryItems(), getGalleryCategories()])
+      const [galleryData, catData] = await Promise.all([
+        getGalleryItemsExcludingStatistical(),
+        getGalleryCategories(),
+      ])
+      const filteredCats = catData.filter((c) => c.name !== 'Resultados Estatísticos')
       setItems(galleryData)
-      setCategories(catData)
+      setCategories(filteredCats)
     } catch (error) {
       console.error(error)
     } finally {
