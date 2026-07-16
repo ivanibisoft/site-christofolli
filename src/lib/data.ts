@@ -24,13 +24,13 @@ export const AUDIT_MODULES = [
     description:
       'Análise do sistema de armazenagem, movimentação e controle de estoque físico e contábil.',
     items: [
-      'Controle de entrada e saída de materiais',
+      'Controle de entrada e saída de materiais (pedidos e baixas de estoque)',
       'Inventários físicos',
-      'Diferenças entre estoque físico e sistema',
-      'Controle de umidade dos agregados',
+      'Diferenças entre estoque físico e sistema contábil',
+      'Controle de umidade dos agregados e perdas associadas',
       'Perdas por contaminação ou armazenagem inadequada',
       'Gestão de silos e tanques',
-      'Indicadores de consumo e giro de estoque',
+      'Indicadores de consumo',
     ],
     objectives: [
       'Melhor rastreabilidade',
