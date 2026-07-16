@@ -30,3 +30,25 @@ export const updateGalleryItem = (id: string, data: FormData) =>
 
 export const deleteGalleryItem = (id: string) =>
   pb.collection<GalleryItem>('gallery_items').delete(id)
+
+export const STATISTICAL_RESULTS_CATEGORY = 'Resultados Estatísticos'
+
+export const getStatisticalResultsCategory = async (): Promise<GalleryCategory | null> => {
+  try {
+    return await pb
+      .collection<GalleryCategory>('gallery_categories')
+      .getFirstListItem(`name = "${STATISTICAL_RESULTS_CATEGORY}"`)
+  } catch {
+    return null
+  }
+}
+
+export const getStatisticalResults = async (): Promise<GalleryItem[]> => {
+  const category = await getStatisticalResultsCategory()
+  if (!category) return []
+  return pb.collection<GalleryItem>('gallery_items').getFullList({
+    sort: '-created',
+    expand: 'category_id',
+    filter: `category_id = "${category.id}"`,
+  })
+}

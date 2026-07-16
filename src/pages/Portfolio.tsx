@@ -1,19 +1,5 @@
 import { useState, useEffect, useCallback } from 'react'
-import {
-  Bar,
-  BarChart,
-  CartesianGrid,
-  XAxis,
-  YAxis,
-  Tooltip as RechartsTooltip,
-  ResponsiveContainer,
-  LineChart,
-  Line,
-  Legend,
-} from 'recharts'
 import { Link } from 'react-router-dom'
-import { ChartContainer, ChartTooltipContent } from '@/components/ui/chart'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import {
@@ -27,33 +13,17 @@ import {
 import { Skeleton } from '@/components/ui/skeleton'
 import { useRealtime } from '@/hooks/use-realtime'
 import pb from '@/lib/pocketbase/client'
-import { getGalleryItems, type GalleryItem } from '@/services/gallery'
+import { getGalleryItems, getStatisticalResults, type GalleryItem } from '@/services/gallery'
 import { getGalleryCategories, type GalleryCategory } from '@/services/gallery-categories'
-
-const strengthData = [
-  { month: 'Jan', original: 30, otimizado: 31, cimentoOrig: 350, cimentoOtim: 320 },
-  { month: 'Fev', original: 30.5, otimizado: 31.5, cimentoOrig: 350, cimentoOtim: 318 },
-  { month: 'Mar', original: 29.8, otimizado: 31.2, cimentoOrig: 350, cimentoOtim: 315 },
-  { month: 'Abr', original: 30.2, otimizado: 31.8, cimentoOrig: 350, cimentoOtim: 310 },
-  { month: 'Mai', original: 30, otimizado: 32, cimentoOrig: 350, cimentoOtim: 305 },
-  { month: 'Jun', original: 31, otimizado: 32.5, cimentoOrig: 350, cimentoOtim: 300 },
-]
-
-const thermalData = [
-  { hora: '0h', nucleo: 25, superficie: 25, ambiente: 20 },
-  { hora: '24h', nucleo: 45, superficie: 35, ambiente: 22 },
-  { hora: '48h', nucleo: 65, superficie: 45, ambiente: 21 },
-  { hora: '72h', nucleo: 58, superficie: 42, ambiente: 23 },
-  { hora: '96h', nucleo: 48, superficie: 38, ambiente: 20 },
-  { hora: '120h', nucleo: 40, superficie: 32, ambiente: 19 },
-]
 
 const ALL_CATEGORIES = 'Todas'
 
 export default function Portfolio() {
   const [items, setItems] = useState<GalleryItem[]>([])
   const [categories, setCategories] = useState<GalleryCategory[]>([])
+  const [statResults, setStatResults] = useState<GalleryItem[]>([])
   const [loading, setLoading] = useState(true)
+  const [statLoading, setStatLoading] = useState(true)
   const [category, setCategory] = useState<string>(ALL_CATEGORIES)
 
   const loadData = useCallback(async () => {
@@ -68,12 +38,25 @@ export default function Portfolio() {
     }
   }, [])
 
+  const loadStatResults = useCallback(async () => {
+    try {
+      const results = await getStatisticalResults()
+      setStatResults(results)
+    } catch (error) {
+      console.error(error)
+    } finally {
+      setStatLoading(false)
+    }
+  }, [])
+
   useEffect(() => {
     loadData()
-  }, [loadData])
+    loadStatResults()
+  }, [loadData, loadStatResults])
 
   useRealtime('gallery_items', () => {
     loadData()
+    loadStatResults()
   })
 
   useRealtime('gallery_categories', () => {
@@ -85,6 +68,9 @@ export default function Portfolio() {
 
   const getCategoryName = (item: GalleryItem) =>
     item.expand?.category_id?.name || item.category || 'Geral'
+
+  const statPlaceholder = (w: number, h: number) =>
+    `https://img.usecurling.com/p/${w}/${h}?q=concrete%20statistics&color=gray`
 
   return (
     <div className="py-12 animate-fade-in">
@@ -192,95 +178,70 @@ export default function Portfolio() {
           )}
         </div>
 
-        {/* Charts Section */}
+        {/* Statistical Results Section */}
         <h2 className="text-2xl font-bold text-primary mb-6">Resultados Estatísticos (Exemplos)</h2>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          <Card>
-            <CardHeader>
-              <CardTitle>Otimização de Consumo vs. Resistência</CardTitle>
-              <CardDescription>
-                Comparativo do consumo de cimento (kg/m³) mantendo a resistência fck = 30MPa
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer
-                config={{
-                  cimentoOrig: { label: 'Consumo Original', color: 'hsl(var(--secondary))' },
-                  cimentoOtim: { label: 'Consumo Otimizado', color: 'hsl(var(--accent))' },
-                }}
-                className="h-[300px] w-full"
-              >
-                <ResponsiveContainer width="100%" height="100%">
-                  <BarChart
-                    data={strengthData}
-                    margin={{ top: 20, right: 0, left: -20, bottom: 0 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                    <XAxis dataKey="month" tickLine={false} axisLine={false} />
-                    <YAxis tickLine={false} axisLine={false} domain={[250, 400]} />
-                    <RechartsTooltip content={<ChartTooltipContent />} />
-                    <Legend />
-                    <Bar
-                      dataKey="cimentoOrig"
-                      fill="var(--color-cimentoOrig)"
-                      radius={[4, 4, 0, 0]}
+        {statLoading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+            {[1, 2].map((i) => (
+              <Skeleton key={i} className="aspect-[4/3] rounded-xl w-full" />
+            ))}
+          </div>
+        ) : statResults.length === 0 ? (
+          <div className="text-center py-12 bg-muted/30 rounded-xl border border-dashed mb-16">
+            <p className="text-muted-foreground">
+              Nenhum resultado estatístico disponível no momento.
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
+            {statResults.map((item) => (
+              <Dialog key={item.id}>
+                <DialogTrigger asChild>
+                  <div className="group relative overflow-hidden rounded-xl bg-card border cursor-pointer shadow-sm hover:shadow-md transition-shadow">
+                    <div className="aspect-[4/3] overflow-hidden bg-muted">
+                      <img
+                        src={
+                          item.image ? pb.files.getUrl(item, item.image) : statPlaceholder(600, 450)
+                        }
+                        alt={item.title}
+                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                      />
+                    </div>
+                    <div className="p-5">
+                      <h3 className="text-lg font-bold text-foreground mb-1">{item.title}</h3>
+                      {item.description && (
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          {item.description}
+                        </p>
+                      )}
+                    </div>
+                  </div>
+                </DialogTrigger>
+                <DialogContent className="max-w-4xl bg-transparent border-none shadow-none p-0 flex flex-col justify-center items-center">
+                  <DialogHeader className="sr-only">
+                    <DialogTitle>{item.title}</DialogTitle>
+                    <DialogDescription>{item.description}</DialogDescription>
+                  </DialogHeader>
+                  <div className="bg-background rounded-xl overflow-hidden shadow-2xl w-full max-w-4xl">
+                    <img
+                      src={
+                        item.image ? pb.files.getUrl(item, item.image) : statPlaceholder(1200, 800)
+                      }
+                      alt={item.title}
+                      className="w-full max-h-[60vh] object-cover bg-black/5"
                     />
-                    <Bar
-                      dataKey="cimentoOtim"
-                      fill="var(--color-cimentoOtim)"
-                      radius={[4, 4, 0, 0]}
-                    />
-                  </BarChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Comportamento Térmico (Simulação)</CardTitle>
-              <CardDescription>
-                Evolução da temperatura em bloco de fundação de 3.800m³ (Núcleo vs Superfície)
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <ChartContainer
-                config={{
-                  nucleo: { label: 'Temp. Núcleo (°C)', color: 'hsl(var(--destructive))' },
-                  superficie: { label: 'Temp. Superfície (°C)', color: 'hsl(var(--primary))' },
-                }}
-                className="h-[300px] w-full"
-              >
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart
-                    data={thermalData}
-                    margin={{ top: 20, right: 10, left: -20, bottom: 0 }}
-                  >
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                    <XAxis dataKey="hora" tickLine={false} axisLine={false} />
-                    <YAxis tickLine={false} axisLine={false} />
-                    <RechartsTooltip content={<ChartTooltipContent />} />
-                    <Legend />
-                    <Line
-                      type="monotone"
-                      dataKey="nucleo"
-                      stroke="var(--color-nucleo)"
-                      strokeWidth={3}
-                      dot={{ r: 4 }}
-                    />
-                    <Line
-                      type="monotone"
-                      dataKey="superficie"
-                      stroke="var(--color-superficie)"
-                      strokeWidth={2}
-                      dot={{ r: 3 }}
-                    />
-                  </LineChart>
-                </ResponsiveContainer>
-              </ChartContainer>
-            </CardContent>
-          </Card>
-        </div>
+                    <div className="p-6">
+                      <h3 className="text-2xl font-bold text-foreground mb-2">{item.title}</h3>
+                      {item.description && (
+                        <p className="text-muted-foreground">{item.description}</p>
+                      )}
+                    </div>
+                  </div>
+                </DialogContent>
+              </Dialog>
+            ))}
+          </div>
+        )}
 
         <div className="text-center mt-16 bg-slate-50 rounded-2xl p-8 md:p-12 border border-slate-100 shadow-sm">
           <h3 className="text-2xl font-bold text-primary mb-4">
