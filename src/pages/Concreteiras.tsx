@@ -78,21 +78,6 @@ export default function Concreteiras() {
                             obra;
                           </span>
                         </li>
-                        <li className="text-sm flex items-start gap-2">
-                          <span className="text-accent mt-0.5">•</span>
-                          <span>
-                            Ensaios laboratoriais dos insumos e rastreabilidade da produção (Índice
-                            de amostragem e procedimentos de moldagem, coleta, desforma, cura,
-                            capeamento, rompimento, lançamento de dados e disponibilização para
-                            acessos externos ou informativos aos clientes);
-                          </span>
-                        </li>
-                        <li className="text-sm flex items-start gap-2">
-                          <span className="text-accent mt-0.5">•</span>
-                          <span>
-                            Padronização operacional e treinamento da mão de obra de laboratório;
-                          </span>
-                        </li>
                       </ul>
                     </div>
 
