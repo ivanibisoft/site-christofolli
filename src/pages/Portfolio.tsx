@@ -92,8 +92,10 @@ export default function Portfolio() {
         <div className="mb-12">
           <h1 className="text-4xl font-bold mb-4">Portfólio & Inteligência de Dados</h1>
           <p className="text-lg text-muted-foreground max-w-3xl">
-            Resultados comprovados através da aplicação de métodos estatísticos e controle rigoroso
-            em grandes obras de infraestrutura e edificações.
+            Resultados comprovados através da experiência consolidada ao longo de mais de 30 anos na
+            aplicação de métodos estatísticos e controles rigorosos em Centrais de concreto de
+            grande e pequeno porte de produção, assim como em obras emblemáticas com aplicação e
+            estudo de soluções para uso de concretos especiais.
           </p>
         </div>
 
