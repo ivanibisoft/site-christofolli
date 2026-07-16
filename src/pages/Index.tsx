@@ -307,26 +307,7 @@ export default function Index() {
       </section>
 
       {/* Gallery Categories */}
-      {galleryCats.length > 0 && (
-        <section className="py-16 bg-white border-t">
-          <div className="container">
-            <div className="text-center mb-8">
-              <h2 className="text-2xl font-bold text-primary mb-2">Áreas de Atuação</h2>
-              <p className="text-muted-foreground">Categorias de projetos e estudos de caso</p>
-            </div>
-            <div className="flex flex-wrap items-center justify-center gap-3">
-              {galleryCats.map((cat) => (
-                <span
-                  key={cat.id}
-                  className="px-4 py-2 bg-slate-50 border border-slate-200 text-slate-700 text-sm font-semibold rounded-full shadow-sm hover:bg-slate-100 transition-colors"
-                >
-                  {cat.name}
-                </span>
-              ))}
-            </div>
-          </div>
-        </section>
-      )}
+      {galleryCats.length > 0 && null}
 
       {/* Contact Section */}
       <section className="py-20 bg-white" id="contato">
