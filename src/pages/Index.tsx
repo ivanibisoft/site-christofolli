@@ -264,6 +264,9 @@ export default function Index() {
                 patologia das construções e métodos probabilísticos para dosagem.
               </p>
 
+              <h3 className="text-sm font-bold text-slate-700 mb-3 tracking-wide">
+                TÓPICOS DE ATUAÇÃO
+              </h3>
               <div className="flex flex-wrap gap-2 mb-8">
                 {keywords.map((kw) => (
                   <span
