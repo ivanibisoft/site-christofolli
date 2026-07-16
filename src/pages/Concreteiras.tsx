@@ -55,35 +55,43 @@ export default function Concreteiras() {
                         <li className="text-sm flex items-start gap-2">
                           <span className="text-accent mt-0.5">•</span>
                           <span>
-                            Central dosadora – produtividade (tempo de carga, vazões dos materiais
-                            em modo pesagem e transferência para CB)
+                            Formulações e traços utilizados – Método de dosagem, adaptação às
+                            condições de logística de entregas e velocidade de atendimento às
+                            solicitações dos clientes;
+                          </span>
+                        </li>
+                        <li className="text-sm flex items-start gap-2">
+                          <span className="text-accent mt-0.5">•</span>
+                          <span>Consumo de cimento por MPa;</span>
+                        </li>
+                        <li className="text-sm flex items-start gap-2">
+                          <span className="text-accent mt-0.5">•</span>
+                          <span>
+                            Análise estatística das resistências – efetividade e velocidade dos
+                            ajustes de MCC;
                           </span>
                         </li>
                         <li className="text-sm flex items-start gap-2">
                           <span className="text-accent mt-0.5">•</span>
                           <span>
-                            Caminhões betoneira – Calibração de Hidrômetros e pressão do sistema
-                            hidráulico (Indicação do Slump Test)
+                            Controle de abatimento (slump), umidade e água adicionada na central e
+                            obra;
                           </span>
                         </li>
                         <li className="text-sm flex items-start gap-2">
                           <span className="text-accent mt-0.5">•</span>
                           <span>
-                            Sistema de pesagem (histórico e periodicidade de calibração das células
-                            de carga)
+                            Ensaios laboratoriais dos insumos e rastreabilidade da produção (Índice
+                            de amostragem e procedimentos de moldagem, coleta, desforma, cura,
+                            capeamento, rompimento, lançamento de dados e disponibilização para
+                            acessos externos ou informativos aos clientes);
                           </span>
                         </li>
                         <li className="text-sm flex items-start gap-2">
                           <span className="text-accent mt-0.5">•</span>
-                          <span>Sensores de umidade (Calibração)</span>
-                        </li>
-                        <li className="text-sm flex items-start gap-2">
-                          <span className="text-accent mt-0.5">•</span>
-                          <span>Análise de disponibilidade operacional</span>
-                        </li>
-                        <li className="text-sm flex items-start gap-2">
-                          <span className="text-accent mt-0.5">•</span>
-                          <span>Consumo de combustível</span>
+                          <span>
+                            Padronização operacional e treinamento da mão de obra de laboratório;
+                          </span>
                         </li>
                       </ul>
                     </div>
