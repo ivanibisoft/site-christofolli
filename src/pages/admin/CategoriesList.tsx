@@ -38,6 +38,7 @@ import {
 } from '@/services/gallery-categories'
 import { useRealtime } from '@/hooks/use-realtime'
 import { extractFieldErrors } from '@/lib/pocketbase/errors'
+import pb from '@/lib/pocketbase/client'
 
 export default function CategoriesList() {
   const [categories, setCategories] = useState<GalleryCategory[]>([])
@@ -48,6 +49,7 @@ export default function CategoriesList() {
   const [saving, setSaving] = useState(false)
   const [deleteTarget, setDeleteTarget] = useState<GalleryCategory | null>(null)
   const [fieldError, setFieldError] = useState<string | null>(null)
+  const [linkedItemsCount, setLinkedItemsCount] = useState(0)
   const { toast } = useToast()
 
   const loadData = () => {
@@ -106,6 +108,19 @@ export default function CategoriesList() {
       }
     } finally {
       setSaving(false)
+    }
+  }
+
+  const handleDeleteClick = async (cat: GalleryCategory) => {
+    setDeleteTarget(cat)
+    setLinkedItemsCount(0)
+    try {
+      const items = await pb.collection('gallery_items').getFullList({
+        filter: `category_id = "${cat.id}"`,
+      })
+      setLinkedItemsCount(items.length)
+    } catch {
+      setLinkedItemsCount(0)
     }
   }
 
@@ -193,7 +208,7 @@ export default function CategoriesList() {
                         <Button
                           variant="ghost"
                           size="icon"
-                          onClick={() => setDeleteTarget(cat)}
+                          onClick={() => handleDeleteClick(cat)}
                           className="h-8 w-8 text-slate-500 hover:text-red-500 hover:bg-red-50"
                         >
                           <Trash2 className="h-4 w-4" />
@@ -267,6 +282,13 @@ export default function CategoriesList() {
               permanentemente?
               <br />
               Esta ação não poderá ser desfeita.
+              {linkedItemsCount > 0 && (
+                <span className="block mt-3 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-sm">
+                  ⚠️ Esta categoria está vinculada a {linkedItemsCount}{' '}
+                  {linkedItemsCount === 1 ? 'item' : 'itens'} da galeria. Ao excluir, os itens
+                  perderão a associação com esta categoria.
+                </span>
+              )}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
