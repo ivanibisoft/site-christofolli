@@ -52,12 +52,39 @@ export default function Concreteiras() {
                         <FileText className="h-4 w-4" /> Itens Avaliados
                       </h4>
                       <ul className="space-y-2">
-                        {module.items.map((item, i) => (
-                          <li key={i} className="text-sm flex items-start gap-2">
-                            <span className="text-accent mt-0.5">•</span>
-                            <span>{item}</span>
-                          </li>
-                        ))}
+                        <li className="text-sm flex items-start gap-2">
+                          <span className="text-accent mt-0.5">•</span>
+                          <span>
+                            Central dosadora – produtividade (tempo de carga, vazões dos materiais
+                            em modo pesagem e transferência para CB)
+                          </span>
+                        </li>
+                        <li className="text-sm flex items-start gap-2">
+                          <span className="text-accent mt-0.5">•</span>
+                          <span>
+                            Caminhões betoneira – Calibração de Hidrômetros e pressão do sistema
+                            hidráulico (Indicação do Slump Test)
+                          </span>
+                        </li>
+                        <li className="text-sm flex items-start gap-2">
+                          <span className="text-accent mt-0.5">•</span>
+                          <span>
+                            Sistema de pesagem (histórico e periodicidade de calibração das células
+                            de carga)
+                          </span>
+                        </li>
+                        <li className="text-sm flex items-start gap-2">
+                          <span className="text-accent mt-0.5">•</span>
+                          <span>Sensores de umidade (Calibração)</span>
+                        </li>
+                        <li className="text-sm flex items-start gap-2">
+                          <span className="text-accent mt-0.5">•</span>
+                          <span>Análise de disponibilidade operacional</span>
+                        </li>
+                        <li className="text-sm flex items-start gap-2">
+                          <span className="text-accent mt-0.5">•</span>
+                          <span>Consumo de combustível</span>
+                        </li>
                       </ul>
                     </div>
 
