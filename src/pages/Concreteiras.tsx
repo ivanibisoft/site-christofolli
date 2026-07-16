@@ -104,7 +104,6 @@ export default function Concreteiras() {
                         {module.objectives.map((obj, i) => (
                           <li key={i} className="text-sm flex items-start gap-2">
                             <CheckCircle className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />
-                            <span>{obj}</span>
                           </li>
                         ))}
                       </ul>
