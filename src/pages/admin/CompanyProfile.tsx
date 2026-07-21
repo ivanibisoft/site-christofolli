@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from 'react'
 import { Building2, Save, Loader2, ImagePlus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Textarea } from '@/components/ui/textarea'
+import { Label } from '@/components/ui/label'
 import { useToast } from '@/hooks/use-toast'
 import { getCompanyProfile, updateCompanyProfile } from '@/services/company-profile'
 import { extractFieldErrors } from '@/lib/pocketbase/errors'
@@ -15,6 +17,7 @@ export default function CompanyProfilePage() {
   const [file, setFile] = useState<File | null>(null)
   const [preview, setPreview] = useState<string | null>(null)
   const [currentPhotoUrl, setCurrentPhotoUrl] = useState<string | null>(null)
+  const [bio, setBio] = useState<string>('')
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const loadProfile = async () => {
@@ -22,6 +25,7 @@ export default function CompanyProfilePage() {
       const profile = await getCompanyProfile()
       if (profile) {
         setProfileId(profile.id)
+        setBio(profile.director_bio || '')
         if (profile.director_photo) {
           setCurrentPhotoUrl(pb.files.getUrl(profile, profile.director_photo))
         }
@@ -81,18 +85,16 @@ export default function CompanyProfilePage() {
       return
     }
 
-    if (!file) {
-      toast({ title: 'Selecione uma imagem', variant: 'destructive' })
-      return
-    }
-
     setSaving(true)
     const formData = new FormData()
-    formData.append('director_photo', file)
+    if (file) {
+      formData.append('director_photo', file)
+    }
+    formData.append('director_bio', bio)
 
     try {
       await updateCompanyProfile(profileId, formData)
-      toast({ title: 'Foto do diretor atualizada com sucesso!' })
+      toast({ title: 'Dados do perfil atualizados com sucesso!' })
       setFile(null)
       setPreview(null)
       if (fileInputRef.current) fileInputRef.current.value = ''
@@ -103,6 +105,12 @@ export default function CompanyProfilePage() {
         toast({
           title: 'Erro na imagem',
           description: fieldErrors.director_photo,
+          variant: 'destructive',
+        })
+      } else if (fieldErrors.director_bio) {
+        toast({
+          title: 'Erro na biografia',
+          description: fieldErrors.director_bio,
           variant: 'destructive',
         })
       } else {
@@ -197,17 +205,33 @@ export default function CompanyProfilePage() {
                 />
               </div>
             </div>
+          <div className="space-y-4">
+            <div>
+              <Label htmlFor="director_bio" className="text-base font-bold text-slate-800">
+                Biografia do Diretor
+              </Label>
+              <p className="text-slate-500 text-sm mt-1 mb-3">
+                Este texto será exibido na página pública "Sobre o Consultor".
+              </p>
+              <Textarea
+                id="director_bio"
+                value={bio}
+                onChange={(e) => setBio(e.target.value)}
+                rows={6}
+                placeholder="Digite a biografia profissional do diretor..."
+                className="resize-y"
+              />
+            </div>
           </div>
         </div>
 
         <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-          <Button
-            type="button"
-            onClick={onSubmit}
-            disabled={saving || !file}
-            className="min-w-[140px] shadow-sm"
-          >
-            {saving ? (
+        <Button
+          type="button"
+          onClick={onSubmit}
+          disabled={saving}
+          className="min-w-[140px] shadow-sm"
+        >            {saving ? (
               <>
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                 Salvando...

@@ -91,6 +91,10 @@ export default function Sobre() {
               especialização em Patologia das Construções pela UTFPR (2006), mestrado e doutorado em
               Construção Civil pelo PPGECC da Universidade Federal do Paraná.
             </p>
+
+            {directorBio && (
+              <p className="text-sm text-slate-600 leading-relaxed mb-4">{directorBio}</p>
+            )}
           </div>
         </div>
 
