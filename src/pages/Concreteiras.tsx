@@ -67,7 +67,7 @@ export default function Concreteiras() {
                           <span>
                             Formulações e traços utilizados – Método de dosagem, adaptação às
                             condições de logística de entregas e velocidade de atendimento às
-                            solicitações dos clientes;
+                            solicitações dos clientes2;
                           </span>
                         </li>
                         <li className="text-sm flex items-start gap-2">
