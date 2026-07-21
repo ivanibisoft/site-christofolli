@@ -205,44 +205,47 @@ export default function CompanyProfilePage() {
                 />
               </div>
             </div>
-          <div className="space-y-4">
-            <div>
-              <Label htmlFor="director_bio" className="text-base font-bold text-slate-800">
-                Biografia do Diretor
-              </Label>
-              <p className="text-slate-500 text-sm mt-1 mb-3">
-                Este texto será exibido na página pública "Sobre o Consultor".
-              </p>
-              <Textarea
-                id="director_bio"
-                value={bio}
-                onChange={(e) => setBio(e.target.value)}
-                rows={6}
-                placeholder="Digite a biografia profissional do diretor..."
-                className="resize-y"
-              />
+            <div className="space-y-4">
+              <div>
+                <Label htmlFor="director_bio" className="text-base font-bold text-slate-800">
+                  Biografia do Diretor
+                </Label>
+                <p className="text-slate-500 text-sm mt-1 mb-3">
+                  Este texto será exibido na página pública "Sobre o Consultor".
+                </p>
+                <Textarea
+                  id="director_bio"
+                  value={bio}
+                  onChange={(e) => setBio(e.target.value)}
+                  rows={6}
+                  placeholder="Digite a biografia profissional do diretor..."
+                  className="resize-y"
+                />
+              </div>
             </div>
           </div>
-        </div>
 
-        <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
-        <Button
-          type="button"
-          onClick={onSubmit}
-          disabled={saving}
-          className="min-w-[140px] shadow-sm"
-        >            {saving ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Salvando...
-              </>
-            ) : (
-              <>
-                <Save className="h-4 w-4 mr-2" />
-                Salvar Alterações
-              </>
-            )}
-          </Button>
+          <div className="px-6 py-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-3">
+            <Button
+              type="button"
+              onClick={onSubmit}
+              disabled={saving}
+              className="min-w-[140px] shadow-sm"
+            >
+              {' '}
+              {saving ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Salvando...
+                </>
+              ) : (
+                <>
+                  <Save className="h-4 w-4 mr-2" />
+                  Salvar Alterações
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </div>
     </div>
