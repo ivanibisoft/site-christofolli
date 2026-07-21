@@ -3,6 +3,7 @@ import type { RecordModel } from 'pocketbase'
 
 export interface AuditService extends RecordModel {
   title: string
+  description: string
   evaluated_items: string
   objectives_and_deliveries: string
   order: number

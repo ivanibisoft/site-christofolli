@@ -21,6 +21,7 @@ import { extractFieldErrors } from '@/lib/pocketbase/errors'
 
 const formSchema = z.object({
   title: z.string().min(1, 'O título é obrigatório'),
+  description: z.string().optional(),
   evaluated_items: z.string().min(1, 'Os itens avaliados são obrigatórios'),
   objectives_and_deliveries: z.string().min(1, 'Os objetivos e entregas são obrigatórios'),
   order: z.coerce.number().int().optional(),
@@ -39,6 +40,7 @@ export default function AuditServiceForm() {
     resolver: zodResolver(formSchema),
     defaultValues: {
       title: '',
+      description: '',
       evaluated_items: '',
       objectives_and_deliveries: '',
       order: 0,
@@ -51,6 +53,7 @@ export default function AuditServiceForm() {
         .then((item) => {
           form.reset({
             title: item.title,
+            description: item.description ?? '',
             evaluated_items: item.evaluated_items,
             objectives_and_deliveries: item.objectives_and_deliveries,
             order: item.order ?? 0,
@@ -69,6 +72,7 @@ export default function AuditServiceForm() {
     try {
       const data = {
         title: values.title,
+        description: values.description ?? '',
         evaluated_items: values.evaluated_items,
         objectives_and_deliveries: values.objectives_and_deliveries,
         order: values.order ?? 0,
@@ -141,6 +145,24 @@ export default function AuditServiceForm() {
                       <Input
                         placeholder="Ex: Auditoria de Compras e Matérias-Primas..."
                         className="bg-slate-50 focus:bg-white"
+                        {...field}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="description"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel className="text-slate-800">Descrição</FormLabel>
+                    <FormControl>
+                      <Textarea
+                        placeholder="Breve resumo do serviço de auditoria..."
+                        className="min-h-[80px] resize-y bg-slate-50 focus:bg-white"
                         {...field}
                       />
                     </FormControl>

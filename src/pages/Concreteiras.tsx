@@ -60,54 +60,69 @@ export default function Concreteiras() {
             </div>
           ) : (
             <Accordion type="single" collapsible className="w-full">
-              {modules.map((module) => (
-                <AccordionItem
-                  value={module.id}
-                  key={module.id}
-                  className="border-b border-slate-100"
-                >
-                  <AccordionTrigger className="text-lg font-semibold hover:text-accent py-4">
-                    {module.title}
-                  </AccordionTrigger>
-                  <AccordionContent className="text-slate-600 pb-6">
-                    <div className="grid md:grid-cols-2 gap-6 mt-4">
-                      <div className="bg-slate-50 p-4 rounded-lg">
-                        <h4 className="font-semibold text-primary mb-3 flex items-center gap-2">
-                          <FileText className="h-4 w-4" /> Itens Avaliados
-                        </h4>
-                        <ul className="space-y-2">
-                          {module.evaluated_items
-                            .split('\n')
-                            .filter(Boolean)
-                            .map((item, idx) => (
-                              <li key={idx} className="text-sm flex items-start gap-2">
-                                <span className="text-accent mt-0.5">•</span>
-                                <span>{item.trim()}</span>
-                              </li>
-                            ))}
-                        </ul>
+              {modules.map((module, index) => {
+                const itemNumber = String(index + 1).padStart(2, '0')
+                return (
+                  <AccordionItem
+                    value={module.id}
+                    key={module.id}
+                    className="border-b border-slate-100"
+                  >
+                    <AccordionTrigger className="text-lg font-semibold hover:text-accent py-4 text-left">
+                      <div className="flex items-start gap-3 flex-1">
+                        <span className="text-accent font-bold text-xl shrink-0 leading-tight">
+                          {itemNumber}.
+                        </span>
+                        <span>{module.title}</span>
                       </div>
+                    </AccordionTrigger>
+                    <AccordionContent className="text-slate-600 pb-6">
+                      <div className="pl-8 sm:pl-10">
+                        {module.description && (
+                          <p className="text-sm text-slate-500 mb-6 leading-relaxed">
+                            {module.description}
+                          </p>
+                        )}
+                        <div className="grid md:grid-cols-2 gap-6">
+                          <div className="bg-slate-50 p-4 rounded-lg">
+                            <h4 className="font-semibold text-primary mb-3 flex items-center gap-2">
+                              <FileText className="h-4 w-4" /> Itens Avaliados
+                            </h4>
+                            <ul className="space-y-2">
+                              {module.evaluated_items
+                                .split('\n')
+                                .filter(Boolean)
+                                .map((item, idx) => (
+                                  <li key={idx} className="text-sm flex items-start gap-2">
+                                    <span className="text-accent mt-0.5">•</span>
+                                    <span>{item.trim()}</span>
+                                  </li>
+                                ))}
+                            </ul>
+                          </div>
 
-                      <div className="bg-slate-50 p-4 rounded-lg">
-                        <h4 className="font-semibold text-primary mb-3 flex items-center gap-2">
-                          <CheckCircle className="h-4 w-4" /> Objetivos e Entregas
-                        </h4>
-                        <ul className="space-y-2">
-                          {module.objectives_and_deliveries
-                            .split('\n')
-                            .filter(Boolean)
-                            .map((item, idx) => (
-                              <li key={idx} className="text-sm flex items-start gap-2">
-                                <CircleCheckBig className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />
-                                <span>{item.trim()}</span>
-                              </li>
-                            ))}
-                        </ul>
+                          <div className="bg-slate-50 p-4 rounded-lg">
+                            <h4 className="font-semibold text-primary mb-3 flex items-center gap-2">
+                              <CheckCircle className="h-4 w-4" /> Objetivos e Entregas
+                            </h4>
+                            <ul className="space-y-2">
+                              {module.objectives_and_deliveries
+                                .split('\n')
+                                .filter(Boolean)
+                                .map((item, idx) => (
+                                  <li key={idx} className="text-sm flex items-start gap-2">
+                                    <CircleCheckBig className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />
+                                    <span>{item.trim()}</span>
+                                  </li>
+                                ))}
+                            </ul>
+                          </div>
+                        </div>
                       </div>
-                    </div>
-                  </AccordionContent>
-                </AccordionItem>
-              ))}
+                    </AccordionContent>
+                  </AccordionItem>
+                )
+              })}
             </Accordion>
           )}
         </div>
