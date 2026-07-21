@@ -4,13 +4,13 @@ import { GraduationCap, Briefcase, FileText, Linkedin, Eye, Download, User } fro
 import { Button } from '@/components/ui/button'
 import { Card, CardContent } from '@/components/ui/card'
 import { PdfViewerDialog } from '@/components/PdfViewerDialog'
-import { BIO_TIMELINE } from '@/lib/data'
 import {
   getCompanyProfile,
   getDirectorPhotoUrl,
   type CompanyProfile,
 } from '@/services/company-profile'
 import { getPublications, type Publication } from '@/services/publications'
+import { getTimelineItems, type TimelineItem } from '@/services/timeline-items'
 import { useRealtime } from '@/hooks/use-realtime'
 import { getFileUrl } from '@/lib/file-url'
 
@@ -19,6 +19,7 @@ export default function Sobre() {
   const [directorBio, setDirectorBio] = useState<string>('')
   const [profileLoading, setProfileLoading] = useState(true)
   const [publications, setPublications] = useState<Publication[]>([])
+  const [timelineItems, setTimelineItems] = useState<TimelineItem[]>([])
   const [pdfViewer, setPdfViewer] = useState<{ url: string; fileName: string } | null>(null)
 
   const getPdfUrl = useCallback((pub: Publication): string => {
@@ -46,9 +47,16 @@ export default function Sobre() {
       .catch(() => {})
   }
 
+  const loadTimeline = () => {
+    getTimelineItems()
+      .then(setTimelineItems)
+      .catch(() => {})
+  }
+
   useEffect(() => {
     loadProfile()
     loadPublications()
+    loadTimeline()
   }, [])
 
   useRealtime('company_profile', () => {
@@ -57,6 +65,10 @@ export default function Sobre() {
 
   useRealtime('publications', () => {
     loadPublications()
+  })
+
+  useRealtime('timeline_items', () => {
+    loadTimeline()
   })
 
   return (
@@ -106,19 +118,23 @@ export default function Sobre() {
             </h3>
 
             <div className="space-y-6 relative before:absolute before:inset-0 before:ml-5 before:-translate-x-px md:before:mx-auto md:before:translate-x-0 before:h-full before:w-0.5 before:bg-gradient-to-b before:from-transparent before:via-slate-300 before:to-transparent">
-              {BIO_TIMELINE.map((item, i) => (
+              {timelineItems.map((item, i) => (
                 <div
-                  key={i}
+                  key={item.id}
                   className="relative flex items-center justify-between md:justify-normal md:odd:flex-row-reverse group is-active"
                 >
                   <div className="flex items-center justify-center w-10 h-10 rounded-full border border-white bg-slate-100 text-slate-500 shadow shrink-0 md:order-1 md:group-odd:-translate-x-1/2 md:group-even:translate-x-1/2 z-10">
-                    <Briefcase className="h-4 w-4" />
+                    {item.type === 'academic' ? (
+                      <GraduationCap className="h-4 w-4" />
+                    ) : (
+                      <Briefcase className="h-4 w-4" />
+                    )}
                   </div>
 
                   <Card className="w-[calc(100%-4rem)] md:w-[calc(50%-2.5rem)] hover:border-primary transition-colors">
                     <CardContent className="p-5">
                       <div className="flex items-center justify-between mb-2">
-                        <span className="font-bold text-accent text-sm">{item.year}</span>
+                        <span className="font-bold text-accent text-sm">{item.period}</span>
                       </div>
                       <h4 className="font-bold text-primary mb-1">{item.title}</h4>
                       <div className="text-sm font-medium text-slate-500 mb-2">

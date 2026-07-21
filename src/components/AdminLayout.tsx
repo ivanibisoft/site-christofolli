@@ -11,7 +11,9 @@ import {
   Server,
   BarChart3,
   ClipboardList,
+  Clock,
 } from 'lucide-react'
+
 import { useAuth } from '@/hooks/use-auth'
 import { Button } from '@/components/ui/button'
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet'
@@ -22,8 +24,10 @@ const navigation = [
   { name: 'Publicações', href: '/admin/publications', icon: FileText },
   { name: 'Galeria', href: '/admin/gallery', icon: ImageIcon },
   { name: 'Resultados Estatísticos', href: '/admin/statistical-results', icon: BarChart3 },
+  { name: 'Trajetória', href: '/admin/timeline', icon: Clock },
   { name: 'Serviços de Auditoria', href: '/admin/audit-services', icon: ClipboardList },
   { name: 'Categorias', href: '/admin/categories', icon: Tag },
+
   { name: 'Contatos', href: '/admin/contacts', icon: Mail },
   { name: 'Configurações de E-mail', href: '/admin/smtp-settings', icon: Server },
 ]

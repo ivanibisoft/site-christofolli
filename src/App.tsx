@@ -21,7 +21,10 @@ import StatisticalResultsList from './pages/admin/StatisticalResultsList'
 import StatisticalResultsForm from './pages/admin/StatisticalResultsForm'
 import AuditServicesList from './pages/admin/AuditServicesList'
 import AuditServiceForm from './pages/admin/AuditServiceForm'
+import TimelineList from './pages/admin/TimelineList'
+import TimelineForm from './pages/admin/TimelineForm'
 import CategoriesList from './pages/admin/CategoriesList'
+
 import CompanyProfilePage from './pages/admin/CompanyProfile'
 import SmtpSettingsPage from './pages/admin/SmtpSettings'
 
@@ -55,7 +58,11 @@ const App = () => (
             <Route path="audit-services" element={<AuditServicesList />} />
             <Route path="audit-services/new" element={<AuditServiceForm />} />
             <Route path="audit-services/:id" element={<AuditServiceForm />} />
+            <Route path="timeline" element={<TimelineList />} />
+            <Route path="timeline/new" element={<TimelineForm />} />
+            <Route path="timeline/:id" element={<TimelineForm />} />
             <Route path="categories" element={<CategoriesList />} />
+
             <Route path="company-profile" element={<CompanyProfilePage />} />
             <Route path="smtp-settings" element={<SmtpSettingsPage />} />
             <Route path="contacts" element={<ContactsList />} />
