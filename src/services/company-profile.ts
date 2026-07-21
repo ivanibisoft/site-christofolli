@@ -3,6 +3,7 @@ import type { RecordModel } from 'pocketbase'
 
 export interface CompanyProfile extends RecordModel {
   director_photo: string
+  director_bio: string
 }
 
 export const getCompanyProfile = async (): Promise<CompanyProfile | null> => {

@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-21T22:07:18.685Z",
+  "generatedAt": "2026-07-21T23:34:47.259Z",
   "collections": [
     {
       "name": "users",
@@ -249,6 +249,12 @@
           "required": false,
           "system": false,
           "autodateTriggers": ["onCreate", "onUpdate"]
+        },
+        {
+          "name": "director_bio",
+          "type": "text",
+          "required": false,
+          "system": false
         }
       ],
       "indexes": []

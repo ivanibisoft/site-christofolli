@@ -16,6 +16,7 @@ import { getFileUrl } from '@/lib/file-url'
 
 export default function Sobre() {
   const [directorPhoto, setDirectorPhoto] = useState<string | null>(null)
+  const [directorBio, setDirectorBio] = useState<string>('')
   const [profileLoading, setProfileLoading] = useState(true)
   const [publications, setPublications] = useState<Publication[]>([])
   const [pdfViewer, setPdfViewer] = useState<{ url: string; fileName: string } | null>(null)
@@ -28,9 +29,11 @@ export default function Sobre() {
     getCompanyProfile()
       .then((profile) => {
         setDirectorPhoto(getDirectorPhotoUrl(profile))
+        setDirectorBio(profile?.director_bio || '')
       })
       .catch(() => {
         setDirectorPhoto(null)
+        setDirectorBio('')
       })
       .finally(() => {
         setProfileLoading(false)
@@ -88,25 +91,9 @@ export default function Sobre() {
               especialização em Patologia das Construções pela UTFPR (2006), mestrado e doutorado em
               Construção Civil pelo PPGECC da Universidade Federal do Paraná.
             </p>
-            <p className="text-slate-600 leading-relaxed">
-              <span id="docs-internal-guid-19e5a441-7fff-bc17-3494-314597a0970b">
-                <p dir="ltr">
-                  <span>
-                    Atuou como Gerente Corporativo de Desenvolvimento Técnico na (Cia de Cimento
-                    Itambé e Concrebras), como engenheiro de pesquisa na Lafarge - Concreto.
-                    Atualmente é Diretor da Christófolli Consultoria de Engenharia Ltda, com vasta
-                    experiência em gestão de controle de qualidade, automação de centrais de
-                    concreto, treinamento de mão de obra, estatística aplicada, concretos especiais,
-                    CAD/CAA, comportamento térmico do concreto em blocos de fundação e
-                    sustentabilidade na construção.
-                  </span>
-                </p>
-                <div>
-                  <span>
-                    <br />
-                  </span>
-                </div>
-              </span>
+            <p className="text-sm text-slate-600 leading-relaxed">
+              {directorBio ||
+                'Atuou na gestão técnica de controle de qualidade do cimento, atendimento aos clientes da Cia de Cimento Itambé assim como na divisão de concreto (CONCREBRAS), no desenvolvimento de concretos especiais, análises estatísticas, redução de custos, assistência técnica e apoio em projetos de grande complexidade construtiva.'}
             </p>
           </div>
         </div>
