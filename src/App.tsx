@@ -19,6 +19,8 @@ import GalleryList from './pages/admin/GalleryList'
 import GalleryForm from './pages/admin/GalleryForm'
 import StatisticalResultsList from './pages/admin/StatisticalResultsList'
 import StatisticalResultsForm from './pages/admin/StatisticalResultsForm'
+import AuditServicesList from './pages/admin/AuditServicesList'
+import AuditServiceForm from './pages/admin/AuditServiceForm'
 import CategoriesList from './pages/admin/CategoriesList'
 import CompanyProfilePage from './pages/admin/CompanyProfile'
 import SmtpSettingsPage from './pages/admin/SmtpSettings'
@@ -50,6 +52,9 @@ const App = () => (
             <Route path="statistical-results" element={<StatisticalResultsList />} />
             <Route path="statistical-results/new" element={<StatisticalResultsForm />} />
             <Route path="statistical-results/:id" element={<StatisticalResultsForm />} />
+            <Route path="audit-services" element={<AuditServicesList />} />
+            <Route path="audit-services/new" element={<AuditServiceForm />} />
+            <Route path="audit-services/:id" element={<AuditServiceForm />} />
             <Route path="categories" element={<CategoriesList />} />
             <Route path="company-profile" element={<CompanyProfilePage />} />
             <Route path="smtp-settings" element={<SmtpSettingsPage />} />

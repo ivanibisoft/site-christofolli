@@ -1,5 +1,6 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Factory, CheckCircle, FileText, CircleCheckBig } from 'lucide-react'
+import { Factory, CheckCircle, FileText, CircleCheckBig, Loader2 } from 'lucide-react'
 import {
   Accordion,
   AccordionContent,
@@ -8,18 +9,27 @@ import {
 } from '@/components/ui/accordion'
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
-import { AUDIT_MODULES } from '@/lib/data'
-
-const EXCLUDED_TITLES = [
-  'Auditoria de Custos Operacionais',
-  'Auditoria de Gestão, Comercial e Processos Internos',
-]
+import { getAuditServices, type AuditService } from '@/services/audit-services'
+import { useRealtime } from '@/hooks/use-realtime'
 
 export default function Concreteiras() {
-  const filteredModules = AUDIT_MODULES.filter(
-    (module: { id: string; title: string; description: string }) =>
-      !EXCLUDED_TITLES.some((t) => module.title.includes(t)),
-  )
+  const [modules, setModules] = useState<AuditService[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const loadData = () => {
+    getAuditServices()
+      .then(setModules)
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  useRealtime('audit_services', () => {
+    loadData()
+  })
 
   return (
     <div className="py-12 animate-fade-in">
@@ -43,78 +53,63 @@ export default function Concreteiras() {
             Escopo dos Serviços de Auditoria
           </h3>
 
-          <Accordion type="single" collapsible className="w-full">
-            {filteredModules.map((module) => (
-              <AccordionItem
-                value={module.id}
-                key={module.id}
-                className="border-b border-slate-100"
-              >
-                <AccordionTrigger className="text-lg font-semibold hover:text-accent py-4">
-                  {module.title}
-                </AccordionTrigger>
-                <AccordionContent className="text-slate-600 pb-6">
-                  <p className="mb-4 text-sm font-medium">{module.description}</p>
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-16 text-slate-500">
+              <Loader2 className="h-8 w-8 animate-spin mb-4 text-primary" />
+              <p>Carregando serviços...</p>
+            </div>
+          ) : (
+            <Accordion type="single" collapsible className="w-full">
+              {modules.map((module) => (
+                <AccordionItem
+                  value={module.id}
+                  key={module.id}
+                  className="border-b border-slate-100"
+                >
+                  <AccordionTrigger className="text-lg font-semibold hover:text-accent py-4">
+                    {module.title}
+                  </AccordionTrigger>
+                  <AccordionContent className="text-slate-600 pb-6">
+                    <div className="grid md:grid-cols-2 gap-6 mt-4">
+                      <div className="bg-slate-50 p-4 rounded-lg">
+                        <h4 className="font-semibold text-primary mb-3 flex items-center gap-2">
+                          <FileText className="h-4 w-4" /> Itens Avaliados
+                        </h4>
+                        <ul className="space-y-2">
+                          {module.evaluated_items
+                            .split('\n')
+                            .filter(Boolean)
+                            .map((item, idx) => (
+                              <li key={idx} className="text-sm flex items-start gap-2">
+                                <span className="text-accent mt-0.5">•</span>
+                                <span>{item.trim()}</span>
+                              </li>
+                            ))}
+                        </ul>
+                      </div>
 
-                  <div className="grid md:grid-cols-2 gap-6 mt-4">
-                    <div className="bg-slate-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-primary mb-3 flex items-center gap-2">
-                        <FileText className="h-4 w-4" /> Itens Avaliados
-                      </h4>
-                      <ul className="space-y-2">
-                        <li className="text-sm flex items-start gap-2">
-                          <span className="text-accent mt-0.5">•</span>
-                          <span>
-                            Formulações e traços utilizados – Método de dosagem, adaptação às
-                            condições de logística de entregas e velocidade de atendimento às
-                            solicitações dos clientes2;
-                          </span>
-                        </li>
-                        <li className="text-sm flex items-start gap-2">
-                          <span className="text-accent mt-0.5">•</span>
-                          <span>Consumo de cimento por MPa;</span>
-                        </li>
-                        <li className="text-sm flex items-start gap-2">
-                          <span className="text-accent mt-0.5">•</span>
-                          <span>
-                            Análise estatística das resistências – efetividade e velocidade dos
-                            ajustes de MCC;
-                          </span>
-                        </li>
-                        <li className="text-sm flex items-start gap-2">
-                          <span className="text-accent mt-0.5">•</span>
-                          <span>
-                            Controle de abatimento (slump), umidade e água adicionada na central e
-                            obra;
-                          </span>
-                        </li>
-                      </ul>
+                      <div className="bg-slate-50 p-4 rounded-lg">
+                        <h4 className="font-semibold text-primary mb-3 flex items-center gap-2">
+                          <CheckCircle className="h-4 w-4" /> Objetivos e Entregas
+                        </h4>
+                        <ul className="space-y-2">
+                          {module.objectives_and_deliveries
+                            .split('\n')
+                            .filter(Boolean)
+                            .map((item, idx) => (
+                              <li key={idx} className="text-sm flex items-start gap-2">
+                                <CircleCheckBig className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />
+                                <span>{item.trim()}</span>
+                              </li>
+                            ))}
+                        </ul>
+                      </div>
                     </div>
-
-                    <div className="bg-slate-50 p-4 rounded-lg">
-                      <h4 className="font-semibold text-primary mb-3 flex items-center gap-2">
-                        <CheckCircle className="h-4 w-4" /> Objetivos e Entregas
-                      </h4>
-                      <ul className="space-y-2">
-                        <li className="text-sm flex items-start gap-2">
-                          <CircleCheckBig className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />
-                          <span>Redução do consumo de cimento</span>
-                        </li>
-                        <li className="text-sm flex items-start gap-2">
-                          <CircleCheckBig className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />
-                          <span>Otimização de traços</span>
-                        </li>
-                        <li className="text-sm flex items-start gap-2">
-                          <CircleCheckBig className="h-4 w-4 text-green-500 shrink-0 mt-0.5" />
-                          <span>Melhoria da qualidade final e redução da variabilidade</span>
-                        </li>
-                      </ul>
-                    </div>
-                  </div>
-                </AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
+                  </AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          )}
         </div>
 
         <div className="grid md:grid-cols-2 gap-8 mb-12">
