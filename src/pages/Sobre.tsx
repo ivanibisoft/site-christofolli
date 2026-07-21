@@ -91,10 +91,6 @@ export default function Sobre() {
               especialização em Patologia das Construções pela UTFPR (2006), mestrado e doutorado em
               Construção Civil pelo PPGECC da Universidade Federal do Paraná.
             </p>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              {directorBio ||
-                'Atuou na gestão técnica de controle de qualidade do cimento, atendimento aos clientes da Cia de Cimento Itambé assim como na divisão de concreto (CONCREBRAS), no desenvolvimento de concretos especiais, análises estatísticas, redução de custos, assistência técnica e apoio em projetos de grande complexidade construtiva.'}
-            </p>
           </div>
         </div>
 
