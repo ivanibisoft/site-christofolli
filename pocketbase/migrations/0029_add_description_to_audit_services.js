@@ -3,7 +3,7 @@ migrate(
     const col = app.findCollectionByNameOrId('audit_services')
     if (!col.fields.getByName('description')) {
       col.fields.add(
-        new (require('__DB__').TextField)({
+        new TextField({
           name: 'description',
           required: false,
         }),
