@@ -35,6 +35,7 @@ const formSchema = z.object({
   title: z.string().min(1, 'O título é obrigatório'),
   description: z.string().optional(),
   published_date: z.string().optional(),
+  category: z.string().optional(),
 })
 
 export default function PublicationForm() {
@@ -62,6 +63,7 @@ export default function PublicationForm() {
       title: '',
       description: '',
       published_date: '',
+      category: 'Technical',
     },
   })
 
@@ -73,6 +75,7 @@ export default function PublicationForm() {
             title: pub.title,
             description: pub.description || '',
             published_date: pub.published_date ? pub.published_date.substring(0, 10) : '',
+            category: pub.category || 'Technical',
           })
           if (pub.pdf_file) {
             setExistingPdf({
@@ -179,6 +182,7 @@ export default function PublicationForm() {
     const formData = new FormData()
     formData.append('title', values.title)
     formData.append('description', values.description || '')
+    formData.append('category', values.category || 'Technical')
     if (values.published_date) {
       formData.append(
         'published_date',
@@ -471,6 +475,29 @@ export default function PublicationForm() {
               </FormDescription>
               {fileError && <p className="text-sm font-medium text-destructive">{fileError}</p>}
             </div>
+
+            <FormField
+              control={form.control}
+              name="category"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel className="text-slate-800">Categoria</FormLabel>
+                  <FormControl>
+                    <select
+                      className="w-full rounded-md border border-slate-200 bg-slate-50 focus:bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+                      {...field}
+                    >
+                      <option value="Technical">Técnica</option>
+                      <option value="Blog">Blog</option>
+                    </select>
+                  </FormControl>
+                  <FormDescription>
+                    Selecione "Blog" para exibir na página inicial ou "Técnica" para a página Sobre.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
 
             <FormField
               control={form.control}

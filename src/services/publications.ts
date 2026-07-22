@@ -9,6 +9,7 @@ export interface Publication {
   published_date?: string
   pdf_file?: string
   cover_image?: string
+  category?: string
   created: string
   updated: string
 }
@@ -16,6 +17,7 @@ export interface Publication {
 export const getRecentPublications = async (limit: number = 3): Promise<Publication[]> => {
   const result = await pb.collection('publications').getList<Publication>(1, limit, {
     sort: '-created',
+    filter: "category = 'Blog'",
   })
   return result.items
 }
@@ -23,6 +25,7 @@ export const getRecentPublications = async (limit: number = 3): Promise<Publicat
 export const getPublications = async (): Promise<Publication[]> => {
   return pb.collection('publications').getFullList<Publication>({
     sort: '-created',
+    filter: "category != 'Blog'",
   })
 }
 

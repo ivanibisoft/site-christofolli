@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-07-22T01:11:37.478Z",
+  "generatedAt": "2026-07-22T01:31:56.349Z",
   "collections": [
     {
       "name": "users",
@@ -98,6 +98,13 @@
           "type": "file",
           "required": false,
           "system": false
+        },
+        {
+          "name": "category",
+          "type": "select",
+          "required": false,
+          "system": false,
+          "selectValues": ["Blog", "Technical"]
         }
       ],
       "indexes": []
