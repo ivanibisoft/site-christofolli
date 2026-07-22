@@ -76,7 +76,7 @@ export default function Layout() {
 
           <div className="hidden md:flex items-center gap-4">
             <Button asChild className="bg-accent hover:bg-accent/90 text-white font-semibold">
-              <Link to="/#contato">Solicitar Consultoria</Link>
+              <Link to="/#contato">Entre em Contato</Link>
             </Button>
           </div>
 
@@ -128,7 +128,7 @@ export default function Layout() {
                     asChild
                     className="w-full bg-accent hover:bg-accent/90 text-white font-semibold"
                   >
-                    <Link to="/#contato">Solicitar Consultoria</Link>
+                    <Link to="/#contato">Entre em Contato</Link>
                   </Button>
                 </SheetClose>
               </div>
