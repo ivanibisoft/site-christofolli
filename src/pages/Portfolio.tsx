@@ -124,7 +124,7 @@ export default function Portfolio() {
               {filteredItems.map((item) => (
                 <Dialog key={item.id}>
                   <DialogTrigger asChild>
-                    <div className="group relative overflow-hidden rounded-xl aspect-[4/3] bg-muted cursor-pointer">
+                    <div className="group relative overflow-hidden rounded-xl h-64 bg-muted/50 cursor-pointer flex items-center justify-center border">
                       <img
                         src={
                           item.image
@@ -136,7 +136,7 @@ export default function Portfolio() {
                               )}&color=gray`
                         }
                         alt={item.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6">
                         <span className="text-xs font-medium text-white/80 uppercase tracking-wider mb-1">
@@ -165,7 +165,7 @@ export default function Portfolio() {
                               )}&color=gray`
                         }
                         alt={item.title}
-                        className="w-full max-h-[60vh] object-cover bg-black/5"
+                        className="w-full max-h-[80vh] object-contain bg-muted/30"
                       />
                       <div className="p-6">
                         <div className="flex items-center gap-2 mb-2">
@@ -206,13 +206,13 @@ export default function Portfolio() {
               <Dialog key={item.id}>
                 <DialogTrigger asChild>
                   <div className="group relative overflow-hidden rounded-xl bg-card border cursor-pointer shadow-sm hover:shadow-md transition-shadow">
-                    <div className="aspect-[4/3] overflow-hidden bg-muted">
+                    <div className="h-64 overflow-hidden bg-muted/50 flex items-center justify-center">
                       <img
                         src={
                           item.image ? pb.files.getUrl(item, item.image) : statPlaceholder(600, 450)
                         }
                         alt={item.title}
-                        className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+                        className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
                       />
                     </div>
                     <div className="p-5">
@@ -236,7 +236,7 @@ export default function Portfolio() {
                         item.image ? pb.files.getUrl(item, item.image) : statPlaceholder(1200, 800)
                       }
                       alt={item.title}
-                      className="w-full max-h-[60vh] object-cover bg-black/5"
+                      className="w-full max-h-[80vh] object-contain bg-muted/30"
                     />
                     <div className="p-6">
                       <h3 className="text-2xl font-bold text-foreground mb-2">{item.title}</h3>
