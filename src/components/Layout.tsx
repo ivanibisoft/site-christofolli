@@ -42,7 +42,6 @@ export default function Layout() {
     { name: 'Portfólio', path: '/portfolio' },
     { name: 'Blog', path: '/blog' },
     { name: 'Sobre', path: '/sobre' },
-    { name: 'Contato', path: '/#contato' },
   ]
 
   return (
