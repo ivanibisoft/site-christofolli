@@ -34,6 +34,8 @@ export default function Layout() {
 
   const mobileNavItems = [
     { name: 'Início', path: '/' },
+    { name: 'Para Construtoras', path: '/construtoras' },
+    { name: 'Para Concreteiras', path: '/concreteiras' },
     { name: 'Portfólio', path: '/portfolio' },
     { name: 'Blog', path: '/blog' },
     { name: 'Sobre', path: '/sobre' },
@@ -106,7 +108,7 @@ export default function Layout() {
                     <Link
                       to={item.path}
                       className={cn(
-                        'px-4 py-3 rounded-lg text-base font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+                        'flex items-center min-h-[44px] px-4 py-3 rounded-lg text-base font-medium transition-colors hover:bg-accent/10 hover:text-accent',
                         location.pathname === item.path.split('#')[0] &&
                           (item.path.includes('#') ? false : true)
                           ? 'text-accent bg-accent/5'
