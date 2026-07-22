@@ -26,6 +26,7 @@ export default function Layout() {
     { name: 'Para Construtoras', path: '/construtoras' },
     { name: 'Para Concreteiras', path: '/concreteiras' },
     { name: 'Portfólio', path: '/portfolio' },
+    { name: 'Blog', path: '/blog' },
     { name: 'Sobre', path: '/sobre' },
   ]
 

@@ -22,6 +22,13 @@ export const getRecentPublications = async (limit: number = 3): Promise<Publicat
   return result.items
 }
 
+export const getBlogPublications = async (): Promise<Publication[]> => {
+  return pb.collection('publications').getFullList<Publication>({
+    sort: '-published_date',
+    filter: "category = 'Blog'",
+  })
+}
+
 export const getPublications = async (): Promise<Publication[]> => {
   return pb.collection('publications').getFullList<Publication>({
     sort: '-created',

@@ -9,6 +9,7 @@ import Index from './pages/Index'
 import Construtoras from './pages/Construtoras'
 import Concreteiras from './pages/Concreteiras'
 import Portfolio from './pages/Portfolio'
+import Blog from './pages/Blog'
 import Sobre from './pages/Sobre'
 import PublicationDetail from './pages/PublicationDetail'
 import NotFound from './pages/NotFound'
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/construtoras" element={<Construtoras />} />
             <Route path="/concreteiras" element={<Concreteiras />} />
             <Route path="/portfolio" element={<Portfolio />} />
+            <Route path="/blog" element={<Blog />} />
             <Route path="/sobre" element={<Sobre />} />
             <Route path="/publicacoes/:id" element={<PublicationDetail />} />
           </Route>
