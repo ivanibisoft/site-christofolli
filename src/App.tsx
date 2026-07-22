@@ -10,6 +10,7 @@ import Construtoras from './pages/Construtoras'
 import Concreteiras from './pages/Concreteiras'
 import Portfolio from './pages/Portfolio'
 import Sobre from './pages/Sobre'
+import PublicationDetail from './pages/PublicationDetail'
 import NotFound from './pages/NotFound'
 import Login from './pages/admin/Login'
 import PublicationsList from './pages/admin/PublicationsList'
@@ -41,6 +42,7 @@ const App = () => (
             <Route path="/concreteiras" element={<Concreteiras />} />
             <Route path="/portfolio" element={<Portfolio />} />
             <Route path="/sobre" element={<Sobre />} />
+            <Route path="/publicacoes/:id" element={<PublicationDetail />} />
           </Route>
 
           <Route path="/admin/login" element={<Login />} />

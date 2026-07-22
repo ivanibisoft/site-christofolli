@@ -11,6 +11,7 @@ import {
   Linkedin,
   Mail,
   FileText,
+  ArrowUpRight,
 } from 'lucide-react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -351,22 +352,22 @@ export default function Index() {
               {publications.map((pub) => (
                 <Card
                   key={pub.id}
-                  className="overflow-hidden border-none shadow-elevation hover:-translate-y-1 transition-transform duration-300"
+                  className="overflow-hidden border-none shadow-elevation hover:-translate-y-1 transition-transform duration-300 flex flex-col"
                 >
                   {pub.cover_image ? (
-                    <div className="aspect-[16/9] overflow-hidden bg-muted/30">
+                    <div className="h-48 overflow-hidden bg-muted/30 flex items-center justify-center">
                       <img
                         src={getFileUrl(pub, pub.cover_image)}
                         alt={pub.title}
-                        className="w-full h-full object-cover"
+                        className="w-full h-full object-contain"
                       />
                     </div>
                   ) : (
-                    <div className="aspect-[16/9] bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
+                    <div className="h-48 bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
                       <FileText className="h-12 w-12 text-slate-400" />
                     </div>
                   )}
-                  <CardContent className="p-6">
+                  <CardContent className="p-6 flex flex-col flex-1">
                     {pub.published_date && (
                       <p className="text-xs text-muted-foreground mb-2 font-medium">
                         {new Date(pub.published_date).toLocaleDateString('pt-BR', {
@@ -380,10 +381,17 @@ export default function Index() {
                       {pub.title}
                     </h3>
                     {pub.description && (
-                      <p className="text-sm text-muted-foreground line-clamp-3">
+                      <p className="text-sm text-muted-foreground line-clamp-3 mb-4">
                         {pub.description}
                       </p>
                     )}
+                    <div className="mt-auto">
+                      <Button asChild variant="outline" size="sm">
+                        <Link to={`/publicacoes/${pub.id}`}>
+                          Ler mais <ArrowUpRight className="ml-1.5 h-3.5 w-3.5" />
+                        </Link>
+                      </Button>
+                    </div>
                   </CardContent>
                 </Card>
               ))}
