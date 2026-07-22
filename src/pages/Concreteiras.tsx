@@ -130,7 +130,7 @@ export default function Concreteiras() {
         <div className="grid md:grid-cols-2 gap-8 mb-12">
           <Card className="bg-primary text-white border-none">
             <CardContent className="p-8">
-              <h3 className="text-xl font-bold mb-4">Metodologia de Trabalho</h3>
+              <h3 className="text-xl font-bold mb-4 text-white">Metodologia de Trabalho</h3>
               <ul className="space-y-3 text-slate-200">
                 <li className="flex items-center gap-3">✓ Visitas técnicas presenciais</li>
                 <li className="flex items-center gap-3">✓ Entrevistas com equipes operacionais</li>
