@@ -12,12 +12,15 @@ export default function Layout() {
 
   useEffect(() => {
     if (location.hash) {
-      setTimeout(() => {
+      const scrollToElement = (attempts: number) => {
         const element = document.querySelector(location.hash)
         if (element) {
           element.scrollIntoView({ behavior: 'smooth' })
+        } else if (attempts > 0) {
+          setTimeout(() => scrollToElement(attempts - 1), 100)
         }
-      }, 100)
+      }
+      scrollToElement(10)
     } else {
       window.scrollTo({ top: 0, behavior: 'smooth' })
     }
