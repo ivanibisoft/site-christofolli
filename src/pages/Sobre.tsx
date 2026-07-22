@@ -93,7 +93,6 @@ export default function Sobre() {
             </div>
           )}
           <div>
-            <h2 className="text-2xl font-bold mb-2">Jorge Luiz Christofolli</h2>
             <h3 className="text-muted-foreground font-medium mb-6">
               Engenheiro Civil • Doutor • Diretor Técnico
             </h3>
@@ -104,9 +103,7 @@ export default function Sobre() {
               Construção Civil pelo PPGECC da Universidade Federal do Paraná.
             </p>
 
-            {directorBio && (
-              <p className="text-sm text-slate-600 leading-relaxed mb-4">{directorBio}</p>
-            )}
+            {directorBio && null}
           </div>
         </div>
 
