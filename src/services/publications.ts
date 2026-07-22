@@ -29,6 +29,12 @@ export const getPublications = async (): Promise<Publication[]> => {
   })
 }
 
+export const getAllPublications = async (): Promise<Publication[]> => {
+  return pb.collection('publications').getFullList<Publication>({
+    sort: '-published_date',
+  })
+}
+
 export const getPublication = async (id: string): Promise<Publication> => {
   return pb.collection('publications').getOne<Publication>(id)
 }

@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Edit2, Plus, Trash2, FileText, ExternalLink } from 'lucide-react'
+import { Edit2, Plus, Trash2, FileText, ExternalLink, Image as ImageIcon } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Badge } from '@/components/ui/badge'
+import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar'
 import {
   Table,
   TableBody,
@@ -22,9 +24,9 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog'
 import { useToast } from '@/hooks/use-toast'
-import { getPublications, deletePublication, type Publication } from '@/services/publications'
+import { getAllPublications, deletePublication, type Publication } from '@/services/publications'
 import { useRealtime } from '@/hooks/use-realtime'
-import pb from '@/lib/pocketbase/client'
+import { getFileUrl } from '@/lib/file-url'
 
 export default function PublicationsList() {
   const [publications, setPublications] = useState<Publication[]>([])
@@ -32,7 +34,7 @@ export default function PublicationsList() {
   const { toast } = useToast()
 
   const loadData = () => {
-    getPublications()
+    getAllPublications()
       .then(setPublications)
       .catch(console.error)
       .finally(() => setLoading(false))
@@ -53,6 +55,11 @@ export default function PublicationsList() {
     } catch (error) {
       toast({ title: 'Erro ao excluir publicação', variant: 'destructive' })
     }
+  }
+
+  const formatDate = (date?: string) => {
+    if (!date) return '-'
+    return new Date(date).toLocaleDateString('pt-BR', { timeZone: 'UTC' })
   }
 
   return (
@@ -77,8 +84,9 @@ export default function PublicationsList() {
           <Table>
             <TableHeader className="bg-slate-50">
               <TableRow>
-                <TableHead className="w-[50px]"></TableHead>
+                <TableHead className="w-[72px]">Capa</TableHead>
                 <TableHead>Título</TableHead>
+                <TableHead className="w-[130px]">Categoria</TableHead>
                 <TableHead className="w-[180px]">Data de Publicação</TableHead>
                 <TableHead className="w-[160px] text-right pr-6">Ações</TableHead>
               </TableRow>
@@ -86,7 +94,7 @@ export default function PublicationsList() {
             <TableBody>
               {loading ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="h-32 text-center text-slate-500">
+                  <TableCell colSpan={5} className="h-32 text-center text-slate-500">
                     <div className="flex flex-col items-center justify-center animate-pulse">
                       <FileText className="h-8 w-8 text-slate-300 mb-2" />
                       Carregando dados...
@@ -95,7 +103,7 @@ export default function PublicationsList() {
                 </TableRow>
               ) : publications.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={4} className="h-48 text-center text-slate-500">
+                  <TableCell colSpan={5} className="h-48 text-center text-slate-500">
                     <div className="flex flex-col items-center justify-center">
                       <FileText className="h-10 w-10 text-slate-300 mb-3" />
                       <p className="text-lg font-medium text-slate-700">Nenhuma publicação</p>
@@ -108,10 +116,15 @@ export default function PublicationsList() {
               ) : (
                 publications.map((pub) => (
                   <TableRow key={pub.id} className="group hover:bg-slate-50/50 transition-colors">
-                    <TableCell className="text-center">
-                      <div className="h-8 w-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center mx-auto">
-                        <FileText className="h-4 w-4" />
-                      </div>
+                    <TableCell className="py-3">
+                      <Avatar className="h-11 w-11 rounded-lg border border-slate-200">
+                        {pub.cover_image ? (
+                          <AvatarImage src={getFileUrl(pub, pub.cover_image)} alt={pub.title} />
+                        ) : null}
+                        <AvatarFallback className="rounded-lg bg-slate-100">
+                          <ImageIcon className="h-4 w-4 text-slate-400" />
+                        </AvatarFallback>
+                      </Avatar>
                     </TableCell>
                     <TableCell className="py-4">
                       <div className="font-semibold text-slate-800 mb-1 leading-snug">
@@ -123,12 +136,19 @@ export default function PublicationsList() {
                         </span>
                       )}
                     </TableCell>
+                    <TableCell>
+                      {pub.category === 'Blog' ? (
+                        <Badge className="bg-blue-100 text-blue-700 hover:bg-blue-100 border-0 font-medium">
+                          Blog
+                        </Badge>
+                      ) : (
+                        <Badge className="bg-emerald-100 text-emerald-700 hover:bg-emerald-100 border-0 font-medium">
+                          Técnica
+                        </Badge>
+                      )}
+                    </TableCell>
                     <TableCell className="text-slate-600 font-medium">
-                      {pub.published_date
-                        ? new Date(pub.published_date).toLocaleDateString('pt-BR', {
-                            timeZone: 'UTC',
-                          })
-                        : '-'}
+                      {formatDate(pub.published_date)}
                     </TableCell>
                     <TableCell className="text-right pr-4">
                       <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity focus-within:opacity-100">
@@ -140,7 +160,7 @@ export default function PublicationsList() {
                             className="h-8 w-8 text-slate-500 hover:text-primary"
                           >
                             <a
-                              href={pb.files.getUrl(pub as any, pub.pdf_file)}
+                              href={getFileUrl(pub, pub.pdf_file)}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
