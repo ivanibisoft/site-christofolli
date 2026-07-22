@@ -10,6 +10,7 @@ import {
   Leaf,
   Linkedin,
   Mail,
+  FileText,
 } from 'lucide-react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
@@ -35,6 +36,9 @@ import {
 } from '@/services/company-profile'
 import { useRealtime } from '@/hooks/use-realtime'
 import { getGalleryCategories, type GalleryCategory } from '@/services/gallery-categories'
+import { getRecentPublications, type Publication } from '@/services/publications'
+import { getFileUrl } from '@/lib/file-url'
+import { Skeleton } from '@/components/ui/skeleton'
 import heroBg from '@/assets/logo-3d-sem-texto-27f6f.png'
 
 const contactSchema = z.object({
@@ -51,6 +55,8 @@ export default function Index() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [directorPhoto, setDirectorPhoto] = useState<string | null>(null)
   const [galleryCats, setGalleryCats] = useState<GalleryCategory[]>([])
+  const [publications, setPublications] = useState<Publication[]>([])
+  const [publicationsLoading, setPublicationsLoading] = useState(true)
   const location = useLocation()
 
   useEffect(() => {
@@ -96,6 +102,25 @@ export default function Index() {
 
   useRealtime('gallery_categories', () => {
     loadGalleryCats()
+  })
+
+  const loadPublications = async () => {
+    try {
+      const pubs = await getRecentPublications(3)
+      setPublications(pubs)
+    } catch {
+      setPublications([])
+    } finally {
+      setPublicationsLoading(false)
+    }
+  }
+
+  useEffect(() => {
+    loadPublications()
+  }, [])
+
+  useRealtime('publications', () => {
+    loadPublications()
   })
 
   const form = useForm<z.infer<typeof contactSchema>>({
@@ -303,6 +328,67 @@ export default function Index() {
               </div>
             </div>
           </div>
+        </div>
+      </section>
+
+      {/* Publications Section */}
+      <section className="py-20 bg-slate-50">
+        <div className="container">
+          <div className="text-center mb-12">
+            <h2 className="text-3xl font-bold text-primary mb-4">Publicações Técnicas</h2>
+            <p className="text-muted-foreground max-w-2xl mx-auto">
+              Artigos e trabalhos técnicos desenvolvidos com rigor científico e aplicação prática.
+            </p>
+          </div>
+          {publicationsLoading ? (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {[1, 2, 3].map((i) => (
+                <Skeleton key={i} className="h-80 rounded-xl" />
+              ))}
+            </div>
+          ) : publications.length === 0 ? null : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+              {publications.map((pub) => (
+                <Card
+                  key={pub.id}
+                  className="overflow-hidden border-none shadow-elevation hover:-translate-y-1 transition-transform duration-300"
+                >
+                  {pub.cover_image ? (
+                    <div className="aspect-[16/9] overflow-hidden bg-muted/30">
+                      <img
+                        src={getFileUrl(pub, pub.cover_image)}
+                        alt={pub.title}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="aspect-[16/9] bg-gradient-to-br from-slate-200 to-slate-300 flex items-center justify-center">
+                      <FileText className="h-12 w-12 text-slate-400" />
+                    </div>
+                  )}
+                  <CardContent className="p-6">
+                    {pub.published_date && (
+                      <p className="text-xs text-muted-foreground mb-2 font-medium">
+                        {new Date(pub.published_date).toLocaleDateString('pt-BR', {
+                          day: '2-digit',
+                          month: 'long',
+                          year: 'numeric',
+                        })}
+                      </p>
+                    )}
+                    <h3 className="text-lg font-bold mb-2 line-clamp-2 text-primary">
+                      {pub.title}
+                    </h3>
+                    {pub.description && (
+                      <p className="text-sm text-muted-foreground line-clamp-3">
+                        {pub.description}
+                      </p>
+                    )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

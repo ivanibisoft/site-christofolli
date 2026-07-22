@@ -45,6 +45,11 @@ export default function PublicationForm() {
   const [loading, setLoading] = useState(isEditing)
   const [saving, setSaving] = useState(false)
 
+  const [coverImage, setCoverImage] = useState<File | null>(null)
+  const [existingCover, setExistingCover] = useState<string | null>(null)
+  const [removeExistingCover, setRemoveExistingCover] = useState(false)
+  const [coverError, setCoverError] = useState<string | null>(null)
+  const coverInputRef = useRef<HTMLInputElement>(null)
   const [pdfFile, setPdfFile] = useState<File | null>(null)
   const [existingPdf, setExistingPdf] = useState<{ url: string; name: string } | null>(null)
   const [removeExistingPdf, setRemoveExistingPdf] = useState(false)
@@ -75,6 +80,9 @@ export default function PublicationForm() {
               name: pub.pdf_file,
             })
           }
+          if (pub.cover_image) {
+            setExistingCover(pub.cover_image)
+          }
         })
         .catch(() => {
           toast({ title: 'Publicação não encontrada', variant: 'destructive' })
@@ -83,6 +91,42 @@ export default function PublicationForm() {
         .finally(() => setLoading(false))
     }
   }, [id, isEditing, form, navigate, toast])
+
+  const handleCoverChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const file = e.target.files[0]
+      if (!file.type.startsWith('image/')) {
+        setCoverError('Apenas arquivos de imagem são permitidos.')
+        toast({
+          title: 'Formato inválido',
+          description: 'Apenas arquivos de imagem são permitidos.',
+          variant: 'destructive',
+        })
+        if (coverInputRef.current) coverInputRef.current.value = ''
+        return
+      }
+      if (file.size > 5242880) {
+        setCoverError('O tamanho máximo permitido é 5MB.')
+        toast({
+          title: 'Arquivo muito grande',
+          description: 'O tamanho máximo permitido é 5MB.',
+          variant: 'destructive',
+        })
+        if (coverInputRef.current) coverInputRef.current.value = ''
+        return
+      }
+      setCoverError(null)
+      setCoverImage(file)
+      setRemoveExistingCover(false)
+    }
+  }
+
+  const handleRemoveCover = () => {
+    setCoverImage(null)
+    setCoverError(null)
+    if (coverInputRef.current) coverInputRef.current.value = ''
+    if (existingCover) setRemoveExistingCover(true)
+  }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -144,6 +188,12 @@ export default function PublicationForm() {
       formData.append('published_date', '')
     }
 
+    if (coverImage) {
+      formData.append('cover_image', coverImage)
+    } else if (removeExistingCover) {
+      formData.append('cover_image', '')
+    }
+
     if (pdfFile) {
       formData.append('pdf_file', pdfFile)
     } else if (removeExistingPdf) {
@@ -163,7 +213,14 @@ export default function PublicationForm() {
       const fieldErrors = extractFieldErrors(error)
       if (Object.keys(fieldErrors).length > 0) {
         Object.entries(fieldErrors).forEach(([field, msg]) => {
-          if (field === 'pdf_file') {
+          if (field === 'cover_image') {
+            setCoverError(msg as string)
+            toast({
+              title: 'Erro na imagem de capa',
+              description: msg as string,
+              variant: 'destructive',
+            })
+          } else if (field === 'pdf_file') {
             setFileError(msg as string)
             toast({
               title: 'Erro no arquivo PDF',
@@ -241,6 +298,83 @@ export default function PublicationForm() {
                 </FormItem>
               )}
             />
+
+            <div className="space-y-3">
+              <FormLabel className="text-slate-800">Imagem de Capa</FormLabel>
+              {!coverImage && (!existingCover || removeExistingCover) ? (
+                <div className="border-2 border-dashed border-slate-200 rounded-lg p-6 flex flex-col items-center justify-center text-center bg-slate-50 hover:bg-slate-100/50 transition-colors">
+                  <div className="h-10 w-10 bg-primary/10 text-primary rounded-full flex items-center justify-center mb-3">
+                    <UploadCloud className="h-5 w-5" />
+                  </div>
+                  <p className="text-sm font-medium text-slate-700 mb-1">
+                    Clique para selecionar uma imagem de capa
+                  </p>
+                  <p className="text-xs text-slate-500 mb-4">JPG, PNG ou WebP — Máx 5MB</p>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() => coverInputRef.current?.click()}
+                  >
+                    Procurar imagem
+                  </Button>
+                  <input
+                    type="file"
+                    ref={coverInputRef}
+                    className="hidden"
+                    accept="image/*"
+                    onChange={handleCoverChange}
+                  />
+                </div>
+              ) : (
+                <div
+                  className={cn(
+                    'flex items-center justify-between p-3 border rounded-lg transition-colors',
+                    coverImage ? 'bg-green-50 border-green-200' : 'bg-slate-50',
+                  )}
+                >
+                  <div className="flex items-center gap-3 overflow-hidden">
+                    <div
+                      className={cn(
+                        'h-10 w-10 rounded-lg flex items-center justify-center shrink-0',
+                        coverImage ? 'bg-green-100 text-green-600' : 'bg-slate-200 text-slate-500',
+                      )}
+                    >
+                      <CheckCircle2 className="h-5 w-5" />
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-slate-800 truncate">
+                        {coverImage ? coverImage.name : existingCover}
+                      </p>
+                      <p
+                        className={cn(
+                          'text-xs',
+                          coverImage ? 'text-green-600 font-medium' : 'text-slate-500',
+                        )}
+                      >
+                        {coverImage
+                          ? `${(coverImage.size / 1024 / 1024).toFixed(2)} MB — imagem selecionada`
+                          : 'Imagem salva no servidor'}
+                      </p>
+                    </div>
+                  </div>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    onClick={handleRemoveCover}
+                    className="h-8 w-8 text-slate-500 hover:text-red-600 hover:bg-red-50"
+                  >
+                    <X className="h-4 w-4" />
+                    <span className="sr-only">Remover imagem</span>
+                  </Button>
+                </div>
+              )}
+              <FormDescription>
+                A imagem de capa será exibida nos cards de publicação na página inicial.
+              </FormDescription>
+              {coverError && <p className="text-sm font-medium text-destructive">{coverError}</p>}
+            </div>
 
             <div className="space-y-3">
               <FormLabel className="text-slate-800">Arquivo PDF</FormLabel>

@@ -8,8 +8,16 @@ export interface Publication {
   description?: string
   published_date?: string
   pdf_file?: string
+  cover_image?: string
   created: string
   updated: string
+}
+
+export const getRecentPublications = async (limit: number = 3): Promise<Publication[]> => {
+  const result = await pb.collection('publications').getList<Publication>(1, limit, {
+    sort: '-created',
+  })
+  return result.items
 }
 
 export const getPublications = async (): Promise<Publication[]> => {
