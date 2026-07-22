@@ -1,12 +1,14 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { Outlet, Link, useLocation } from 'react-router-dom'
-import { Linkedin, Mail, Phone } from 'lucide-react'
+import { Linkedin, Mail, Phone, Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
+import { Sheet, SheetContent, SheetTrigger, SheetClose } from '@/components/ui/sheet'
 import { cn } from '@/lib/utils'
 import logoImg from '@/assets/logo-2dhsf2-christofolli-consultoria-a4665.png'
 
 export default function Layout() {
   const location = useLocation()
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
 
   useEffect(() => {
     if (location.hash) {
@@ -28,6 +30,14 @@ export default function Layout() {
     { name: 'Portfólio', path: '/portfolio' },
     { name: 'Blog', path: '/blog' },
     { name: 'Sobre', path: '/sobre' },
+  ]
+
+  const mobileNavItems = [
+    { name: 'Início', path: '/' },
+    { name: 'Portfólio', path: '/portfolio' },
+    { name: 'Blog', path: '/blog' },
+    { name: 'Sobre', path: '/sobre' },
+    { name: 'Contato', path: '/#contato' },
   ]
 
   return (
@@ -65,6 +75,61 @@ export default function Layout() {
               <Link to="/#contato">Solicitar Consultoria</Link>
             </Button>
           </div>
+
+          <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
+            <SheetTrigger asChild>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="md:hidden"
+                aria-label="Abrir menu de navegação"
+              >
+                <Menu className="h-6 w-6 text-secondary" />
+              </Button>
+            </SheetTrigger>
+            <SheetContent side="right" className="w-[300px] sm:w-[340px] p-0">
+              <div className="flex items-center justify-between px-6 py-5 border-b border-slate-200">
+                <img
+                  src={logoImg}
+                  alt="Christófolli Consultoria de Engenharia"
+                  className="h-12 w-auto"
+                />
+                <SheetClose asChild>
+                  <Button variant="ghost" size="icon" aria-label="Fechar menu">
+                    <X className="h-5 w-5 text-secondary" />
+                  </Button>
+                </SheetClose>
+              </div>
+              <nav className="flex flex-col px-6 py-6 gap-1">
+                {mobileNavItems.map((item) => (
+                  <SheetClose asChild key={item.path}>
+                    <Link
+                      to={item.path}
+                      className={cn(
+                        'px-4 py-3 rounded-lg text-base font-medium transition-colors hover:bg-accent/10 hover:text-accent',
+                        location.pathname === item.path.split('#')[0] &&
+                          (item.path.includes('#') ? false : true)
+                          ? 'text-accent bg-accent/5'
+                          : 'text-secondary',
+                      )}
+                    >
+                      {item.name}
+                    </Link>
+                  </SheetClose>
+                ))}
+              </nav>
+              <div className="px-6 mt-4">
+                <SheetClose asChild>
+                  <Button
+                    asChild
+                    className="w-full bg-accent hover:bg-accent/90 text-white font-semibold"
+                  >
+                    <Link to="/#contato">Solicitar Consultoria</Link>
+                  </Button>
+                </SheetClose>
+              </div>
+            </SheetContent>
+          </Sheet>
         </div>
       </header>
 
