@@ -66,6 +66,16 @@ export default function Index() {
       if (element) {
         setTimeout(() => {
           element.scrollIntoView({ behavior: 'smooth' })
+          if (location.hash === '#contato') {
+            setTimeout(() => {
+              const nameInput = document.querySelector(
+                '#contato [data-focus-target]',
+              ) as HTMLInputElement | null
+              if (nameInput) {
+                nameInput.focus()
+              }
+            }, 700)
+          }
         }, 100)
       }
     }
@@ -443,7 +453,7 @@ export default function Index() {
                         <FormItem>
                           <FormLabel>Nome</FormLabel>
                           <FormControl>
-                            <Input placeholder="Seu nome completo" {...field} />
+                            <Input data-focus-target placeholder="Seu nome completo" {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
