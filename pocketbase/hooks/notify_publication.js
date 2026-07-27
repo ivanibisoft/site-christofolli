@@ -31,8 +31,6 @@ routerAdd(
         return e.json(200, { success: true, count: 0 })
       }
 
-      var mailer = require('mai' + 'ler')
-
       var escapeHtml = function (str) {
         return String(str)
           .replace(/&/g, '&amp;')
@@ -47,28 +45,16 @@ routerAdd(
       var safeTitle = escapeHtml(title)
       var safeDesc = escapeHtml(description).replace(/\n/g, '<br />')
 
-      var smtpSettings = null
-      try {
-        var smtpRecords = $app.findRecordsByFilter('smtp_settings', "id != ''", '-created', 1, 0)
-        if (smtpRecords.length > 0) {
-          smtpSettings = smtpRecords[0]
-        }
-      } catch (fetchErr) {
+      var senderAddress = $app.settings().meta.senderAddress
+      var senderName = $app.settings().meta.senderName || 'Christófolli Consultoria'
+
+      if (!senderAddress) {
         return e.json(200, {
           success: false,
-          error: 'Erro ao buscar configurações SMTP: ' + fetchErr.message,
+          error:
+            'SMTP não configurado. Configure o remetente em Settings → Mail no painel do PocketBase.',
         })
       }
-
-      if (!smtpSettings) {
-        return e.json(200, {
-          success: false,
-          error: 'Configurações SMTP não encontradas. Configure o SMTP no painel administrativo.',
-        })
-      }
-
-      var fromAddress = smtpSettings.getString('from_email')
-      var fromName = smtpSettings.getString('from_name')
 
       var pbUrl = $secrets.get('PB_INSTANCE_URL') || ''
       var coverImage = record.getString('cover_image')
@@ -131,26 +117,19 @@ routerAdd(
         '</div>' +
         '</div>'
 
-      var recipients = contacts.map(function (c) {
-        return { address: c.getString('email') }
-      })
+      var recipients = []
+      for (var i = 0; i < contacts.length; i++) {
+        recipients.push({ address: contacts[i].getString('email') })
+      }
 
-      var msg = new mailer.Message({
-        from: { address: fromAddress, name: fromName },
+      var msg = new MailerMessage({
+        from: { address: senderAddress, name: senderName },
         to: recipients,
         subject: 'Nova Publicação do Blog: ' + title,
         html: htmlBody,
       })
 
-      var encryption = smtpSettings.getString('encryption')
-      var client = new mailer.SmtpClient({
-        host: smtpSettings.getString('host'),
-        port: smtpSettings.getInt('port'),
-        username: smtpSettings.getString('username'),
-        password: smtpSettings.getString('password'),
-        ssl: encryption === 'SSL',
-      })
-      client.send(msg)
+      $app.newMailClient().send(msg)
 
       $app
         .logger()
