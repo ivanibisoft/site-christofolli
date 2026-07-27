@@ -40,7 +40,7 @@ export default function Concreteiras() {
             Para Concreteiras
           </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            Auditoria Técnica, Operacional e Administrativa
+            Consultoria Técnica, Operacional e Administrativa
           </h1>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Uma avaliação 360º da sua central dosadora visando identificar oportunidades de
@@ -50,7 +50,7 @@ export default function Concreteiras() {
 
         <div className="bg-white rounded-2xl shadow-subtle p-8 border border-slate-100 mb-12">
           <h3 className="text-2xl font-bold mb-6 text-primary border-b pb-4">
-            Escopo dos Serviços de Auditoria
+            Escopo dos Serviços de Consultoria
           </h3>
 
           {loading ? (

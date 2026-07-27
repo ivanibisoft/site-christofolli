@@ -25,7 +25,7 @@ const navigation = [
   { name: 'Galeria', href: '/admin/gallery', icon: ImageIcon },
   { name: 'Resultados Estatísticos', href: '/admin/statistical-results', icon: BarChart3 },
   { name: 'Trajetória', href: '/admin/timeline', icon: Clock },
-  { name: 'Serviços de Auditoria', href: '/admin/audit-services', icon: ClipboardList },
+  { name: 'Serviços de Consultoria', href: '/admin/audit-services', icon: ClipboardList },
   { name: 'Categorias', href: '/admin/categories', icon: Tag },
 
   { name: 'Contatos', href: '/admin/contacts', icon: Mail },

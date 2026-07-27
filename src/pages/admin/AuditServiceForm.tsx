@@ -123,8 +123,8 @@ export default function AuditServiceForm() {
           </h1>
           <p className="text-slate-500 text-sm mt-1">
             {isEditing
-              ? 'Atualize os detalhes do serviço de auditoria.'
-              : 'Adicione um novo serviço de auditoria.'}
+              ? 'Atualize os detalhes do serviço de consultoria.'
+              : 'Adicione um novo serviço de consultoria.'}
           </p>
         </div>
       </div>

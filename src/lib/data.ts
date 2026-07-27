@@ -1,7 +1,7 @@
 export const AUDIT_MODULES = [
   {
     id: '1',
-    title: '1. Auditoria de Compras e Matérias-Primas',
+    title: '1. Consultoria de Compras e Matérias-Primas',
     description:
       'Avaliação dos processos de aquisição, recebimento e consumo de materiais utilizados na produção de concreto.',
     items: [
@@ -20,7 +20,7 @@ export const AUDIT_MODULES = [
   },
   {
     id: '2',
-    title: '2. Auditoria de Controle de Estoque',
+    title: '2. Consultoria de Controle de Estoque',
     description:
       'Análise do sistema de armazenagem, movimentação e controle de estoque físico e contábil.',
     items: [
@@ -41,7 +41,7 @@ export const AUDIT_MODULES = [
   },
   {
     id: '3',
-    title: '3. Auditoria de Manutenção e Equipamentos',
+    title: '3. Consultoria de Manutenção e Equipamentos',
     description: 'Avaliação das condições operacionais e da gestão da manutenção da central.',
     items: [
       'Central dosadora e Misturadores',
@@ -62,7 +62,7 @@ export const AUDIT_MODULES = [
   },
   {
     id: '4',
-    title: '4. Auditoria Tecnológica e Controle das Formulações',
+    title: '4. Consultoria Tecnológica e Controle das Formulações',
     description:
       'Avaliação técnica do sistema de dosagem, traços e controle tecnológico do concreto.',
     items: [
@@ -82,7 +82,7 @@ export const AUDIT_MODULES = [
   },
   {
     id: '5',
-    title: '5. Auditoria de Custos Operacionais',
+    title: '5. Consultoria de Custos Operacionais',
     description: 'Análise econômica dos processos produtivos e administrativos.',
     items: [
       'Custo real por m³',
@@ -100,7 +100,7 @@ export const AUDIT_MODULES = [
   },
   {
     id: '6',
-    title: '6. Auditoria de Gestão, Comercial e Processos Internos',
+    title: '6. Consultoria de Gestão, Comercial e Processos Internos',
     description: 'Avaliação dos procedimentos administrativos e de gestão.',
     items: [
       'Fluxos internos e procedimentos operacionais',
