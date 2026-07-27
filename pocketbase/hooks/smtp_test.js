@@ -19,8 +19,7 @@ routerAdd(
       if (!password) return e.badRequestError('Password is required')
       if (!fromEmail) return e.badRequestError('From email is required')
 
-      const m = 'mailer'
-      const mailer = require(m)
+      const mailer = require('mailer')
 
       const htmlBody =
         '<div style="font-family:sans-serif;color:#333;max-width:600px;margin:0 auto;">' +

@@ -1,7 +1,6 @@
 onRecordAfterCreateSuccess((e) => {
   try {
-    const m = 'mailer'
-    const mailer = require(m)
+    const mailer = require('mailer')
 
     const escapeHtml = (str) => {
       return String(str)
@@ -37,17 +36,12 @@ onRecordAfterCreateSuccess((e) => {
     }
 
     if (!smtpSettings) {
-      $app.logger().warn('No SMTP settings found, using default platform mailer')
+      $app.logger().warn('No SMTP settings found, skipping contact notification email')
+      return e.next()
     }
 
-    let fromAddress, fromName
-    if (smtpSettings) {
-      fromAddress = smtpSettings.getString('from_email')
-      fromName = smtpSettings.getString('from_name')
-    } else {
-      fromAddress = $app.settings().meta.senderAddress
-      fromName = $app.settings().meta.senderName || 'Site Christófolli Consultoria'
-    }
+    let fromAddress = smtpSettings.getString('from_email')
+    let fromName = smtpSettings.getString('from_name')
 
     const htmlBody = `
       <div style="font-family: sans-serif; color: #333;">
@@ -90,19 +84,15 @@ onRecordAfterCreateSuccess((e) => {
       html: htmlBody,
     })
 
-    if (smtpSettings) {
-      const encryption = smtpSettings.getString('encryption')
-      const client = new mailer.SmtpClient({
-        host: smtpSettings.getString('host'),
-        port: smtpSettings.getInt('port'),
-        username: smtpSettings.getString('username'),
-        password: smtpSettings.getString('password'),
-        ssl: encryption === 'SSL',
-      })
-      client.send(msg)
-    } else {
-      $app.newMailClient().send(msg)
-    }
+    const encryption = smtpSettings.getString('encryption')
+    const client = new mailer.SmtpClient({
+      host: smtpSettings.getString('host'),
+      port: smtpSettings.getInt('port'),
+      username: smtpSettings.getString('username'),
+      password: smtpSettings.getString('password'),
+      ssl: encryption === 'SSL',
+    })
+    client.send(msg)
   } catch (err) {
     $app
       .logger()

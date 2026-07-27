@@ -31,8 +31,7 @@ routerAdd(
         return e.json(200, { success: true, count: 0 })
       }
 
-      var m = 'mailer'
-      var mailer = require(m)
+      var mailer = require('mailer')
 
       var escapeHtml = function (str) {
         return String(str)
@@ -55,17 +54,21 @@ routerAdd(
           smtpSettings = smtpRecords[0]
         }
       } catch (fetchErr) {
-        // fall through to default mailer
+        return e.json(200, {
+          success: false,
+          error: 'Erro ao buscar configurações SMTP: ' + fetchErr.message,
+        })
       }
 
-      var fromAddress, fromName
-      if (smtpSettings) {
-        fromAddress = smtpSettings.getString('from_email')
-        fromName = smtpSettings.getString('from_name')
-      } else {
-        fromAddress = $app.settings().meta.senderAddress
-        fromName = $app.settings().meta.senderName || 'Christófolli Consultoria'
+      if (!smtpSettings) {
+        return e.json(200, {
+          success: false,
+          error: 'Configurações SMTP não encontradas. Configure o SMTP no painel administrativo.',
+        })
       }
+
+      var fromAddress = smtpSettings.getString('from_email')
+      var fromName = smtpSettings.getString('from_name')
 
       var pbUrl = $secrets.get('PB_INSTANCE_URL') || ''
       var coverImage = record.getString('cover_image')
@@ -139,19 +142,15 @@ routerAdd(
         html: htmlBody,
       })
 
-      if (smtpSettings) {
-        var encryption = smtpSettings.getString('encryption')
-        var client = new mailer.SmtpClient({
-          host: smtpSettings.getString('host'),
-          port: smtpSettings.getInt('port'),
-          username: smtpSettings.getString('username'),
-          password: smtpSettings.getString('password'),
-          ssl: encryption === 'SSL',
-        })
-        client.send(msg)
-      } else {
-        $app.newMailClient().send(msg)
-      }
+      var encryption = smtpSettings.getString('encryption')
+      var client = new mailer.SmtpClient({
+        host: smtpSettings.getString('host'),
+        port: smtpSettings.getInt('port'),
+        username: smtpSettings.getString('username'),
+        password: smtpSettings.getString('password'),
+        ssl: encryption === 'SSL',
+      })
+      client.send(msg)
 
       $app
         .logger()
