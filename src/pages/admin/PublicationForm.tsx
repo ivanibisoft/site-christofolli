@@ -219,17 +219,17 @@ export default function PublicationForm() {
         try {
           const result = await notifyPublicationContacts(pubId)
           if (result.success) {
-            toast({ title: `E-mails enviados para ${result.count} contatos` })
+            toast({ title: `E‑mails enviados para ${result.count} contatos com sucesso!` })
           } else {
             toast({
-              title: `Erro ao enviar e-mails: ${result.error || 'Erro desconhecido'}`,
+              title: `Erro ao enviar e‑mails: ${result.error || 'Erro desconhecido'}`,
               variant: 'destructive',
             })
           }
         } catch (notifyError) {
           const reason = notifyError instanceof Error ? notifyError.message : 'Erro desconhecido'
           toast({
-            title: `Erro ao enviar e-mails: ${reason}`,
+            title: `Erro ao enviar e‑mails: ${reason}`,
             variant: 'destructive',
           })
         }
