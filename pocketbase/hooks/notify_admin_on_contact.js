@@ -67,7 +67,7 @@ onRecordAfterCreateSuccess((e) => {
 
     var msg = new MailerMessage({
       from: { address: senderAddress, name: senderName },
-      to: [{ address: 'jorge@christofolli.com.br' }],
+      to: [{ address: senderAddress }],
       subject: 'Novo Contato Recebido: ' + rawSubject,
       html: htmlBody,
     })

@@ -29,7 +29,7 @@ import {
 } from '@/components/ui/form'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
-import { createContact } from '@/services/contacts'
+import { submitContact } from '@/services/contacts'
 import {
   getCompanyProfile,
   getDirectorPhotoUrl,
@@ -149,9 +149,17 @@ export default function Index() {
   const onSubmit = async (data: z.infer<typeof contactSchema>) => {
     setIsSubmitting(true)
     try {
-      await createContact(data)
-      toast({ title: 'Mensagem enviada!', description: 'Entraremos em contato em breve.' })
-      form.reset()
+      const result = await submitContact(data)
+      if (result.success) {
+        toast({ title: 'Mensagem enviada!', description: 'Entraremos em contato em breve.' })
+        form.reset()
+      } else {
+        toast({
+          title: 'Erro',
+          description: result.error || 'Não foi possível enviar a mensagem.',
+          variant: 'destructive',
+        })
+      }
     } catch (err) {
       toast({
         title: 'Erro',

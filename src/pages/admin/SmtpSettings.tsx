@@ -1,17 +1,60 @@
-import { useState } from 'react'
-import { Server, Loader2, Send, Mail, Info, ExternalLink } from 'lucide-react'
+import { useState, useEffect } from 'react'
+import { Server, Loader2, Save, Send, Mail, Info } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { useToast } from '@/hooks/use-toast'
-import { testSmtpSettings } from '@/services/smtp-settings'
+import {
+  getSmtpSettings,
+  saveSmtpSettings,
+  testSmtpSettings,
+  type SmtpSettings,
+} from '@/services/smtp-settings'
 
 export default function SmtpSettingsPage() {
   const { toast } = useToast()
+  const [loading, setLoading] = useState(true)
+  const [saving, setSaving] = useState(false)
   const [testing, setTesting] = useState(false)
   const [testEmail, setTestEmail] = useState('')
+  const [settings, setSettings] = useState<SmtpSettings>({
+    host: '',
+    port: 587,
+    username: '',
+    password: '',
+    encryption: 'TLS',
+    from_email: '',
+    from_name: 'Christófolli Consultoria',
+  })
+
+  useEffect(() => {
+    getSmtpSettings()
+      .then((data) => setSettings(data))
+      .catch(() => toast({ title: 'Erro ao carregar configurações', variant: 'destructive' }))
+      .finally(() => setLoading(false))
+  }, [toast])
+
+  const handleChange = (field: keyof SmtpSettings, value: string | number) => {
+    setSettings((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handleSave = async () => {
+    setSaving(true)
+    try {
+      await saveSmtpSettings(settings)
+      toast({ title: 'Configurações salvas com sucesso!' })
+    } catch (error: any) {
+      toast({
+        title: 'Erro ao salvar',
+        description: error?.message || 'Erro desconhecido',
+        variant: 'destructive',
+      })
+    } finally {
+      setSaving(false)
+    }
+  }
 
   const handleTest = async () => {
     setTesting(true)
@@ -19,27 +62,31 @@ export default function SmtpSettingsPage() {
       const result = await testSmtpSettings({ to: testEmail || undefined })
       if (result.success) {
         toast({
-          title: 'E-mail de teste enviado com sucesso!',
+          title: 'E-mail de teste enviado!',
           description: result.message || 'Verifique a caixa de entrada.',
         })
       } else {
         toast({
-          title: 'Falha no teste de configuração',
+          title: 'Falha no teste',
           description: result.error || 'Erro desconhecido',
           variant: 'destructive',
         })
       }
     } catch (error: any) {
       const errorMsg =
-        error?.response?.error || error?.message || 'Erro ao testar configuração SMTP'
-      toast({
-        title: 'Falha no teste de configuração',
-        description: errorMsg,
-        variant: 'destructive',
-      })
+        error?.response?.message || error?.message || 'Erro ao testar configuração SMTP'
+      toast({ title: 'Falha no teste', description: errorMsg, variant: 'destructive' })
     } finally {
       setTesting(false)
     }
+  }
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-20">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+      </div>
+    )
   }
 
   return (
@@ -60,17 +107,10 @@ export default function SmtpSettingsPage() {
 
       <Alert>
         <Info className="h-4 w-4" />
-        <AlertTitle>Configuração via Painel PocketBase</AlertTitle>
+        <AlertTitle>Configuração Nativa PocketBase</AlertTitle>
         <AlertDescription>
-          <p className="mb-2">
-            As configurações de SMTP agora são gerenciadas nativamente pelo PocketBase. Acesse o
-            painel administrativo do PocketBase em <strong>Settings → Mail</strong> para configurar
-            o servidor SMTP (host, porta, usuário, senha e criptografia).
-          </p>
-          <p>
-            Todos os e-mails do sistema (auto-resposta, notificação de contatos e notificação de
-            publicações) utilizam essa configuração nativa.
-          </p>
+          As credenciais SMTP são salvas diretamente nas configurações nativas do PocketBase
+          (Settings → Mail). Todos os e-mails do sistema utilizam esta configuração.
         </AlertDescription>
       </Alert>
 
@@ -78,11 +118,118 @@ export default function SmtpSettingsPage() {
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-2">
             <Mail className="h-5 w-5 text-primary" />
+            Credenciais SMTP
+          </CardTitle>
+          <CardDescription>
+            Configure o servidor de e-mail para auto-resposta e notificações.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="host">Servidor SMTP</Label>
+              <Input
+                id="host"
+                value={settings.host}
+                onChange={(e) => handleChange('host', e.target.value)}
+                placeholder="smtp.exemplo.com"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="port">Porta</Label>
+              <Input
+                id="port"
+                type="number"
+                value={settings.port}
+                onChange={(e) => handleChange('port', parseInt(e.target.value) || 587)}
+                placeholder="587"
+              />
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="username">Usuário</Label>
+              <Input
+                id="username"
+                value={settings.username}
+                onChange={(e) => handleChange('username', e.target.value)}
+                placeholder="usuario@exemplo.com"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="password">Senha</Label>
+              <Input
+                id="password"
+                type="password"
+                value={settings.password}
+                onChange={(e) => handleChange('password', e.target.value)}
+                placeholder="••••••••"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="encryption">Criptografia</Label>
+            <select
+              id="encryption"
+              className="w-full rounded-md border border-slate-200 bg-slate-50 focus:bg-white px-3 py-2 text-sm text-slate-700 outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              value={settings.encryption}
+              onChange={(e) => handleChange('encryption', e.target.value)}
+            >
+              <option value="TLS">TLS</option>
+              <option value="none">Nenhuma</option>
+            </select>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="from_email">E-mail Remetente</Label>
+              <Input
+                id="from_email"
+                type="email"
+                value={settings.from_email}
+                onChange={(e) => handleChange('from_email', e.target.value)}
+                placeholder="noreply@exemplo.com"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="from_name">Nome do Remetente</Label>
+              <Input
+                id="from_name"
+                value={settings.from_name}
+                onChange={(e) => handleChange('from_name', e.target.value)}
+                placeholder="Christófolli Consultoria"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end pt-2">
+            <Button onClick={handleSave} disabled={saving} className="min-w-[180px] shadow-sm">
+              {saving ? (
+                <>
+                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                  Salvando...
+                </>
+              ) : (
+                <>
+                  <Save className="h-4 w-4 mr-2" />
+                  Salvar Configuração
+                </>
+              )}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-xl flex items-center gap-2">
+            <Send className="h-5 w-5 text-primary" />
             Testar Configuração
           </CardTitle>
           <CardDescription>
-            Envie um e-mail de teste para verificar se o SMTP está funcionando corretamente.
-            Certifique-se de que as configurações foram salvas em Settings → Mail no PocketBase.
+            Envie um e-mail de teste para verificar se o SMTP está funcionando.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -95,14 +242,14 @@ export default function SmtpSettingsPage() {
               onChange={(e) => setTestEmail(e.target.value)}
               placeholder="Deixe vazio para usar o remetente padrão"
             />
-            <p className="text-xs text-slate-500">
-              Se não preenchido, o e-mail será enviado para o endereço do remetente configurado no
-              PocketBase.
-            </p>
           </div>
-
           <div className="flex justify-end pt-2">
-            <Button onClick={handleTest} disabled={testing} className="min-w-[180px] shadow-sm">
+            <Button
+              variant="outline"
+              onClick={handleTest}
+              disabled={testing}
+              className="min-w-[180px] shadow-sm"
+            >
               {testing ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
