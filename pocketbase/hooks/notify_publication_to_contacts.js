@@ -1,6 +1,21 @@
 onRecordAfterCreateSuccess((e) => {
+  var category = e.record.getString('category')
+  if (category !== 'Blog') {
+    $app
+      .logger()
+      .info(
+        'Skipping publication notification - category is not Blog',
+        'category',
+        category,
+        'publicationId',
+        e.record.id,
+      )
+    e.next()
+    return
+  }
+
   try {
-    let contacts = []
+    var contacts = []
     try {
       contacts = $app.findRecordsByFilter('contacts', "email != ''", '', 0, 0)
     } catch (fetchErr) {
@@ -14,10 +29,10 @@ onRecordAfterCreateSuccess((e) => {
       return
     }
 
-    const m = 'mailer'
-    const mailer = require(m)
+    var m = 'mailer'
+    var mailer = require(m)
 
-    const escapeHtml = (str) => {
+    var escapeHtml = function (str) {
       return String(str)
         .replace(/&/g, '&amp;')
         .replace(/</g, '&lt;')
@@ -26,14 +41,14 @@ onRecordAfterCreateSuccess((e) => {
         .replace(/'/g, '&#039;')
     }
 
-    const title = e.record.getString('title')
-    const description = e.record.getString('description') || ''
-    const safeTitle = escapeHtml(title)
-    const safeDesc = escapeHtml(description).replace(/\n/g, '<br />')
+    var title = e.record.getString('title')
+    var description = e.record.getString('description') || ''
+    var safeTitle = escapeHtml(title)
+    var safeDesc = escapeHtml(description).replace(/\n/g, '<br />')
 
-    let smtpSettings = null
+    var smtpSettings = null
     try {
-      const records = $app.findRecordsByFilter('smtp_settings', "id != ''", '-created', 1, 0)
+      var records = $app.findRecordsByFilter('smtp_settings', "id != ''", '-created', 1, 0)
       if (records.length > 0) {
         smtpSettings = records[0]
       }
@@ -47,7 +62,7 @@ onRecordAfterCreateSuccess((e) => {
         )
     }
 
-    let fromAddress, fromName
+    var fromAddress, fromName
     if (smtpSettings) {
       fromAddress = smtpSettings.getString('from_email')
       fromName = smtpSettings.getString('from_name')
@@ -56,15 +71,15 @@ onRecordAfterCreateSuccess((e) => {
       fromName = $app.settings().meta.senderName || 'Christófolli Consultoria'
     }
 
-    const pbUrl = $secrets.get('PB_INSTANCE_URL') || ''
-    const coverImage = e.record.getString('cover_image')
-    const coverUrl = coverImage
+    var pbUrl = $secrets.get('PB_INSTANCE_URL') || ''
+    var coverImage = e.record.getString('cover_image')
+    var coverUrl = coverImage
       ? pbUrl + '/api/files/' + e.record.collectionId + '/' + e.record.id + '/' + coverImage
       : ''
 
-    const siteUrl = $secrets.get('SITE_URL') || 'https://consultoria-concreto-tech-191de.goskip.app'
+    var siteUrl = $secrets.get('SITE_URL') || 'https://consultoria-concreto-tech-191de.goskip.app'
 
-    let coverHtml = ''
+    var coverHtml = ''
     if (coverUrl) {
       coverHtml =
         '<div style="margin-bottom:24px;text-align:center;">' +
@@ -76,7 +91,7 @@ onRecordAfterCreateSuccess((e) => {
         '</div>'
     }
 
-    let descHtml = ''
+    var descHtml = ''
     if (safeDesc) {
       descHtml =
         '<div style="background:#f4f4f5;padding:15px;border-radius:6px;border:1px solid #e4e4e7;margin:20px 0;">' +
@@ -86,11 +101,11 @@ onRecordAfterCreateSuccess((e) => {
         '</div>'
     }
 
-    const htmlBody =
+    var htmlBody =
       '<div style="font-family:sans-serif;color:#333;max-width:600px;margin:0 auto;">' +
       '<div style="background-color:#1e3a5f;padding:20px;border-radius:8px 8px 0 0;text-align:center;">' +
       '<h1 style="color:#ffffff;margin:0;font-size:22px;">Christófolli Consultoria</h1>' +
-      '<p style="color:#c0d4e8;margin:5px 0 0 0;font-size:14px;">Nova Publicação Técnica</p>' +
+      '<p style="color:#c0d4e8;margin:5px 0 0 0;font-size:14px;">Nova Publicação do Blog</p>' +
       '</div>' +
       '<div style="padding:30px;border:1px solid #e4e4e7;border-top:none;border-radius:0 0 8px 8px;">' +
       '<h2 style="color:#1e3a5f;margin:0 0 15px 0;font-size:20px;">' +
@@ -117,14 +132,14 @@ onRecordAfterCreateSuccess((e) => {
       '</div>' +
       '</div>'
 
-    const recipients = contacts.map(function (c) {
+    var recipients = contacts.map(function (c) {
       return { address: c.getString('email') }
     })
 
-    const msg = new mailer.Message({
+    var msg = new mailer.Message({
       from: { address: fromAddress, name: fromName },
       to: recipients,
-      subject: 'Nova Publicação Técnica: ' + title,
+      subject: 'Nova Publicação do Blog: ' + title,
       html: htmlBody,
     })
 
@@ -156,6 +171,186 @@ onRecordAfterCreateSuccess((e) => {
       .logger()
       .error(
         'Erro ao enviar notificacao de nova publicacao para contatos',
+        'error',
+        err.message,
+        'recordId',
+        e.record.id,
+      )
+  }
+
+  e.next()
+}, 'publications')
+
+onRecordAfterUpdateSuccess((e) => {
+  var oldCategory = e.record.original().getString('category')
+  var newCategory = e.record.getString('category')
+
+  if (oldCategory === 'Blog' || newCategory !== 'Blog') {
+    e.next()
+    return
+  }
+
+  try {
+    var contacts = []
+    try {
+      contacts = $app.findRecordsByFilter('contacts', "email != ''", '', 0, 0)
+    } catch (fetchErr) {
+      $app
+        .logger()
+        .warn(
+          'Failed to fetch contacts for publication notification (update)',
+          'error',
+          fetchErr.message,
+        )
+    }
+
+    if (contacts.length === 0) {
+      e.next()
+      return
+    }
+
+    var m = 'mailer'
+    var mailer = require(m)
+
+    var escapeHtml = function (str) {
+      return String(str)
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;')
+    }
+
+    var title = e.record.getString('title')
+    var description = e.record.getString('description') || ''
+    var safeTitle = escapeHtml(title)
+    var safeDesc = escapeHtml(description).replace(/\n/g, '<br />')
+
+    var smtpSettings = null
+    try {
+      var records = $app.findRecordsByFilter('smtp_settings', "id != ''", '-created', 1, 0)
+      if (records.length > 0) {
+        smtpSettings = records[0]
+      }
+    } catch (fetchErr) {
+      $app
+        .logger()
+        .warn(
+          'Failed to fetch SMTP settings for publication notification (update)',
+          'error',
+          fetchErr.message,
+        )
+    }
+
+    var fromAddress, fromName
+    if (smtpSettings) {
+      fromAddress = smtpSettings.getString('from_email')
+      fromName = smtpSettings.getString('from_name')
+    } else {
+      fromAddress = $app.settings().meta.senderAddress
+      fromName = $app.settings().meta.senderName || 'Christófolli Consultoria'
+    }
+
+    var pbUrl = $secrets.get('PB_INSTANCE_URL') || ''
+    var coverImage = e.record.getString('cover_image')
+    var coverUrl = coverImage
+      ? pbUrl + '/api/files/' + e.record.collectionId + '/' + e.record.id + '/' + coverImage
+      : ''
+
+    var siteUrl = $secrets.get('SITE_URL') || 'https://consultoria-concreto-tech-191de.goskip.app'
+
+    var coverHtml = ''
+    if (coverUrl) {
+      coverHtml =
+        '<div style="margin-bottom:24px;text-align:center;">' +
+        '<img src="' +
+        coverUrl +
+        '" alt="' +
+        safeTitle +
+        '" style="max-width:100%;width:600px;border-radius:8px;display:block;margin:0 auto;" />' +
+        '</div>'
+    }
+
+    var descHtml = ''
+    if (safeDesc) {
+      descHtml =
+        '<div style="background:#f4f4f5;padding:15px;border-radius:6px;border:1px solid #e4e4e7;margin:20px 0;">' +
+        '<p style="margin:0;font-size:14px;color:#555;line-height:1.6;">' +
+        safeDesc +
+        '</p>' +
+        '</div>'
+    }
+
+    var htmlBody =
+      '<div style="font-family:sans-serif;color:#333;max-width:600px;margin:0 auto;">' +
+      '<div style="background-color:#1e3a5f;padding:20px;border-radius:8px 8px 0 0;text-align:center;">' +
+      '<h1 style="color:#ffffff;margin:0;font-size:22px;">Christófolli Consultoria</h1>' +
+      '<p style="color:#c0d4e8;margin:5px 0 0 0;font-size:14px;">Nova Publicação do Blog</p>' +
+      '</div>' +
+      '<div style="padding:30px;border:1px solid #e4e4e7;border-top:none;border-radius:0 0 8px 8px;">' +
+      '<h2 style="color:#1e3a5f;margin:0 0 15px 0;font-size:20px;">' +
+      safeTitle +
+      '</h2>' +
+      coverHtml +
+      descHtml +
+      '<div style="text-align:center;margin:30px 0 10px 0;">' +
+      '<a href="' +
+      siteUrl +
+      '" style="display:inline-block;background-color:#1e3a5f;color:#ffffff;text-decoration:none;padding:12px 32px;border-radius:6px;font-weight:bold;font-size:15px;">Acessar Publicação</a>' +
+      '</div>' +
+      '<p style="font-size:13px;color:#888;text-align:center;margin-top:20px;">' +
+      'Você recebeu este e-mail porque está cadastrado em nossa lista de contatos.<br/>' +
+      'Visite <a href="' +
+      siteUrl +
+      '" style="color:#1e3a5f;">' +
+      siteUrl +
+      '</a> para mais informações.' +
+      '</p>' +
+      '</div>' +
+      '<div style="text-align:center;padding:15px;color:#999;font-size:12px;">' +
+      '<p style="margin:0;">Este é um e-mail automático. Por favor, não responda a esta mensagem.</p>' +
+      '</div>' +
+      '</div>'
+
+    var recipients = contacts.map(function (c) {
+      return { address: c.getString('email') }
+    })
+
+    var msg = new mailer.Message({
+      from: { address: fromAddress, name: fromName },
+      to: recipients,
+      subject: 'Nova Publicação do Blog: ' + title,
+      html: htmlBody,
+    })
+
+    if (smtpSettings) {
+      var encryption = smtpSettings.getString('encryption')
+      var client = new mailer.SmtpClient({
+        host: smtpSettings.getString('host'),
+        port: smtpSettings.getInt('port'),
+        username: smtpSettings.getString('username'),
+        password: smtpSettings.getString('password'),
+        ssl: encryption === 'SSL',
+      })
+      client.send(msg)
+    } else {
+      $app.newMailClient().send(msg)
+    }
+
+    $app
+      .logger()
+      .info(
+        'Publication notification sent (category changed to Blog)',
+        'contacts',
+        contacts.length,
+        'publicationId',
+        e.record.id,
+      )
+  } catch (err) {
+    $app
+      .logger()
+      .error(
+        'Erro ao enviar notificacao de publicacao atualizada para contatos',
         'error',
         err.message,
         'recordId',
