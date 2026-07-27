@@ -27,7 +27,12 @@ import {
   FormDescription,
 } from '@/components/ui/form'
 import { useToast } from '@/hooks/use-toast'
-import { getPublication, createPublication, updatePublication } from '@/services/publications'
+import {
+  getPublication,
+  createPublication,
+  updatePublication,
+  notifyPublicationContacts,
+} from '@/services/publications'
 import { extractFieldErrors } from '@/lib/pocketbase/errors'
 import { getFileUrl } from '@/lib/file-url'
 
@@ -205,13 +210,37 @@ export default function PublicationForm() {
     }
 
     try {
-      if (isEditing) {
-        await updatePublication(id!, formData)
-        toast({ title: 'Publicação atualizada com sucesso!' })
+      const savedPub = isEditing
+        ? await updatePublication(id!, formData)
+        : await createPublication(formData)
+      const pubId = savedPub?.id || id || ''
+
+      if (values.category === 'Blog' && pubId) {
+        try {
+          const result = await notifyPublicationContacts(pubId)
+          if (result.success) {
+            toast({ title: `E-mails enviados para ${result.count} contatos` })
+          } else {
+            toast({
+              title: `Erro ao enviar e-mails: ${result.error || 'Erro desconhecido'}`,
+              variant: 'destructive',
+            })
+          }
+        } catch (notifyError) {
+          const reason = notifyError instanceof Error ? notifyError.message : 'Erro desconhecido'
+          toast({
+            title: `Erro ao enviar e-mails: ${reason}`,
+            variant: 'destructive',
+          })
+        }
       } else {
-        await createPublication(formData)
-        toast({ title: 'Publicação cadastrada com sucesso!' })
+        toast({
+          title: isEditing
+            ? 'Publicação atualizada com sucesso!'
+            : 'Publicação cadastrada com sucesso!',
+        })
       }
+
       navigate('/admin/publications')
     } catch (error) {
       const fieldErrors = extractFieldErrors(error)

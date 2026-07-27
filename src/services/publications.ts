@@ -62,3 +62,13 @@ export const updatePublication = async (
 export const deletePublication = async (id: string): Promise<void> => {
   return pb.collection('publications').delete(id)
 }
+
+export interface NotifyResult {
+  success: boolean
+  count: number
+  error?: string
+  skipped?: boolean
+}
+
+export const notifyPublicationContacts = (id: string): Promise<NotifyResult> =>
+  pb.send(`/backend/v1/publications/${id}/notify`, { method: 'POST' }) as Promise<NotifyResult>
