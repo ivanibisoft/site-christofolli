@@ -31,8 +31,7 @@ routerAdd(
         return e.json(200, { success: true, count: 0 })
       }
 
-      var m = 'mailer'
-      var mailer = require(m)
+      var mailer = require('mailer')
 
       var escapeHtml = function (str) {
         return String(str)
