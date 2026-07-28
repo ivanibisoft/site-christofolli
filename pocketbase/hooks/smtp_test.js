@@ -16,7 +16,7 @@ routerAdd(
         settings.meta.smtpTLS = body.encryption === 'TLS' || body.encryption === 'SSL'
         settings.meta.senderAddress = body.from_email || ''
         settings.meta.senderName = body.from_name || 'Christófolli Consultoria'
-        $app.save(settings)
+        $app.saveSettings(settings)
       }
 
       var senderAddress = $app.settings().meta.senderAddress

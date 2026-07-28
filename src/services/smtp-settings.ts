@@ -22,8 +22,7 @@ export const getSmtpSettings = (): Promise<SmtpSettings> =>
 export const saveSmtpSettings = (data: SmtpSettings): Promise<{ success: boolean }> =>
   pb.send('/backend/v1/smtp/settings', {
     method: 'POST',
-    body: JSON.stringify(data),
-    headers: { 'Content-Type': 'application/json' },
+    body: data,
   })
 
 export const testSmtpSettings = (
@@ -31,6 +30,5 @@ export const testSmtpSettings = (
 ): Promise<SmtpTestResult> =>
   pb.send('/backend/v1/smtp/test', {
     method: 'POST',
-    body: JSON.stringify(data),
-    headers: { 'Content-Type': 'application/json' },
+    body: data,
   })

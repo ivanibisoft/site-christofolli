@@ -15,7 +15,7 @@ routerAdd(
       settings.meta.senderAddress = body.from_email || ''
       settings.meta.senderName = body.from_name || 'Christófolli Consultoria'
 
-      $app.save(settings)
+      $app.saveSettings(settings)
 
       return e.json(200, { success: true })
     } catch (err) {
