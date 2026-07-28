@@ -59,7 +59,16 @@ export default function SmtpSettingsPage() {
   const handleTest = async () => {
     setTesting(true)
     try {
-      const result = await testSmtpSettings({ to: testEmail || undefined })
+      const result = await testSmtpSettings({
+        to: testEmail || undefined,
+        host: settings.host,
+        port: settings.port,
+        username: settings.username,
+        password: settings.password,
+        encryption: settings.encryption,
+        from_email: settings.from_email,
+        from_name: settings.from_name,
+      })
       if (result.success) {
         toast({
           title: 'E-mail de teste enviado!',

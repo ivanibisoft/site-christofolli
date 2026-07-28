@@ -26,7 +26,9 @@ export const saveSmtpSettings = (data: SmtpSettings): Promise<{ success: boolean
     headers: { 'Content-Type': 'application/json' },
   })
 
-export const testSmtpSettings = (data: { to?: string }): Promise<SmtpTestResult> =>
+export const testSmtpSettings = (
+  data: { to?: string } & Partial<SmtpSettings>,
+): Promise<SmtpTestResult> =>
   pb.send('/backend/v1/smtp/test', {
     method: 'POST',
     body: JSON.stringify(data),

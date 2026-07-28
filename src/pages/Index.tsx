@@ -151,7 +151,10 @@ export default function Index() {
     try {
       const result = await submitContact(data)
       if (result.success) {
-        toast({ title: 'Mensagem enviada!', description: 'Entraremos em contato em breve.' })
+        toast({
+          title: 'E-mails enviados',
+          description: 'Recebemos sua mensagem e entraremos em contato em breve.',
+        })
         form.reset()
       } else {
         toast({

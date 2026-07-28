@@ -6,6 +6,19 @@ routerAdd(
       var body = e.requestInfo().body || {}
       var toEmail = (body.to || '').trim()
 
+      if (body.host !== undefined) {
+        var settings = $app.settings()
+        settings.meta.smtpHost = body.host || ''
+        settings.meta.smtpPort = body.port || 587
+        settings.meta.smtpUsername = body.username || ''
+        settings.meta.smtpPassword = body.password || ''
+        settings.meta.smtpAuth = !!body.username
+        settings.meta.smtpTLS = body.encryption === 'TLS' || body.encryption === 'SSL'
+        settings.meta.senderAddress = body.from_email || ''
+        settings.meta.senderName = body.from_name || 'Christófolli Consultoria'
+        $app.save(settings)
+      }
+
       var senderAddress = $app.settings().meta.senderAddress
       var senderName = $app.settings().meta.senderName || 'Christófolli Consultoria'
 
