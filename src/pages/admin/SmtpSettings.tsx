@@ -18,7 +18,6 @@ export default function SmtpSettingsPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [testing, setTesting] = useState(false)
-  const [testEmail, setTestEmail] = useState('')
   const [settings, setSettings] = useState<SmtpSettings>({
     host: '',
     port: 587,
@@ -59,21 +58,9 @@ export default function SmtpSettingsPage() {
   const handleTest = async () => {
     setTesting(true)
     try {
-      const result = await testSmtpSettings({
-        to: testEmail || undefined,
-        host: settings.host,
-        port: settings.port,
-        username: settings.username,
-        password: settings.password,
-        encryption: settings.encryption,
-        from_email: settings.from_email,
-        from_name: settings.from_name,
-      })
+      const result = await testSmtpSettings(settings)
       if (result.success) {
-        toast({
-          title: 'E-mail de teste enviado!',
-          description: result.message || 'Verifique a caixa de entrada.',
-        })
+        toast({ title: 'Teste enviado com sucesso!' })
       } else {
         toast({
           title: 'Falha no teste',
@@ -81,10 +68,11 @@ export default function SmtpSettingsPage() {
           variant: 'destructive',
         })
       }
-    } catch (error: any) {
-      const errorMsg =
-        error?.response?.message || error?.message || 'Erro ao testar configuração SMTP'
-      toast({ title: 'Falha no teste', description: errorMsg, variant: 'destructive' })
+    } catch {
+      toast({
+        title: 'Erro de conexão. Verifique o servidor.',
+        variant: 'destructive',
+      })
     } finally {
       setTesting(false)
     }
@@ -235,23 +223,13 @@ export default function SmtpSettingsPage() {
         <CardHeader>
           <CardTitle className="text-xl flex items-center gap-2">
             <Send className="h-5 w-5 text-primary" />
-            Testar Configuração
+            Testar Conexão
           </CardTitle>
           <CardDescription>
-            Envie um e-mail de teste para verificar se o SMTP está funcionando.
+            Envie um e-mail de teste para o endereço remetente configurado acima.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="test_email">E-mail para teste (opcional)</Label>
-            <Input
-              id="test_email"
-              type="email"
-              value={testEmail}
-              onChange={(e) => setTestEmail(e.target.value)}
-              placeholder="Deixe vazio para usar o remetente padrão"
-            />
-          </div>
+        <CardContent>
           <div className="flex justify-end pt-2">
             <Button
               variant="outline"
@@ -267,7 +245,7 @@ export default function SmtpSettingsPage() {
               ) : (
                 <>
                   <Send className="h-4 w-4 mr-2" />
-                  Testar Configuração
+                  Testar Conexão
                 </>
               )}
             </Button>

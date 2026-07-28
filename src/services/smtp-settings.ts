@@ -12,7 +12,6 @@ export interface SmtpSettings {
 
 export interface SmtpTestResult {
   success: boolean
-  message?: string
   error?: string
 }
 
@@ -25,10 +24,8 @@ export const saveSmtpSettings = (data: SmtpSettings): Promise<{ success: boolean
     body: data,
   })
 
-export const testSmtpSettings = (
-  data: { to?: string } & Partial<SmtpSettings>,
-): Promise<SmtpTestResult> =>
-  pb.send('/backend/v1/smtp/test', {
+export const testSmtpSettings = (data: SmtpSettings): Promise<SmtpTestResult> =>
+  pb.send('/backend/v1/smtp_test', {
     method: 'POST',
     body: data,
   })
