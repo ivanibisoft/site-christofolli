@@ -5,17 +5,52 @@ routerAdd('POST', '/backend/v1/contacts/submit', (e) => {
     return e.badRequestError('Nome, email e mensagem são obrigatórios')
   }
 
-  var meta = $app.settings().meta
-  var senderAddress = meta.senderAddress
-  var senderName = meta.senderName || 'Christófolli Consultoria'
+  var smtpHost = ''
+  var smtpPort = 587
+  var smtpUsername = ''
+  var smtpPassword = ''
+  var smtpEncryption = 'TLS'
+  var senderAddress = ''
+  var senderName = 'Christófolli Consultoria'
+
+  try {
+    var existing = $app.findRecordsByFilter('smtp_settings', '', '', 1, 0)
+    if (existing.length > 0) {
+      var smtpRecord = existing[0]
+      smtpHost = smtpRecord.getString('host') || ''
+      smtpPort = smtpRecord.getInt('port') || 587
+      smtpUsername = smtpRecord.getString('username') || ''
+      smtpPassword = smtpRecord.getString('password') || ''
+      smtpEncryption = smtpRecord.getString('encryption') || 'TLS'
+      senderAddress = smtpRecord.getString('from_email') || ''
+      senderName = smtpRecord.getString('from_name') || 'Christófolli Consultoria'
+    }
+  } catch (_) {}
+
+  if (!smtpHost) {
+    return e.json(400, {
+      success: false,
+      error:
+        'Configurações de SMTP não definidas. Configure o SMTP no painel administrativo antes de receber contatos.',
+    })
+  }
 
   if (!senderAddress) {
     return e.json(400, {
       success: false,
       error:
-        'Configurações de e-mail não definidas. Configure o SMTP no painel administrativo antes de receber contatos.',
+        'E-mail remetente não definido. Configure o SMTP no painel administrativo antes de receber contatos.',
     })
   }
+
+  var mailClient = $app.newMailClient({
+    host: smtpHost,
+    port: smtpPort,
+    username: smtpUsername,
+    password: smtpPassword,
+    tls: smtpEncryption === 'TLS' || smtpEncryption === 'SSL',
+    auth: smtpUsername ? 'PLAIN' : '',
+  })
 
   var contactId = ''
   try {
@@ -72,7 +107,7 @@ routerAdd('POST', '/backend/v1/contacts/submit', (e) => {
       '<p style="margin:0;">Este é um e-mail automático. Por favor, não responda a esta mensagem.</p>' +
       '</div></div></div>'
 
-    $app.newMailClient().send(
+    mailClient.send(
       new MailerMessage({
         from: { address: senderAddress, name: senderName },
         to: [{ address: body.email }],
@@ -115,7 +150,7 @@ routerAdd('POST', '/backend/v1/contacts/submit', (e) => {
       esc(body.message).replace(/\n/g, '<br/>') +
       '</div></div>'
 
-    $app.newMailClient().send(
+    mailClient.send(
       new MailerMessage({
         from: { address: senderAddress, name: senderName },
         to: [{ address: senderAddress }],
