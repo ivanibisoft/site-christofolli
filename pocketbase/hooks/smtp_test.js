@@ -21,13 +21,14 @@ routerAdd(
       }
 
       try {
-        var client = $app.newMailClient()
-        client.host = host
-        client.port = port
-        client.username = username
-        client.password = password
-        client.tls = encryption === 'TLS' || encryption === 'SSL'
-        client.auth = !!username
+        var client = $app.newMailClient({
+          host: host,
+          port: port,
+          username: username,
+          password: password,
+          tls: encryption === 'TLS' || encryption === 'SSL',
+          auth: !!username,
+        })
 
         var msg = new MailerMessage({
           from: { address: fromEmail, name: fromName },
