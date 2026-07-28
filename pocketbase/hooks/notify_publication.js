@@ -16,13 +16,14 @@ routerAdd(
       return e.json(200, { success: true, count: 0, skipped: true })
     }
 
+    var senderAddress = 'noreply@christofolli.com.br'
+    var senderName = 'Blog Post Notifier'
+
     var smtpHost = ''
     var smtpPort = 587
     var smtpUsername = ''
     var smtpPassword = ''
     var smtpEncryption = 'TLS'
-    var senderAddress = ''
-    var senderName = 'Christófolli Consultoria'
 
     try {
       var existing = $app.findRecordsByFilter('smtp_settings', '', '', 1, 0)
@@ -33,8 +34,6 @@ routerAdd(
         smtpUsername = smtpRecord.getString('username') || ''
         smtpPassword = smtpRecord.getString('password') || ''
         smtpEncryption = smtpRecord.getString('encryption') || 'TLS'
-        senderAddress = smtpRecord.getString('from_email') || ''
-        senderName = smtpRecord.getString('from_name') || 'Christófolli Consultoria'
       }
     } catch (smtpFetchErr) {
       $app
@@ -56,13 +55,6 @@ routerAdd(
       return e.json(200, {
         success: false,
         error: 'Configurações de SMTP não definidas. Configure o SMTP no painel administrativo.',
-      })
-    }
-
-    if (!senderAddress) {
-      return e.json(200, {
-        success: false,
-        error: 'E-mail remetente não definido. Configure o SMTP no painel administrativo.',
       })
     }
 
@@ -92,11 +84,16 @@ routerAdd(
     var title = record.getString('title')
     var description = record.getString('description') || ''
 
-    var descLines = description.split('\n').filter(function (line) {
-      return line.trim().length > 0
-    })
-    var firstFiveLines = descLines.slice(0, 5).join('\n')
-    var safeDesc = escapeHtml(firstFiveLines).replace(/\n/g, '<br />')
+    var snippet = ''
+    if (description.trim()) {
+      var descLines = description.split('\n').filter(function (line) {
+        return line.trim().length > 0
+      })
+      snippet = descLines.slice(0, 5).join('\n')
+    } else {
+      snippet = '(no content)'
+    }
+    var safeSnippet = escapeHtml(snippet).replace(/\n/g, '<br />')
     var safeTitle = escapeHtml(title)
 
     var pbUrl = $secrets.get('PB_INSTANCE_URL') || ''
@@ -120,21 +117,20 @@ routerAdd(
         '</div>'
     }
 
-    var descHtml = ''
-    if (safeDesc) {
-      descHtml =
-        '<div style="background:#f4f4f5;padding:15px;border-radius:6px;border:1px solid #e4e4e7;margin:20px 0;">' +
-        '<p style="margin:0;font-size:14px;color:#555;line-height:1.6;">' +
-        safeDesc +
-        '</p>' +
-        '</div>'
-    }
+    var snippetHtml =
+      '<div style="background:#f4f4f5;padding:15px;border-radius:6px;border:1px solid #e4e4e7;margin:20px 0;">' +
+      '<p style="margin:0;font-size:14px;color:#555;line-height:1.6;">' +
+      safeSnippet +
+      '</p>' +
+      '</div>'
+
+    var brandName = 'Christófolli Consultoria'
 
     var htmlBody =
       '<div style="font-family:sans-serif;color:#333;max-width:600px;margin:0 auto;">' +
       '<div style="background-color:#1e3a5f;padding:20px;border-radius:8px 8px 0 0;text-align:center;">' +
       '<h1 style="color:#ffffff;margin:0;font-size:22px;">' +
-      escapeHtml(senderName) +
+      escapeHtml(brandName) +
       '</h1>' +
       '<p style="color:#c0d4e8;margin:5px 0 0 0;font-size:14px;">Nova Publicação do Blog</p>' +
       '</div>' +
@@ -143,11 +139,11 @@ routerAdd(
       safeTitle +
       '</h2>' +
       coverHtml +
-      descHtml +
+      snippetHtml +
       '<div style="text-align:center;margin:30px 0 10px 0;">' +
       '<a href="' +
       escapeHtml(postUrl) +
-      '" style="display:inline-block;background-color:#1e3a5f;color:#ffffff;text-decoration:none;padding:12px 32px;border-radius:6px;font-weight:bold;font-size:15px;">Acessar postagem completa</a>' +
+      '" style="display:inline-block;background-color:#1e3a5f;color:#ffffff;text-decoration:none;padding:12px 32px;border-radius:6px;font-weight:bold;font-size:15px;">Leia o artigo completo →</a>' +
       '</div>' +
       '<p style="font-size:13px;color:#888;text-align:center;margin-top:20px;">' +
       'Você recebeu este e-mail porque está cadastrado em nossa lista de contatos.' +
