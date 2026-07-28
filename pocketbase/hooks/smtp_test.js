@@ -27,7 +27,7 @@ routerAdd(
           username: username,
           password: password,
           tls: encryption === 'TLS' || encryption === 'SSL',
-          auth: !!username,
+          auth: username ? 'PLAIN' : '',
         })
 
         var msg = new MailerMessage({

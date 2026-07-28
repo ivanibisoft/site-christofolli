@@ -46,6 +46,21 @@ routerAdd(
         $app.save(record)
       }
 
+      try {
+        var s = $app.settings()
+        s.smtp.host = data.host
+        s.smtp.port = data.port
+        s.smtp.username = data.username
+        s.smtp.password = data.password
+        s.smtp.tls = data.encryption === 'TLS' || data.encryption === 'SSL'
+        s.smtp.auth = data.username ? 'PLAIN' : ''
+        s.meta.senderAddress = data.from_email
+        s.meta.senderName = data.from_name
+        $app.save(s)
+      } catch (settingsErr) {
+        $app.logger().error('Failed to update native mail settings', 'error', settingsErr.message)
+      }
+
       return e.json(200, { success: true })
     } catch (err) {
       $app.logger().error('Failed to save SMTP settings', 'error', err.message)
