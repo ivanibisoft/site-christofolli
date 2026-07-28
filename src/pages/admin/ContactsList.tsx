@@ -104,17 +104,18 @@ export default function ContactsList() {
           {contacts.length === 0 ? (
             <p className="text-center text-muted-foreground py-8">Nenhum contato recebido ainda.</p>
           ) : (
-            <div className="rounded-md border overflow-hidden">
-              <div className="overflow-x-auto">
+            <>
+              {/* Desktop table - no horizontal scroll, actions always visible */}
+              <div className="hidden lg:block rounded-md border">
                 <Table>
                   <TableHeader className="bg-slate-50">
                     <TableRow>
-                      <TableHead className="w-[160px]">Data</TableHead>
-                      <TableHead>Nome</TableHead>
-                      <TableHead className="hidden md:table-cell">E-mail</TableHead>
-                      <TableHead className="hidden lg:table-cell">Empresa</TableHead>
-                      <TableHead className="hidden lg:table-cell">WhatsApp</TableHead>
-                      <TableHead className="w-[120px] text-right pr-6">Ações</TableHead>
+                      <TableHead className="w-[140px]">Data</TableHead>
+                      <TableHead className="w-[150px]">Nome</TableHead>
+                      <TableHead className="w-[200px]">E-mail</TableHead>
+                      <TableHead className="w-[150px]">Empresa</TableHead>
+                      <TableHead className="w-[130px]">WhatsApp</TableHead>
+                      <TableHead className="w-[100px] text-right pr-4">Ações</TableHead>
                     </TableRow>
                   </TableHeader>
                   <TableBody>
@@ -123,18 +124,18 @@ export default function ContactsList() {
                         <TableCell className="whitespace-nowrap text-sm text-slate-600">
                           {format(new Date(c.created), 'dd/MM/yyyy HH:mm')}
                         </TableCell>
-                        <TableCell className="font-medium text-slate-800">{c.name}</TableCell>
-                        <TableCell className="hidden md:table-cell text-slate-600">
+                        <TableCell className="font-medium text-slate-800 truncate max-w-[150px]">
+                          {c.name}
+                        </TableCell>
+                        <TableCell className="text-slate-600 truncate max-w-[200px]">
                           {c.email}
                         </TableCell>
-                        <TableCell className="hidden lg:table-cell text-slate-600">
+                        <TableCell className="text-slate-600 truncate max-w-[150px]">
                           {c.company_name || '-'}
                         </TableCell>
-                        <TableCell className="hidden lg:table-cell text-slate-600">
-                          {c.whatsapp || '-'}
-                        </TableCell>
+                        <TableCell className="text-slate-600">{c.whatsapp || '-'}</TableCell>
                         <TableCell className="text-right pr-4">
-                          <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity focus-within:opacity-100">
+                          <div className="flex items-center justify-end gap-1">
                             <Button
                               variant="ghost"
                               size="icon"
@@ -162,7 +163,70 @@ export default function ContactsList() {
                   </TableBody>
                 </Table>
               </div>
-            </div>
+
+              {/* Mobile/tablet card layout - actions always visible */}
+              <div className="lg:hidden space-y-3">
+                {contacts.map((c) => (
+                  <div
+                    key={c.id}
+                    className="rounded-lg border border-slate-200 p-4 bg-white hover:bg-slate-50/50 transition-colors"
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div className="flex items-start gap-3 min-w-0 flex-1">
+                        <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-slate-100 text-slate-500">
+                          <User className="h-5 w-5" />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="font-medium text-slate-800 truncate">{c.name}</p>
+                          <p className="text-sm text-slate-500 truncate">{c.email}</p>
+                          <p className="text-xs text-slate-400 mt-0.5">
+                            {format(new Date(c.created), 'dd/MM/yyyy HH:mm')}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="flex items-center gap-1 shrink-0">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-slate-500 hover:text-primary"
+                          onClick={() => setSelectedContact(c)}
+                          title="Ver detalhes"
+                        >
+                          <Eye className="h-4 w-4" />
+                          <span className="sr-only">Ver detalhes</span>
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-slate-500 hover:text-red-500 hover:bg-red-50"
+                          onClick={() => setContactToDelete(c)}
+                          title="Excluir"
+                        >
+                          <Trash2 className="h-4 w-4" />
+                          <span className="sr-only">Excluir</span>
+                        </Button>
+                      </div>
+                    </div>
+                    {(c.company_name || c.whatsapp) && (
+                      <div className="mt-3 flex flex-wrap gap-x-4 gap-y-1 text-sm text-slate-600">
+                        {c.company_name && (
+                          <span className="inline-flex items-center gap-1">
+                            <Building2 className="h-3.5 w-3.5 text-slate-400" />
+                            {c.company_name}
+                          </span>
+                        )}
+                        {c.whatsapp && (
+                          <span className="inline-flex items-center gap-1">
+                            <Phone className="h-3.5 w-3.5 text-slate-400" />
+                            {c.whatsapp}
+                          </span>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </>
           )}
         </CardContent>
       </Card>
