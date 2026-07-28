@@ -6,6 +6,7 @@ import { Label } from '@/components/ui/label'
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card'
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert'
 import { useToast } from '@/hooks/use-toast'
+import { extractFieldErrors, getErrorMessage, type FieldErrors } from '@/lib/pocketbase/errors'
 import {
   getSmtpSettings,
   saveSmtpSettings,
@@ -18,6 +19,7 @@ export default function SmtpSettingsPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [testing, setTesting] = useState(false)
+  const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [settings, setSettings] = useState<SmtpSettings>({
     host: '',
     port: 587,
@@ -37,19 +39,31 @@ export default function SmtpSettingsPage() {
 
   const handleChange = (field: keyof SmtpSettings, value: string | number) => {
     setSettings((prev) => ({ ...prev, [field]: value }))
+    setFieldErrors((prev) => ({ ...prev, [field]: '' }))
   }
 
   const handleSave = async () => {
     setSaving(true)
+    setFieldErrors({})
     try {
       await saveSmtpSettings(settings)
       toast({ title: 'Configurações salvas com sucesso!' })
     } catch (error: any) {
-      toast({
-        title: 'Erro ao salvar',
-        description: error?.message || 'Erro desconhecido',
-        variant: 'destructive',
-      })
+      const errors = extractFieldErrors(error)
+      if (Object.keys(errors).length > 0) {
+        setFieldErrors(errors)
+        toast({
+          title: 'Erro de validação',
+          description: Object.values(errors).join(', '),
+          variant: 'destructive',
+        })
+      } else {
+        toast({
+          title: 'Erro ao salvar',
+          description: getErrorMessage(error),
+          variant: 'destructive',
+        })
+      }
     } finally {
       setSaving(false)
     }
@@ -132,6 +146,7 @@ export default function SmtpSettingsPage() {
                 onChange={(e) => handleChange('host', e.target.value)}
                 placeholder="smtp.exemplo.com"
               />
+              {fieldErrors.host && <p className="text-sm text-red-500">{fieldErrors.host}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="port">Porta</Label>
@@ -142,6 +157,7 @@ export default function SmtpSettingsPage() {
                 onChange={(e) => handleChange('port', parseInt(e.target.value) || 587)}
                 placeholder="587"
               />
+              {fieldErrors.port && <p className="text-sm text-red-500">{fieldErrors.port}</p>}
             </div>
           </div>
 
@@ -154,6 +170,9 @@ export default function SmtpSettingsPage() {
                 onChange={(e) => handleChange('username', e.target.value)}
                 placeholder="usuario@exemplo.com"
               />
+              {fieldErrors.username && (
+                <p className="text-sm text-red-500">{fieldErrors.username}</p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Senha</Label>
@@ -164,6 +183,9 @@ export default function SmtpSettingsPage() {
                 onChange={(e) => handleChange('password', e.target.value)}
                 placeholder="••••••••"
               />
+              {fieldErrors.password && (
+                <p className="text-sm text-red-500">{fieldErrors.password}</p>
+              )}
             </div>
           </div>
 
@@ -178,6 +200,9 @@ export default function SmtpSettingsPage() {
               <option value="TLS">TLS</option>
               <option value="none">Nenhuma</option>
             </select>
+            {fieldErrors.encryption && (
+              <p className="text-sm text-red-500">{fieldErrors.encryption}</p>
+            )}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -190,6 +215,9 @@ export default function SmtpSettingsPage() {
                 onChange={(e) => handleChange('from_email', e.target.value)}
                 placeholder="noreply@exemplo.com"
               />
+              {fieldErrors.from_email && (
+                <p className="text-sm text-red-500">{fieldErrors.from_email}</p>
+              )}
             </div>
             <div className="space-y-2">
               <Label htmlFor="from_name">Nome do Remetente</Label>
@@ -199,6 +227,9 @@ export default function SmtpSettingsPage() {
                 onChange={(e) => handleChange('from_name', e.target.value)}
                 placeholder="Christófolli Consultoria"
               />
+              {fieldErrors.from_name && (
+                <p className="text-sm text-red-500">{fieldErrors.from_name}</p>
+              )}
             </div>
           </div>
 
