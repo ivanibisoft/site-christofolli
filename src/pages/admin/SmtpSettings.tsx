@@ -68,9 +68,10 @@ export default function SmtpSettingsPage() {
           variant: 'destructive',
         })
       }
-    } catch {
+    } catch (error: any) {
       toast({
-        title: 'Erro de conexão. Verifique o servidor.',
+        title: 'Erro de conexão',
+        description: error?.message || 'Verifique o servidor e tente novamente.',
         variant: 'destructive',
       })
     } finally {

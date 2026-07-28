@@ -20,26 +20,15 @@ routerAdd(
         return e.json(200, { success: false, error: 'E-mail remetente é obrigatório.' })
       }
 
-      var settings = $app.settings()
-      var origHost = settings.meta.smtpHost
-      var origPort = settings.meta.smtpPort
-      var origUsername = settings.meta.smtpUsername
-      var origPassword = settings.meta.smtpPassword
-      var origAuth = settings.meta.smtpAuth
-      var origTLS = settings.meta.smtpTLS
-      var origSenderAddress = settings.meta.senderAddress
-      var origSenderName = settings.meta.senderName
-
-      settings.meta.smtpHost = host
-      settings.meta.smtpPort = port
-      settings.meta.smtpUsername = username
-      settings.meta.smtpPassword = password
-      settings.meta.smtpAuth = !!username
-      settings.meta.smtpTLS = encryption === 'TLS' || encryption === 'SSL'
-      settings.meta.senderAddress = fromEmail
-      settings.meta.senderName = fromName
-
       try {
+        var client = $app.newMailClient()
+        client.host = host
+        client.port = port
+        client.username = username
+        client.password = password
+        client.tls = encryption === 'TLS' || encryption === 'SSL'
+        client.auth = !!username
+
         var msg = new MailerMessage({
           from: { address: fromEmail, name: fromName },
           to: [{ address: fromEmail }],
@@ -48,29 +37,20 @@ routerAdd(
           text: 'Este é um e-mail de teste enviado a partir das configurações SMTP.',
         })
 
-        $app.newMailClient().send(msg)
+        client.send(msg)
 
         return e.json(200, { success: true })
       } catch (sendErr) {
         return e.json(200, {
           success: false,
-          error: sendErr.message || 'Falha ao enviar e-mail de teste.',
+          error: 'Falha no teste: ' + (sendErr.message || 'Erro desconhecido ao enviar e-mail.'),
         })
-      } finally {
-        settings.meta.smtpHost = origHost
-        settings.meta.smtpPort = origPort
-        settings.meta.smtpUsername = origUsername
-        settings.meta.smtpPassword = origPassword
-        settings.meta.smtpAuth = origAuth
-        settings.meta.smtpTLS = origTLS
-        settings.meta.senderAddress = origSenderAddress
-        settings.meta.senderName = origSenderName
       }
     } catch (err) {
       $app.logger().error('SMTP test failed', 'error', err.message)
       return e.json(200, {
         success: false,
-        error: err.message || 'Erro desconhecido ao testar configuração SMTP.',
+        error: 'Falha no teste: ' + (err.message || 'Erro desconhecido.'),
       })
     }
   },
