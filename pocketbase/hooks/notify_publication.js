@@ -96,11 +96,15 @@ routerAdd(
     var safeSnippet = escapeHtml(snippet).replace(/\n/g, '<br />')
     var safeTitle = escapeHtml(title)
 
-    var pbUrl = $secrets.get('PB_INSTANCE_URL') || ''
+    var pbUrl = ($secrets.get('PB_INSTANCE_URL') || $secrets.get('SITE_URL') || '').replace(
+      /\/$/,
+      '',
+    )
     var coverImage = record.getString('cover_image')
-    var coverUrl = coverImage
-      ? pbUrl + '/api/files/' + record.collectionId + '/' + record.id + '/' + coverImage
-      : ''
+    var coverUrl = ''
+    if (coverImage && pbUrl) {
+      coverUrl = pbUrl + '/api/files/' + record.collectionId + '/' + record.id + '/' + coverImage
+    }
 
     var siteUrl = $secrets.get('SITE_URL') || 'https://consultoria-concreto-tech-191de.goskip.app'
     var postUrl = siteUrl.replace(/\/$/, '') + '/publicacoes/' + record.id
