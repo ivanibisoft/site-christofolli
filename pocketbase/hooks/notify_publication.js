@@ -97,7 +97,9 @@ routerAdd(
     var safeTitle = escapeHtml(title)
 
     var coverImage = record.getString('cover_image')
-    var coverUrl = ''
+    var inlineAttachments = []
+    var coverHtml = ''
+
     if (coverImage) {
       try {
         var baseUrl = ($secrets.get('PB_INSTANCE_URL') || '').trim()
@@ -108,36 +110,83 @@ routerAdd(
           baseUrl = 'https://consultoria-concreto-tech-191de.goskip.app'
         }
         baseUrl = baseUrl.replace(/\/$/, '')
-        coverUrl =
+        var coverUrl =
           baseUrl + '/api/files/' + record.collectionId + '/' + record.id + '/' + coverImage
-      } catch (urlErr) {
+
+        var imgRes = $http.send({
+          url: coverUrl,
+          method: 'GET',
+          timeout: 30,
+        })
+
+        if (imgRes.statusCode === 200 && imgRes.body) {
+          var ext = coverImage.split('.').pop().toLowerCase()
+          var mimeType = 'image/jpeg'
+          if (ext === 'png') mimeType = 'image/png'
+          else if (ext === 'webp') mimeType = 'image/webp'
+          else if (ext === 'gif') mimeType = 'image/gif'
+
+          inlineAttachments = [
+            {
+              filename: 'cover-image',
+              data: imgRes.body,
+              headers: {
+                'Content-ID': '<cover-image>',
+                'Content-Type': mimeType,
+              },
+            },
+          ]
+
+          coverHtml =
+            '<div style="margin-bottom:24px;text-align:center;">' +
+            '<img src="cid:cover-image" alt="' +
+            safeTitle +
+            '" style="max-width:100%;width:600px;border-radius:8px;display:block;margin:0 auto;" />' +
+            '</div>'
+
+          $app
+            .logger()
+            .info(
+              'Cover image attached as inline CID for publication notification',
+              'publicationId',
+              pubId,
+              'coverImage',
+              coverImage,
+            )
+        } else {
+          $app
+            .logger()
+            .warn(
+              'Failed to download cover image for inline attachment',
+              'publicationId',
+              pubId,
+              'statusCode',
+              imgRes.statusCode,
+            )
+        }
+      } catch (imgErr) {
         $app
           .logger()
           .error(
-            'Failed to construct cover image URL',
+            'Error fetching cover image for inline attachment',
             'error',
-            urlErr.message,
+            imgErr.message,
             'publicationId',
             pubId,
           )
-        coverUrl = ''
       }
+    } else {
+      $app
+        .logger()
+        .info(
+          'No cover image found for publication, sending email without image',
+          'publicationId',
+          pubId,
+        )
     }
 
     var siteUrl = $secrets.get('SITE_URL') || 'https://consultoria-concreto-tech-191de.goskip.app'
     var postUrl = siteUrl.replace(/\/$/, '') + '/publicacoes/' + record.id
-
-    var coverHtml = ''
-    if (coverUrl) {
-      coverHtml =
-        '<div style="margin-bottom:24px;text-align:center;">' +
-        '<img src="' +
-        coverUrl +
-        '" alt="' +
-        safeTitle +
-        '" style="max-width:100%;width:600px;border-radius:8px;display:block;margin:0 auto;" />' +
-        '</div>'
-    }
 
     var snippetHtml =
       '<div style="background:#f4f4f5;padding:15px;border-radius:6px;border:1px solid #e4e4e7;margin:20px 0;">' +
@@ -197,6 +246,7 @@ routerAdd(
         bcc: bccRecipients,
         subject: title,
         html: htmlBody,
+        inline: inlineAttachments,
       })
       mailClient.send(msg)
 
