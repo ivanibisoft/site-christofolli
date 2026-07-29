@@ -96,14 +96,46 @@ routerAdd(
     var safeSnippet = escapeHtml(snippet).replace(/\n/g, '<br />')
     var safeTitle = escapeHtml(title)
 
-    var pbUrl = ($secrets.get('PB_INSTANCE_URL') || $secrets.get('SITE_URL') || '').replace(
-      /\/$/,
-      '',
-    )
     var coverImage = record.getString('cover_image')
     var coverUrl = ''
-    if (coverImage && pbUrl) {
-      coverUrl = pbUrl + '/api/files/' + record.collectionId + '/' + record.id + '/' + coverImage
+    if (coverImage) {
+      var fsys = $app.newFilesystem()
+      try {
+        var fileKey = record.baseFilesPath() + '/' + coverImage
+        if (fsys.exists(fileKey)) {
+          var fileData = fsys.read(fileKey)
+          var base64Str = ''
+          if (typeof fileData === 'string') {
+            base64Str = btoa(fileData)
+          } else if (fileData && fileData.length !== undefined) {
+            var binary = ''
+            for (var i = 0; i < fileData.length; i++) {
+              binary += String.fromCharCode(fileData[i])
+            }
+            base64Str = btoa(binary)
+          }
+          if (base64Str) {
+            var ext = coverImage.toLowerCase().split('.').pop()
+            var mime = 'image/jpeg'
+            if (ext === 'png') mime = 'image/png'
+            else if (ext === 'webp') mime = 'image/webp'
+            else if (ext === 'gif') mime = 'image/gif'
+            coverUrl = 'data:' + mime + ';base64,' + base64Str
+          }
+        }
+      } catch (imgErr) {
+        $app
+          .logger()
+          .error(
+            'Failed to embed cover image as base64',
+            'error',
+            imgErr.message,
+            'publicationId',
+            pubId,
+          )
+      } finally {
+        fsys.close()
+      }
     }
 
     var siteUrl = $secrets.get('SITE_URL') || 'https://consultoria-concreto-tech-191de.goskip.app'
