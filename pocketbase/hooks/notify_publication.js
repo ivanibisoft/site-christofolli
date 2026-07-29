@@ -171,7 +171,7 @@ routerAdd(
     try {
       var msg = new MailerMessage({
         from: { address: senderAddress, name: senderName },
-        to: [],
+        to: [{ address: senderAddress, name: senderName }],
         bcc: bccRecipients,
         subject: title,
         html: htmlBody,
