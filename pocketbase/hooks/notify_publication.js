@@ -17,7 +17,7 @@ routerAdd(
     }
 
     var senderAddress = 'noreply@christofolli.com.br'
-    var senderName = 'Blog Post Notifier'
+    var senderName = 'Christófolli Consultoria'
 
     var smtpHost = ''
     var smtpPort = 587
@@ -171,7 +171,7 @@ routerAdd(
     try {
       var msg = new MailerMessage({
         from: { address: senderAddress, name: senderName },
-        to: [{ address: senderAddress }],
+        to: [],
         bcc: bccRecipients,
         subject: title,
         html: htmlBody,
