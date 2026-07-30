@@ -166,7 +166,7 @@ export default function UsersList() {
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         onCreated={loadData}
-        existingEmails={users.map((u) => u.email.toLowerCase())}
+        existingEmails={users.map((u) => u.email?.toLowerCase() ?? '')}
       />
     </div>
   )
