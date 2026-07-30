@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Eye, EyeOff, Loader2 } from 'lucide-react'
+import { Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import {
@@ -30,7 +30,7 @@ import {
 } from '@/components/ui/form'
 import { useToast } from '@/hooks/use-toast'
 import { updateUser } from '@/services/users'
-import { extractFieldErrors } from '@/lib/pocketbase/errors'
+import { extractFieldErrors, getErrorMessage } from '@/lib/pocketbase/errors'
 import type { User } from '@/services/users'
 
 const formSchema = z.object({
@@ -60,6 +60,7 @@ export function EditUserDialog({
   const { toast } = useToast()
   const [saving, setSaving] = useState(false)
   const [showPassword, setShowPassword] = useState(false)
+  const [generalError, setGeneralError] = useState('')
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -74,9 +75,11 @@ export function EditUserDialog({
   const onSubmit = async (values: z.infer<typeof formSchema>) => {
     if (!user) return
 
+    setGeneralError('')
+
     const isSelf = user.id === currentUserId
     if (isSelf && user.role === 'admin' && values.role !== 'admin') {
-      toast({ title: 'Você não pode rebaixar a si mesmo', variant: 'destructive' })
+      setGeneralError('Você não pode rebaixar a si mesmo.')
       return
     }
 
@@ -98,7 +101,7 @@ export function EditUserDialog({
         data.passwordConfirm = values.password
       }
       await updateUser(user.id, data)
-      toast({ title: 'Usuário atualizado com sucesso!' })
+      toast({ title: 'Administrador atualizado com sucesso!' })
       form.reset({
         name: values.name,
         email: values.email,
@@ -113,9 +116,11 @@ export function EditUserDialog({
         Object.entries(fieldErrors).forEach(([field, msg]) => {
           form.setError(field as keyof typeof formSchema, { message: msg })
         })
-      } else {
-        toast({ title: 'Erro ao atualizar usuário', variant: 'destructive' })
       }
+      setGeneralError(
+        getErrorMessage(error) ||
+          'Erro ao atualizar usuário. Verifique os dados e tente novamente.',
+      )
     } finally {
       setSaving(false)
     }
@@ -134,6 +139,12 @@ export function EditUserDialog({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            {generalError && (
+              <div className="flex items-start gap-2 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+                <span>{generalError}</span>
+              </div>
+            )}
             <FormField
               control={form.control}
               name="name"
