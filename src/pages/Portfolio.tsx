@@ -2,14 +2,6 @@ import { useState, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog'
 import { Skeleton } from '@/components/ui/skeleton'
 import { useRealtime } from '@/hooks/use-realtime'
 import pb from '@/lib/pocketbase/client'
@@ -19,6 +11,7 @@ import {
   type GalleryItem,
 } from '@/services/gallery'
 import { getGalleryCategories, type GalleryCategory } from '@/services/gallery-categories'
+import { GalleryImageDialog } from '@/components/GalleryImageDialog'
 
 const ALL_CATEGORIES = 'Todas'
 
@@ -29,6 +22,8 @@ export default function Portfolio() {
   const [loading, setLoading] = useState(true)
   const [statLoading, setStatLoading] = useState(true)
   const [category, setCategory] = useState<string>(ALL_CATEGORIES)
+  const [galleryOpenIndex, setGalleryOpenIndex] = useState<number | null>(null)
+  const [statOpenIndex, setStatOpenIndex] = useState<number | null>(null)
 
   const loadData = useCallback(async () => {
     try {
@@ -36,9 +31,8 @@ export default function Portfolio() {
         getGalleryItemsExcludingStatistical(),
         getGalleryCategories(),
       ])
-      const filteredCats = catData.filter((c) => c.name !== 'Gráficos Estatísticos')
       setItems(galleryData)
-      setCategories(filteredCats)
+      setCategories(catData.filter((c) => c.name !== 'Gráficos Estatísticos'))
     } catch (error) {
       console.error(error)
     } finally {
@@ -48,8 +42,7 @@ export default function Portfolio() {
 
   const loadStatResults = useCallback(async () => {
     try {
-      const results = await getStatisticalResults()
-      setStatResults(results)
+      setStatResults(await getStatisticalResults())
     } catch (error) {
       console.error(error)
     } finally {
@@ -66,7 +59,6 @@ export default function Portfolio() {
     loadData()
     loadStatResults()
   })
-
   useRealtime('gallery_categories', () => {
     loadData()
   })
@@ -74,11 +66,42 @@ export default function Portfolio() {
   const filteredItems =
     category === ALL_CATEGORIES ? items : items.filter((item) => item.category_id === category)
 
+  useEffect(() => {
+    setGalleryOpenIndex(null)
+  }, [category])
+
+  useEffect(() => {
+    if (galleryOpenIndex !== null && galleryOpenIndex >= filteredItems.length) {
+      setGalleryOpenIndex(null)
+    }
+  }, [filteredItems.length, galleryOpenIndex])
+
+  useEffect(() => {
+    if (statOpenIndex !== null && statOpenIndex >= statResults.length) {
+      setStatOpenIndex(null)
+    }
+  }, [statResults.length, statOpenIndex])
+
   const getCategoryName = (item: GalleryItem) =>
     item.expand?.category_id?.name || item.category || 'Geral'
 
-  const statPlaceholder = (w: number, h: number) =>
+  const getGalleryPlaceholder = (item: GalleryItem, w: number, h: number) =>
+    `https://img.usecurling.com/p/${w}/${h}?q=${encodeURIComponent(
+      getCategoryName(item) === 'Ensaios' ? 'concrete laboratory' : 'construction',
+    )}&color=gray`
+
+  const getStatPlaceholder = (_item: GalleryItem, w: number, h: number) =>
     `https://img.usecurling.com/p/${w}/${h}?q=concrete%20statistics&color=gray`
+
+  const handleCardKeyDown = (
+    e: { key: string; preventDefault: () => void },
+    action: () => void,
+  ) => {
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      action()
+    }
+  }
 
   return (
     <div className="py-12 animate-fade-in">
@@ -93,7 +116,6 @@ export default function Portfolio() {
           </p>
         </div>
 
-        {/* Dynamic Gallery */}
         <div className="mb-16">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6 gap-4">
             <h2 className="text-2xl font-bold text-primary">Galeria de Imagens</h2>
@@ -121,72 +143,36 @@ export default function Portfolio() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredItems.map((item) => (
-                <Dialog key={item.id}>
-                  <DialogTrigger asChild>
-                    <div className="group relative overflow-hidden rounded-xl h-64 bg-muted/50 cursor-pointer flex items-center justify-center border">
-                      <img
-                        src={
-                          item.image
-                            ? pb.files.getUrl(item, item.image)
-                            : `https://img.usecurling.com/p/600/450?q=${encodeURIComponent(
-                                getCategoryName(item) === 'Ensaios'
-                                  ? 'concrete laboratory'
-                                  : 'construction',
-                              )}&color=gray`
-                        }
-                        alt={item.title}
-                        className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6">
-                        <span className="text-xs font-medium text-white/80 uppercase tracking-wider mb-1">
-                          {getCategoryName(item)}
-                        </span>
-                        <h3 className="text-white font-semibold text-lg leading-tight">
-                          {item.title}
-                        </h3>
-                      </div>
-                    </div>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-4xl bg-transparent border-none shadow-none p-0 flex flex-col justify-center items-center">
-                    <DialogHeader className="sr-only">
-                      <DialogTitle>{item.title}</DialogTitle>
-                      <DialogDescription>{item.description}</DialogDescription>
-                    </DialogHeader>
-                    <div className="bg-background rounded-xl overflow-hidden shadow-2xl w-full max-w-4xl">
-                      <img
-                        src={
-                          item.image
-                            ? pb.files.getUrl(item, item.image)
-                            : `https://img.usecurling.com/p/1200/800?q=${encodeURIComponent(
-                                getCategoryName(item) === 'Ensaios'
-                                  ? 'concrete laboratory'
-                                  : 'construction',
-                              )}&color=gray`
-                        }
-                        alt={item.title}
-                        className="w-full max-h-[80vh] object-contain bg-muted/30"
-                      />
-                      <div className="p-6">
-                        <div className="flex items-center gap-2 mb-2">
-                          <span className="bg-primary/10 text-primary text-xs font-semibold px-2 py-1 rounded">
-                            {getCategoryName(item)}
-                          </span>
-                        </div>
-                        <h3 className="text-2xl font-bold text-foreground mb-2">{item.title}</h3>
-                        {item.description && (
-                          <p className="text-muted-foreground">{item.description}</p>
-                        )}
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
+              {filteredItems.map((item, index) => (
+                <div
+                  key={item.id}
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setGalleryOpenIndex(index)}
+                  onKeyDown={(e) => handleCardKeyDown(e, () => setGalleryOpenIndex(index))}
+                  className="group relative overflow-hidden rounded-xl h-64 bg-muted/50 cursor-pointer flex items-center justify-center border focus:outline-none focus:ring-2 focus:ring-primary"
+                >
+                  <img
+                    src={
+                      item.image
+                        ? pb.files.getUrl(item, item.image)
+                        : getGalleryPlaceholder(item, 600, 450)
+                    }
+                    alt={item.title}
+                    className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent flex flex-col justify-end p-6">
+                    <span className="text-xs font-medium text-white/80 uppercase tracking-wider mb-1">
+                      {getCategoryName(item)}
+                    </span>
+                    <h3 className="text-white font-semibold text-lg leading-tight">{item.title}</h3>
+                  </div>
+                </div>
               ))}
             </div>
           )}
         </div>
 
-        {/* Statistical Results Section */}
         <h2 className="text-2xl font-bold text-primary mb-6">Gráficos Estatísticos</h2>
         {statLoading ? (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
@@ -202,51 +188,33 @@ export default function Portfolio() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-16">
-            {statResults.map((item) => (
-              <Dialog key={item.id}>
-                <DialogTrigger asChild>
-                  <div className="group relative overflow-hidden rounded-xl bg-card border cursor-pointer shadow-sm hover:shadow-md transition-shadow">
-                    <div className="h-64 overflow-hidden bg-muted/50 flex items-center justify-center">
-                      <img
-                        src={
-                          item.image ? pb.files.getUrl(item, item.image) : statPlaceholder(600, 450)
-                        }
-                        alt={item.title}
-                        className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
-                      />
-                    </div>
-                    <div className="p-5">
-                      <h3 className="text-lg font-bold text-foreground mb-1">{item.title}</h3>
-                      {item.description && (
-                        <p className="text-sm text-muted-foreground line-clamp-2">
-                          {item.description}
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                </DialogTrigger>
-                <DialogContent className="max-w-4xl bg-transparent border-none shadow-none p-0 flex flex-col justify-center items-center">
-                  <DialogHeader className="sr-only">
-                    <DialogTitle>{item.title}</DialogTitle>
-                    <DialogDescription>{item.description}</DialogDescription>
-                  </DialogHeader>
-                  <div className="bg-background rounded-xl overflow-hidden shadow-2xl w-full max-w-4xl">
-                    <img
-                      src={
-                        item.image ? pb.files.getUrl(item, item.image) : statPlaceholder(1200, 800)
-                      }
-                      alt={item.title}
-                      className="w-full max-h-[80vh] object-contain bg-muted/30"
-                    />
-                    <div className="p-6">
-                      <h3 className="text-2xl font-bold text-foreground mb-2">{item.title}</h3>
-                      {item.description && (
-                        <p className="text-muted-foreground">{item.description}</p>
-                      )}
-                    </div>
-                  </div>
-                </DialogContent>
-              </Dialog>
+            {statResults.map((item, index) => (
+              <div
+                key={item.id}
+                role="button"
+                tabIndex={0}
+                onClick={() => setStatOpenIndex(index)}
+                onKeyDown={(e) => handleCardKeyDown(e, () => setStatOpenIndex(index))}
+                className="group relative overflow-hidden rounded-xl bg-card border cursor-pointer shadow-sm hover:shadow-md transition-shadow focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <div className="h-64 overflow-hidden bg-muted/50 flex items-center justify-center">
+                  <img
+                    src={
+                      item.image
+                        ? pb.files.getUrl(item, item.image)
+                        : getStatPlaceholder(item, 600, 450)
+                    }
+                    alt={item.title}
+                    className="w-full h-full object-contain transition-transform duration-500 group-hover:scale-105"
+                  />
+                </div>
+                <div className="p-5">
+                  <h3 className="text-lg font-bold text-foreground mb-1">{item.title}</h3>
+                  {item.description && (
+                    <p className="text-sm text-muted-foreground line-clamp-2">{item.description}</p>
+                  )}
+                </div>
+              </div>
             ))}
           </div>
         )}
@@ -268,6 +236,25 @@ export default function Portfolio() {
           </Button>
         </div>
       </div>
+
+      <GalleryImageDialog
+        items={filteredItems}
+        openIndex={galleryOpenIndex}
+        onOpenChange={(open) => !open && setGalleryOpenIndex(null)}
+        onNavigate={setGalleryOpenIndex}
+        getCategoryName={getCategoryName}
+        getPlaceholder={getGalleryPlaceholder}
+        showCategory
+      />
+
+      <GalleryImageDialog
+        items={statResults}
+        openIndex={statOpenIndex}
+        onOpenChange={(open) => !open && setStatOpenIndex(null)}
+        onNavigate={setStatOpenIndex}
+        getPlaceholder={getStatPlaceholder}
+        showCategory={false}
+      />
     </div>
   )
 }
