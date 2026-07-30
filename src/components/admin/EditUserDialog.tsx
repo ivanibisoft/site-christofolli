@@ -116,11 +116,13 @@ export function EditUserDialog({
         Object.entries(fieldErrors).forEach(([field, msg]) => {
           form.setError(field as keyof typeof formSchema, { message: msg })
         })
+        setGeneralError('')
+      } else {
+        setGeneralError(
+          getErrorMessage(error) ||
+            'Erro ao atualizar usuário. Verifique os dados e tente novamente.',
+        )
       }
-      setGeneralError(
-        getErrorMessage(error) ||
-          'Erro ao atualizar usuário. Verifique os dados e tente novamente.',
-      )
     } finally {
       setSaving(false)
     }
@@ -139,12 +141,6 @@ export function EditUserDialog({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            {generalError && (
-              <div className="flex items-start gap-2 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
-                <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
-                <span>{generalError}</span>
-              </div>
-            )}
             <FormField
               control={form.control}
               name="name"
@@ -229,6 +225,12 @@ export function EditUserDialog({
                 </FormItem>
               )}
             />
+            {generalError && (
+              <div className="flex items-start gap-2 rounded-md border border-red-200 bg-red-50 p-3 text-sm text-red-700">
+                <AlertCircle className="h-4 w-4 mt-0.5 shrink-0" />
+                <span>{generalError}</span>
+              </div>
+            )}
             <DialogFooter>
               <Button
                 type="button"
