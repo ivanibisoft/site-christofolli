@@ -29,4 +29,12 @@ export const updateUser = (
     password?: string
     passwordConfirm?: string
   },
-) => pb.collection<User>('users').update(id, data)
+) => {
+  const formData = new FormData()
+  Object.entries(data).forEach(([key, value]) => {
+    if (value !== undefined && value !== null) {
+      formData.append(key, String(value))
+    }
+  })
+  return pb.collection<User>('users').update(id, formData)
+}
