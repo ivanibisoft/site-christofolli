@@ -99,7 +99,12 @@ export function EditUserDialog({
       }
       await updateUser(user.id, data)
       toast({ title: 'Usuário atualizado com sucesso!' })
-      form.reset()
+      form.reset({
+        name: values.name,
+        email: values.email,
+        role: values.role,
+        password: '',
+      })
       onOpenChange(false)
       onSaved()
     } catch (error) {

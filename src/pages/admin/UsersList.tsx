@@ -189,6 +189,7 @@ export default function UsersList() {
       />
 
       <EditUserDialog
+        key={editingUser?.id ?? 'none'}
         open={editDialogOpen}
         onOpenChange={setEditDialogOpen}
         onSaved={loadData}
