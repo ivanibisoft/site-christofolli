@@ -12,6 +12,7 @@ import {
   BarChart3,
   ClipboardList,
   Clock,
+  Users,
 } from 'lucide-react'
 
 import { useAuth } from '@/hooks/use-auth'
@@ -29,6 +30,7 @@ const navigation = [
   { name: 'Categorias', href: '/admin/categories', icon: Tag },
 
   { name: 'Contatos', href: '/admin/contacts', icon: Mail },
+  { name: 'Usuários', href: '/admin/users', icon: Users },
   { name: 'Configurações de E-mail', href: '/admin/smtp-settings', icon: Server },
 ]
 

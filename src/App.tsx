@@ -27,6 +27,7 @@ import AuditServiceForm from './pages/admin/AuditServiceForm'
 import TimelineList from './pages/admin/TimelineList'
 import TimelineForm from './pages/admin/TimelineForm'
 import CategoriesList from './pages/admin/CategoriesList'
+import UsersList from './pages/admin/UsersList'
 
 import CompanyProfilePage from './pages/admin/CompanyProfile'
 import SmtpSettingsPage from './pages/admin/SmtpSettings'
@@ -68,6 +69,7 @@ const App = () => (
             <Route path="timeline/new" element={<TimelineForm />} />
             <Route path="timeline/:id" element={<TimelineForm />} />
             <Route path="categories" element={<CategoriesList />} />
+            <Route path="users" element={<UsersList />} />
 
             <Route path="company-profile" element={<CompanyProfilePage />} />
             <Route path="smtp-settings" element={<SmtpSettingsPage />} />
