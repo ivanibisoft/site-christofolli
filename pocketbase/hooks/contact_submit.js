@@ -1,8 +1,17 @@
 routerAdd('POST', '/backend/v1/contacts/submit', (e) => {
   var body = e.requestInfo().body || {}
 
-  if (!body.name || !body.email || !body.message) {
-    return e.badRequestError('Nome, email e mensagem são obrigatórios')
+  var missingFields = {}
+  if (!body.name)
+    missingFields.name = new ValidationError('validation_required', 'O nome é obrigatório')
+  if (!body.email)
+    missingFields.email = new ValidationError('validation_required', 'O email é obrigatório')
+  if (!body.subject)
+    missingFields.subject = new ValidationError('validation_required', 'O assunto é obrigatório')
+  if (!body.message)
+    missingFields.message = new ValidationError('validation_required', 'A mensagem é obrigatória')
+  if (Object.keys(missingFields).length > 0) {
+    throw new BadRequestError('Por favor, preencha todos os campos obrigatórios.', missingFields)
   }
 
   var smtpHost = ''

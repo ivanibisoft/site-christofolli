@@ -30,6 +30,7 @@ import {
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
 import { submitContact } from '@/services/contacts'
+import { Alert, AlertDescription } from '@/components/ui/alert'
 import {
   getCompanyProfile,
   getDirectorPhotoUrl,
@@ -43,17 +44,21 @@ import { Skeleton } from '@/components/ui/skeleton'
 import heroBg from '@/assets/logo-3d-sem-texto-27f6f.png'
 
 const contactSchema = z.object({
-  name: z.string().min(1, 'Nome é obrigatório'),
-  email: z.string().email('E-mail inválido'),
+  name: z.string().min(1, 'O nome é obrigatório'),
+  email: z.string().min(1, 'O email é obrigatório').email('E-mail inválido'),
   company_name: z.string().optional(),
   whatsapp: z.string().optional(),
-  subject: z.string().optional(),
-  message: z.string().min(10, 'A mensagem deve ter pelo menos 10 caracteres'),
+  subject: z.string().min(1, 'O assunto é obrigatório'),
+  message: z
+    .string()
+    .min(1, 'A mensagem é obrigatória')
+    .min(10, 'A mensagem deve ter pelo menos 10 caracteres'),
 })
 
 export default function Index() {
   const { toast } = useToast()
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [serverError, setServerError] = useState<string | null>(null)
   const [directorPhoto, setDirectorPhoto] = useState<string | null>(null)
   const [galleryCats, setGalleryCats] = useState<GalleryCategory[]>([])
   const [publications, setPublications] = useState<Publication[]>([])
@@ -148,27 +153,26 @@ export default function Index() {
 
   const onSubmit = async (data: z.infer<typeof contactSchema>) => {
     setIsSubmitting(true)
+    setServerError(null)
     try {
       const result = await submitContact(data)
       if (result.success) {
         toast({
-          title: 'E-mails enviados',
+          title: 'Mensagem enviada com sucesso!',
           description: 'Recebemos sua mensagem e entraremos em contato em breve.',
+          className: 'bg-green-600 text-white border-green-700',
         })
         form.reset()
       } else {
-        toast({
-          title: 'Erro',
-          description: result.error || 'Não foi possível enviar a mensagem.',
-          variant: 'destructive',
-        })
+        if (result.fieldErrors) {
+          Object.entries(result.fieldErrors).forEach(([field, message]) => {
+            form.setError(field, { message })
+          })
+        }
+        setServerError(result.error || 'Não foi possível enviar a mensagem.')
       }
     } catch (err) {
-      toast({
-        title: 'Erro',
-        description: 'Não foi possível enviar a mensagem.',
-        variant: 'destructive',
-      })
+      setServerError('Não foi possível enviar a mensagem. Tente novamente.')
     } finally {
       setIsSubmitting(false)
     }
@@ -456,6 +460,11 @@ export default function Index() {
             <CardContent className="pt-6">
               <Form {...form}>
                 <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                  {serverError && (
+                    <Alert variant="destructive">
+                      <AlertDescription>{serverError}</AlertDescription>
+                    </Alert>
+                  )}
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <FormField
                       control={form.control}
@@ -490,7 +499,7 @@ export default function Index() {
                     name="subject"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Assunto (opcional)</FormLabel>
+                        <FormLabel>Assunto</FormLabel>
                         <FormControl>
                           <Input placeholder="Qual o assunto da sua mensagem?" {...field} />
                         </FormControl>

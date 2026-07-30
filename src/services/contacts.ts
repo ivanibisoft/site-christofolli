@@ -1,5 +1,6 @@
 import pb from '@/lib/pocketbase/client'
 import type { RecordModel } from 'pocketbase'
+import { extractFieldErrors, type FieldErrors } from '@/lib/pocketbase/errors'
 
 export interface Contact extends RecordModel {
   name: string
@@ -13,6 +14,7 @@ export interface Contact extends RecordModel {
 export interface ContactSubmitResult {
   success: boolean
   error?: string
+  fieldErrors?: FieldErrors
 }
 
 export const getContacts = () =>
@@ -31,8 +33,12 @@ export const submitContact = async (data: Partial<Contact>): Promise<ContactSubm
       headers: { 'Content-Type': 'application/json' },
     })
   } catch (error: any) {
+    const fieldErrors = extractFieldErrors(error)
     const errorMsg =
-      error?.response?.message || error?.message || 'Não foi possível enviar a mensagem.'
-    return { success: false, error: errorMsg }
+      error?.response?.error ||
+      error?.response?.message ||
+      error?.message ||
+      'Não foi possível enviar a mensagem.'
+    return { success: false, error: errorMsg, fieldErrors }
   }
 }
