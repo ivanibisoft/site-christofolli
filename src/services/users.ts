@@ -30,11 +30,11 @@ export const updateUser = (
     passwordConfirm?: string
   },
 ) => {
-  const formData = new FormData()
+  const payload: Record<string, string> = {}
   Object.entries(data).forEach(([key, value]) => {
     if (value !== undefined && value !== null) {
-      formData.append(key, String(value))
+      payload[key] = String(value)
     }
   })
-  return pb.collection<User>('users').update(id, formData)
+  return pb.collection<User>('users').update(id, payload)
 }

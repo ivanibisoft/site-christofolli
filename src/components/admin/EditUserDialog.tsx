@@ -35,7 +35,7 @@ import type { User } from '@/services/users'
 
 const formSchema = z.object({
   name: z.string().min(1, 'O nome é obrigatório'),
-  email: z.string().email('E-mail inválido'),
+  email: z.string().min(1, 'O e-mail é obrigatório').email('Formato de e-mail inválido'),
   role: z.string(),
   password: z.string().optional(),
 })
