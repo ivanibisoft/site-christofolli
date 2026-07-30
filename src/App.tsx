@@ -14,6 +14,7 @@ import Sobre from './pages/Sobre'
 import PublicationDetail from './pages/PublicationDetail'
 import NotFound from './pages/NotFound'
 import Login from './pages/admin/Login'
+import ForgotPassword from './pages/admin/ForgotPassword'
 import PublicationsList from './pages/admin/PublicationsList'
 import PublicationForm from './pages/admin/PublicationForm'
 import ContactsList from './pages/admin/ContactsList'
@@ -48,6 +49,7 @@ const App = () => (
           </Route>
 
           <Route path="/admin/login" element={<Login />} />
+          <Route path="/admin/forgot-password" element={<ForgotPassword />} />
           <Route path="/admin" element={<AdminLayout />}>
             <Route index element={<Navigate to="/admin/publications" replace />} />
             <Route path="publications" element={<PublicationsList />} />
