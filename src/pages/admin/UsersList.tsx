@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Users as UsersIcon, Plus, Trash2, ShieldAlert } from 'lucide-react'
+import { Users as UsersIcon, Plus, Trash2, Pencil, ShieldAlert } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { useToast } from '@/hooks/use-toast'
 import { useRealtime } from '@/hooks/use-realtime'
@@ -26,13 +26,16 @@ import {
 } from '@/components/ui/alert-dialog'
 import { getUsers, deleteUser, type User } from '@/services/users'
 import { CreateUserDialog } from '@/components/admin/CreateUserDialog'
+import { EditUserDialog } from '@/components/admin/EditUserDialog'
 
 export default function UsersList() {
   const { user, isAdmin, loading } = useAuth()
   const { toast } = useToast()
   const [users, setUsers] = useState<User[]>([])
   const [dataLoading, setDataLoading] = useState(true)
-  const [dialogOpen, setDialogOpen] = useState(false)
+  const [createDialogOpen, setCreateDialogOpen] = useState(false)
+  const [editDialogOpen, setEditDialogOpen] = useState(false)
+  const [editingUser, setEditingUser] = useState<User | null>(null)
 
   const loadData = () => {
     getUsers()
@@ -58,6 +61,11 @@ export default function UsersList() {
     }
   }
 
+  const handleEditClick = (u: User) => {
+    setEditingUser(u)
+    setEditDialogOpen(true)
+  }
+
   if (loading) return null
 
   if (!isAdmin) {
@@ -77,7 +85,7 @@ export default function UsersList() {
           <h1 className="text-3xl font-bold text-slate-800 tracking-tight">Usuários</h1>
           <p className="text-slate-500 mt-1">Gerencie os administradores do sistema.</p>
         </div>
-        <Button className="shrink-0 shadow-sm" onClick={() => setDialogOpen(true)}>
+        <Button className="shrink-0 shadow-sm" onClick={() => setCreateDialogOpen(true)}>
           <Plus className="h-4 w-4 mr-2" />
           Adicionar Administrador
         </Button>
@@ -92,7 +100,7 @@ export default function UsersList() {
                 <TableHead>E-mail</TableHead>
                 <TableHead className="w-[120px]">Função</TableHead>
                 <TableHead className="w-[140px]">Data</TableHead>
-                <TableHead className="w-[80px] text-right pr-6">Ações</TableHead>
+                <TableHead className="w-[120px] text-right pr-6">Ações</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -121,38 +129,49 @@ export default function UsersList() {
                       {new Date(u.created).toLocaleDateString('pt-BR')}
                     </TableCell>
                     <TableCell className="text-right pr-4">
-                      {u.id !== user?.id && (
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-8 w-8 text-slate-500 hover:text-red-500 hover:bg-red-50 opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              <Trash2 className="h-4 w-4" />
-                              <span className="sr-only">Remover</span>
-                            </Button>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>Remover Usuário?</AlertDialogTitle>
-                              <AlertDialogDescription>
-                                Tem certeza que deseja remover{' '}
-                                <strong>"{u.name || u.email}"</strong> permanentemente?
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancelar</AlertDialogCancel>
-                              <AlertDialogAction
-                                className="bg-red-500 hover:bg-red-600 text-white"
-                                onClick={() => handleDelete(u.id)}
+                      <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-slate-500 hover:text-blue-500 hover:bg-blue-50"
+                          onClick={() => handleEditClick(u)}
+                        >
+                          <Pencil className="h-4 w-4" />
+                          <span className="sr-only">Editar</span>
+                        </Button>
+                        {u.id !== user?.id && (
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-8 w-8 text-slate-500 hover:text-red-500 hover:bg-red-50"
                               >
-                                Sim, remover
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      )}
+                                <Trash2 className="h-4 w-4" />
+                                <span className="sr-only">Remover</span>
+                              </Button>
+                            </AlertDialogTrigger>
+                            <AlertDialogContent>
+                              <AlertDialogHeader>
+                                <AlertDialogTitle>Remover Usuário?</AlertDialogTitle>
+                                <AlertDialogDescription>
+                                  Tem certeza que deseja remover{' '}
+                                  <strong>"{u.name || u.email}"</strong> permanentemente?
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+                              <AlertDialogFooter>
+                                <AlertDialogCancel>Cancelar</AlertDialogCancel>
+                                <AlertDialogAction
+                                  className="bg-red-500 hover:bg-red-600 text-white"
+                                  onClick={() => handleDelete(u.id)}
+                                >
+                                  Sim, remover
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
+                        )}
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))
@@ -163,9 +182,18 @@ export default function UsersList() {
       </div>
 
       <CreateUserDialog
-        open={dialogOpen}
-        onOpenChange={setDialogOpen}
+        open={createDialogOpen}
+        onOpenChange={setCreateDialogOpen}
         onCreated={loadData}
+        existingEmails={users.map((u) => u.email?.toLowerCase() ?? '')}
+      />
+
+      <EditUserDialog
+        open={editDialogOpen}
+        onOpenChange={setEditDialogOpen}
+        onSaved={loadData}
+        user={editingUser}
+        currentUserId={user?.id ?? ''}
         existingEmails={users.map((u) => u.email?.toLowerCase() ?? '')}
       />
     </div>

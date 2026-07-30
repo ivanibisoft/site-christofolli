@@ -19,3 +19,14 @@ export const createUser = (data: {
 }) => pb.collection<User>('users').create(data)
 
 export const deleteUser = (id: string) => pb.collection<User>('users').delete(id)
+
+export const updateUser = (
+  id: string,
+  data: {
+    name?: string
+    email?: string
+    role?: string
+    password?: string
+    passwordConfirm?: string
+  },
+) => pb.collection<User>('users').update(id, data)
