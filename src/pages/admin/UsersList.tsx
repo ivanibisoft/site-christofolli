@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react'
-import { Users as UsersIcon, Plus, Trash2, Pencil, ShieldAlert } from 'lucide-react'
+import { Users as UsersIcon, Plus, Trash2, ShieldAlert } from 'lucide-react'
 import { useAuth } from '@/hooks/use-auth'
 import { useToast } from '@/hooks/use-toast'
 import { useRealtime } from '@/hooks/use-realtime'
@@ -26,7 +26,6 @@ import {
 } from '@/components/ui/alert-dialog'
 import { getUsers, deleteUser, type User } from '@/services/users'
 import { CreateUserDialog } from '@/components/admin/CreateUserDialog'
-import { EditUserDialog } from '@/components/admin/EditUserDialog'
 
 export default function UsersList() {
   const { user, isAdmin, loading } = useAuth()
@@ -34,8 +33,6 @@ export default function UsersList() {
   const [users, setUsers] = useState<User[]>([])
   const [dataLoading, setDataLoading] = useState(true)
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
-  const [editDialogOpen, setEditDialogOpen] = useState(false)
-  const [editingUser, setEditingUser] = useState<User | null>(null)
 
   const loadData = () => {
     getUsers()
@@ -59,11 +56,6 @@ export default function UsersList() {
     } catch {
       toast({ title: 'Erro ao remover usuário', variant: 'destructive' })
     }
-  }
-
-  const handleEditClick = (u: User) => {
-    setEditingUser(u)
-    setEditDialogOpen(true)
   }
 
   if (loading) return null
@@ -130,15 +122,6 @@ export default function UsersList() {
                     </TableCell>
                     <TableCell className="text-right pr-4">
                       <div className="flex items-center justify-end gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-8 w-8 text-slate-500 hover:text-blue-500 hover:bg-blue-50"
-                          onClick={() => handleEditClick(u)}
-                        >
-                          <Pencil className="h-4 w-4" />
-                          <span className="sr-only">Editar</span>
-                        </Button>
                         {u.id !== user?.id && (
                           <AlertDialog>
                             <AlertDialogTrigger asChild>
@@ -186,15 +169,6 @@ export default function UsersList() {
         onOpenChange={setCreateDialogOpen}
         onCreated={loadData}
         existingEmails={users.map((u) => u.email?.toLowerCase() ?? '')}
-      />
-
-      <EditUserDialog
-        key={editingUser?.id ?? 'none'}
-        open={editDialogOpen}
-        onOpenChange={setEditDialogOpen}
-        onSaved={loadData}
-        user={editingUser}
-        currentUserId={user?.id ?? ''}
       />
     </div>
   )
