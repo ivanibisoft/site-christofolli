@@ -75,6 +75,7 @@ export function CreateUserDialog({
         password: values.password,
         passwordConfirm: values.password,
         role: values.role,
+        emailVisibility: true,
       })
       toast({ title: 'Usuário criado com sucesso!' })
       form.reset()

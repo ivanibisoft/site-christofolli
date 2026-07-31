@@ -6,6 +6,7 @@ export interface User extends RecordModel {
   email: string
   role: string
   created: string
+  emailVisibility: boolean
 }
 
 export const getUsers = () => pb.collection<User>('users').getFullList({ sort: '-created' })
@@ -16,6 +17,7 @@ export const createUser = (data: {
   password: string
   passwordConfirm: string
   role: string
+  emailVisibility: boolean
 }) => pb.collection<User>('users').create(data)
 
 export const deleteUser = (id: string) => pb.collection<User>('users').delete(id)
