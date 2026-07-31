@@ -35,7 +35,6 @@ import type { User } from '@/services/users'
 
 const formSchema = z.object({
   name: z.string().min(1, 'O nome é obrigatório'),
-  email: z.string().min(1, 'O e-mail é obrigatório').email('Formato de e-mail inválido'),
   role: z.string(),
   password: z.string().optional(),
 })
@@ -46,7 +45,6 @@ interface EditUserDialogProps {
   onSaved: () => void
   user: User | null
   currentUserId: string
-  existingEmails: string[]
 }
 
 export function EditUserDialog({
@@ -55,7 +53,6 @@ export function EditUserDialog({
   onSaved,
   user,
   currentUserId,
-  existingEmails,
 }: EditUserDialogProps) {
   const { toast } = useToast()
   const [saving, setSaving] = useState(false)
@@ -66,7 +63,6 @@ export function EditUserDialog({
     resolver: zodResolver(formSchema),
     values: {
       name: user?.name ?? '',
-      email: user?.email ?? '',
       role: user?.role ?? 'user',
       password: '',
     },
@@ -83,17 +79,10 @@ export function EditUserDialog({
       return
     }
 
-    const otherEmails = existingEmails.filter((e) => e !== user.email?.toLowerCase())
-    if (otherEmails.includes(values.email.toLowerCase())) {
-      form.setError('email', { message: 'Este e-mail já está em uso' })
-      return
-    }
-
     setSaving(true)
     try {
       const data: Record<string, string> = {
         name: values.name,
-        email: values.email,
         role: values.role,
       }
       if (values.password && values.password.length > 0) {
@@ -104,7 +93,6 @@ export function EditUserDialog({
       toast({ title: 'Administrador atualizado com sucesso!' })
       form.reset({
         name: values.name,
-        email: values.email,
         role: values.role,
         password: '',
       })
@@ -149,19 +137,6 @@ export function EditUserDialog({
                   <FormLabel>Nome</FormLabel>
                   <FormControl>
                     <Input placeholder="Nome completo" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>E-mail</FormLabel>
-                  <FormControl>
-                    <Input type="email" placeholder="email@exemplo.com" {...field} />
                   </FormControl>
                   <FormMessage />
                 </FormItem>

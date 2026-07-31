@@ -195,7 +195,6 @@ export default function UsersList() {
         onSaved={loadData}
         user={editingUser}
         currentUserId={user?.id ?? ''}
-        existingEmails={users.map((u) => u.email?.toLowerCase() ?? '')}
       />
     </div>
   )

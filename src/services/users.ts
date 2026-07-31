@@ -24,7 +24,6 @@ export const updateUser = (
   id: string,
   data: {
     name?: string
-    email?: string
     role?: string
     password?: string
     passwordConfirm?: string
