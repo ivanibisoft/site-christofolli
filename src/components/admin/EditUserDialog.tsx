@@ -2,9 +2,10 @@ import { useState } from 'react'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { Eye, EyeOff, Loader2, AlertCircle } from 'lucide-react'
+import { Eye, EyeOff, Loader2, AlertCircle, Mail } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
+import { Label } from '@/components/ui/label'
 import {
   Dialog,
   DialogContent,
@@ -129,6 +130,14 @@ export function EditUserDialog({
         </DialogHeader>
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-2">
+              <Label>E-mail</Label>
+              <div className="flex items-center gap-2 rounded-md border border-slate-200 bg-slate-50 px-3 py-2 text-sm text-slate-500">
+                <Mail className="h-4 w-4 shrink-0 text-slate-400" />
+                <span className="truncate">{user?.email ?? '-'}</span>
+              </div>
+              <p className="text-xs text-slate-400">O e-mail não pode ser alterado.</p>
+            </div>
             <FormField
               control={form.control}
               name="name"
