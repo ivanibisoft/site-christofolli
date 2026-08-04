@@ -61,7 +61,7 @@ export default function Concreteiras() {
           ) : (
             <Accordion type="single" collapsible className="w-full">
               {modules.map((module, index) => {
-                const itemNumber = String(index + 1).padStart(2, '0')
+                const itemNumber = String(index + 1)
                 return (
                   <AccordionItem
                     value={module.id}
