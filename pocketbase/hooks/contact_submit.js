@@ -95,7 +95,8 @@ routerAdd('POST', '/backend/v1/contacts/submit', (e) => {
     })
   }
 
-  var firstName = esc(body.name.split(' ')[0] || body.name)  var errors = []
+  var firstName = esc(body.name.split(' ')[0] || body.name)
+  var errors = []
   var autoSuccess = false
   var adminSuccess = false
 
