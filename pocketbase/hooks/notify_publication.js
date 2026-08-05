@@ -25,7 +25,7 @@ routerAdd(
       return e.json(200, { success: true, count: 0, skipped: true })
     }
 
-    var senderAddress = 'noreply@christofolli.com.br'
+    var senderAddress = ''
     var senderName = 'Christófolli Consultoria'
 
     var smtpHost = ''
@@ -43,6 +43,8 @@ routerAdd(
         smtpUsername = smtpRecord.getString('username') || ''
         smtpPassword = smtpRecord.getString('password') || ''
         smtpEncryption = smtpRecord.getString('encryption') || 'TLS'
+        senderAddress = smtpRecord.getString('from_email') || ''
+        senderName = smtpRecord.getString('from_name') || 'Christófolli Consultoria'
       }
     } catch (smtpFetchErr) {
       $app
@@ -64,6 +66,14 @@ routerAdd(
       return e.json(200, {
         success: false,
         error: 'Configurações de SMTP não definidas. Configure o SMTP no painel administrativo.',
+      })
+    }
+
+    if (!senderAddress) {
+      return e.json(200, {
+        success: false,
+        error:
+          'E-mail remetente não definido. Configure o SMTP no painel administrativo antes de enviar notificações.',
       })
     }
 
@@ -115,7 +125,7 @@ routerAdd(
       '</p>' +
       '</div>'
 
-    var brandName = 'Christófolli Consultoria'
+    var brandName = senderName
 
     var htmlBody =
       '<div style="font-family:sans-serif;color:#333;max-width:600px;margin:0 auto;">' +
