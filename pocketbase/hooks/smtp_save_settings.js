@@ -13,6 +13,7 @@ routerAdd(
         encryption: body.encryption || 'TLS',
         from_email: body.from_email || '',
         from_name: body.from_name || 'Christófolli Consultoria',
+        admin_email: body.admin_email || '',
       }
 
       var col = $app.findCollectionByNameOrId('smtp_settings')
@@ -33,6 +34,7 @@ routerAdd(
         record.set('encryption', data.encryption)
         record.set('from_email', data.from_email)
         record.set('from_name', data.from_name)
+        record.set('admin_email', data.admin_email)
         $app.save(record)
       } else {
         record = new Record(col)
@@ -43,6 +45,7 @@ routerAdd(
         record.set('encryption', data.encryption)
         record.set('from_email', data.from_email)
         record.set('from_name', data.from_name)
+        record.set('admin_email', data.admin_email)
         $app.save(record)
       }
 

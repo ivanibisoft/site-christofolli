@@ -12,12 +12,20 @@ routerAdd(
       var encryption = body.encryption || 'none'
       var fromEmail = (body.from_email || '').trim()
       var fromName = (body.from_name || '').trim() || 'Christófolli Consultoria'
+      var adminEmail = (body.admin_email || '').trim()
 
       if (!host) {
         return e.json(200, { success: false, error: 'Host SMTP é obrigatório.' })
       }
       if (!fromEmail) {
         return e.json(200, { success: false, error: 'E-mail remetente é obrigatório.' })
+      }
+      if (!adminEmail) {
+        return e.json(200, {
+          success: false,
+          error:
+            'E-mail do administrador é obrigatório para o teste de conexão. Configure o e-mail do administrador primeiro.',
+        })
       }
 
       try {
@@ -32,7 +40,7 @@ routerAdd(
 
         var msg = new MailerMessage({
           from: { address: fromEmail, name: fromName },
-          to: [{ address: fromEmail }],
+          to: [{ address: adminEmail }],
           subject: 'Teste de Configuração SMTP',
           html: '<div style="font-family:sans-serif;color:#333;max-width:600px;margin:0 auto;"><p>Este é um e-mail de teste enviado a partir das configurações SMTP.</p></div>',
           text: 'Este é um e-mail de teste enviado a partir das configurações SMTP.',

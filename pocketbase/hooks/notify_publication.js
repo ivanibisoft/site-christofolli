@@ -27,6 +27,7 @@ routerAdd(
 
     var senderAddress = ''
     var senderName = 'Christófolli Consultoria'
+    var adminEmail = ''
 
     var smtpHost = ''
     var smtpPort = 587
@@ -45,6 +46,7 @@ routerAdd(
         smtpEncryption = smtpRecord.getString('encryption') || 'TLS'
         senderAddress = smtpRecord.getString('from_email') || ''
         senderName = smtpRecord.getString('from_name') || 'Christófolli Consultoria'
+        adminEmail = smtpRecord.getString('admin_email') || ''
       }
     } catch (smtpFetchErr) {
       $app
@@ -74,6 +76,14 @@ routerAdd(
         success: false,
         error:
           'E-mail remetente não definido. Configure o SMTP no painel administrativo antes de enviar notificações.',
+      })
+    }
+
+    if (!adminEmail) {
+      return e.json(200, {
+        success: false,
+        error:
+          'E-mail do administrador não definido. Configure o e-mail do administrador no painel administrativo antes de enviar notificações.',
       })
     }
 
@@ -171,7 +181,7 @@ routerAdd(
     try {
       var msg = new MailerMessage({
         from: { address: senderAddress, name: senderName },
-        to: [{ address: senderAddress, name: senderName }],
+        to: [{ address: adminEmail, name: senderName }],
         bcc: bccRecipients,
         subject: title,
         html: htmlBody,

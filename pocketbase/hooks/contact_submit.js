@@ -21,6 +21,7 @@ routerAdd('POST', '/backend/v1/contacts/submit', (e) => {
   var smtpEncryption = 'TLS'
   var senderAddress = ''
   var senderName = 'Christófolli Consultoria'
+  var adminEmail = ''
 
   try {
     var existing = $app.findRecordsByFilter('smtp_settings', '', '', 1, 0)
@@ -33,9 +34,9 @@ routerAdd('POST', '/backend/v1/contacts/submit', (e) => {
       smtpEncryption = smtpRecord.getString('encryption') || 'TLS'
       senderAddress = smtpRecord.getString('from_email') || ''
       senderName = smtpRecord.getString('from_name') || 'Christófolli Consultoria'
+      adminEmail = smtpRecord.getString('admin_email') || ''
     }
   } catch (_) {}
-
   if (!smtpHost) {
     return e.json(400, {
       success: false,
@@ -86,8 +87,15 @@ routerAdd('POST', '/backend/v1/contacts/submit', (e) => {
       .replace(/'/g, '&#039;')
   }
 
-  var firstName = esc(body.name.split(' ')[0] || body.name)
-  var errors = []
+  if (!adminEmail) {
+    return e.json(400, {
+      success: false,
+      error:
+        'E-mail do administrador não definido. Configure o e-mail do administrador no painel administrativo antes de receber contatos.',
+    })
+  }
+
+  var firstName = esc(body.name.split(' ')[0] || body.name)  var errors = []
   var autoSuccess = false
   var adminSuccess = false
 
@@ -162,7 +170,7 @@ routerAdd('POST', '/backend/v1/contacts/submit', (e) => {
     mailClient.send(
       new MailerMessage({
         from: { address: senderAddress, name: senderName },
-        to: [{ address: senderAddress }],
+        to: [{ address: adminEmail }],
         subject: 'Novo lead recebido',
         html: adminHtml,
       }),

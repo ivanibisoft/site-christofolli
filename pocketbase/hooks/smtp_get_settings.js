@@ -20,6 +20,7 @@ routerAdd(
           encryption: 'TLS',
           from_email: '',
           from_name: 'Christófolli Consultoria',
+          admin_email: '',
         })
       }
 
@@ -31,6 +32,7 @@ routerAdd(
         encryption: record.getString('encryption') || 'TLS',
         from_email: record.getString('from_email') || '',
         from_name: record.getString('from_name') || '',
+        admin_email: record.getString('admin_email') || '',
       })
     } catch (err) {
       return e.json(500, { error: 'Failed to read SMTP settings: ' + err.message })

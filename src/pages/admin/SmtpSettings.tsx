@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { Server, Loader2, Save, Send, Mail, Info } from 'lucide-react'
+import { Server, Loader2, Save, Send, Mail, Info, Eye, EyeOff } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
@@ -19,6 +19,7 @@ export default function SmtpSettingsPage() {
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [testing, setTesting] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({})
   const [settings, setSettings] = useState<SmtpSettings>({
     host: '',
@@ -28,6 +29,7 @@ export default function SmtpSettingsPage() {
     encryption: 'TLS',
     from_email: '',
     from_name: 'Christófolli Consultoria',
+    admin_email: '',
   })
 
   useEffect(() => {
@@ -70,6 +72,18 @@ export default function SmtpSettingsPage() {
   }
 
   const handleTest = async () => {
+    if (!settings.admin_email) {
+      setFieldErrors((prev) => ({
+        ...prev,
+        admin_email: 'E-mail do administrador é obrigatório para o teste de conexão.',
+      }))
+      toast({
+        title: 'E-mail do administrador necessário',
+        description: 'Configure o e-mail do administrador antes de testar a conexão.',
+        variant: 'destructive',
+      })
+      return
+    }
     setTesting(true)
     try {
       const result = await testSmtpSettings(settings)
@@ -176,13 +190,24 @@ export default function SmtpSettingsPage() {
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Senha</Label>
-              <Input
-                id="password"
-                type="password"
-                value={settings.password}
-                onChange={(e) => handleChange('password', e.target.value)}
-                placeholder="••••••••"
-              />
+              <div className="relative">
+                <Input
+                  id="password"
+                  type={showPassword ? 'text' : 'password'}
+                  value={settings.password}
+                  onChange={(e) => handleChange('password', e.target.value)}
+                  placeholder="••••••••"
+                  className="pr-10"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
+                  aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
+                >
+                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                </button>
+              </div>
               {fieldErrors.password && (
                 <p className="text-sm text-red-500">{fieldErrors.password}</p>
               )}
@@ -233,6 +258,24 @@ export default function SmtpSettingsPage() {
             </div>
           </div>
 
+          <div className="space-y-2">
+            <Label htmlFor="admin_email">E-mail do Administrador</Label>
+            <Input
+              id="admin_email"
+              type="email"
+              value={settings.admin_email}
+              onChange={(e) => handleChange('admin_email', e.target.value)}
+              placeholder="admin@exemplo.com"
+            />
+            {fieldErrors.admin_email && (
+              <p className="text-sm text-red-500">{fieldErrors.admin_email}</p>
+            )}
+            <p className="text-xs text-slate-500">
+              E-mails de notificação do sistema (novos contatos, novas publicações) e o teste de
+              conexão serão enviados para este endereço.
+            </p>
+          </div>
+
           <div className="flex justify-end pt-2">
             <Button onClick={handleSave} disabled={saving} className="min-w-[180px] shadow-sm">
               {saving ? (
@@ -258,7 +301,7 @@ export default function SmtpSettingsPage() {
             Testar Conexão
           </CardTitle>
           <CardDescription>
-            Envie um e-mail de teste para o endereço remetente configurado acima.
+            Envie um e-mail de teste para o endereço do administrador configurado acima.
           </CardDescription>
         </CardHeader>
         <CardContent>

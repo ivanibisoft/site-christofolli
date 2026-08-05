@@ -8,6 +8,7 @@ export interface SmtpSettings {
   encryption: string
   from_email: string
   from_name: string
+  admin_email: string
 }
 
 export interface SmtpTestResult {
