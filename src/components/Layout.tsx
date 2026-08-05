@@ -242,8 +242,21 @@ export default function Layout() {
           </div>
         </div>
         <div className="container mx-auto px-4 mt-12 pt-8 border-t border-slate-200 text-sm text-slate-500 text-center">
-          © {new Date().getFullYear()} Christófolli Consultoria de Engenharia Ltda. Todos os
-          direitos reservados.
+          <p>
+            © {new Date().getFullYear()} Christófolli Consultoria de Engenharia Ltda. Todos os
+            direitos reservados.
+          </p>
+          <p className="mt-1 text-xs text-slate-400">
+            Desenvolvido por{' '}
+            <a
+              href="https://www.ibisoft.com.br"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="transition-colors hover:text-accent"
+            >
+              ibisoft Tecnologia da Informação
+            </a>
+          </p>
         </div>
       </footer>
     </div>
