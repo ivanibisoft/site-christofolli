@@ -24,6 +24,8 @@ import StatisticalResultsList from './pages/admin/StatisticalResultsList'
 import StatisticalResultsForm from './pages/admin/StatisticalResultsForm'
 import AuditServicesList from './pages/admin/AuditServicesList'
 import AuditServiceForm from './pages/admin/AuditServiceForm'
+import BuilderServicesList from './pages/admin/BuilderServicesList'
+import BuilderServiceForm from './pages/admin/BuilderServiceForm'
 import TimelineList from './pages/admin/TimelineList'
 import TimelineForm from './pages/admin/TimelineForm'
 import CategoriesList from './pages/admin/CategoriesList'
@@ -65,6 +67,9 @@ const App = () => (
             <Route path="audit-services" element={<AuditServicesList />} />
             <Route path="audit-services/new" element={<AuditServiceForm />} />
             <Route path="audit-services/:id" element={<AuditServiceForm />} />
+            <Route path="builder-services" element={<BuilderServicesList />} />
+            <Route path="builder-services/new" element={<BuilderServiceForm />} />
+            <Route path="builder-services/:id" element={<BuilderServiceForm />} />
             <Route path="timeline" element={<TimelineList />} />
             <Route path="timeline/new" element={<TimelineForm />} />
             <Route path="timeline/:id" element={<TimelineForm />} />

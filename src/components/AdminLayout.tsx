@@ -13,6 +13,7 @@ import {
   ClipboardList,
   Clock,
   Users,
+  HardHat,
 } from 'lucide-react'
 
 import { useAuth } from '@/hooks/use-auth'
@@ -25,6 +26,7 @@ const navigation = [
   { name: 'Publicações', href: '/admin/publications', icon: FileText },
   { name: 'Galeria', href: '/admin/gallery', icon: ImageIcon },
   { name: 'Resultados Estatísticos', href: '/admin/statistical-results', icon: BarChart3 },
+  { name: 'Serviços para Construtoras', href: '/admin/builder-services', icon: HardHat },
   { name: 'Trajetória', href: '/admin/timeline', icon: Clock },
   { name: 'Serviços para Concreteiras', href: '/admin/audit-services', icon: ClipboardList },
   { name: 'Categorias', href: '/admin/categories', icon: Tag },

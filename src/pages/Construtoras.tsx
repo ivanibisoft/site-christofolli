@@ -1,7 +1,19 @@
+import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Building2, ThermometerSun, Leaf, LineChart, Check } from 'lucide-react'
+import { Building2, Check, Loader2, FlaskConical, Thermometer, Leaf, LineChart } from 'lucide-react'
+import { LucideIcon } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
+import { getBuilderServices, type BuilderService } from '@/services/builder-services'
+import { useRealtime } from '@/hooks/use-realtime'
+
+const ICON_MAP: Record<string, LucideIcon> = {
+  Flask: FlaskConical,
+  FlaskConical,
+  Thermometer,
+  Leaf,
+  LineChart,
+}
 
 function StandardListItem({ children }: { children: React.ReactNode }) {
   return (
@@ -13,6 +25,24 @@ function StandardListItem({ children }: { children: React.ReactNode }) {
 }
 
 export default function Construtoras() {
+  const [services, setServices] = useState<BuilderService[]>([])
+  const [loading, setLoading] = useState(true)
+
+  const loadData = () => {
+    getBuilderServices()
+      .then(setServices)
+      .catch(console.error)
+      .finally(() => setLoading(false))
+  }
+
+  useEffect(() => {
+    loadData()
+  }, [])
+
+  useRealtime('builder_services', () => {
+    loadData()
+  })
+
   return (
     <div className="py-12 animate-fade-in-up">
       <div className="container">
@@ -29,76 +59,41 @@ export default function Construtoras() {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
-          <Card className="hover:border-accent transition-colors">
-            <CardHeader>
-              <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
-                <LineChart className="h-6 w-6 text-primary" />
-              </div>
-              <CardTitle>Concretos Especiais (CAD/CAA)</CardTitle>
-              <CardDescription>Alto Desempenho e Autoadensável</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
-                Especificação de Concreto de Alto Desempenho (CAD) para permitir pilares mais
-                esbeltos, resultando em maior área útil e menor consumo de aço e formas.
-              </p>
-              <ul className="space-y-2 font-medium text-slate-700">
-                <StandardListItem>Redução de volume de concreto</StandardListItem>
-                <StandardListItem>Velocidade na desforma</StandardListItem>
-                <StandardListItem>Acabamento superior</StandardListItem>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:border-accent transition-colors">
-            <CardHeader>
-              <div className="w-12 h-12 rounded-lg bg-orange-100 flex items-center justify-center mb-4">
-                <ThermometerSun className="h-6 w-6 text-accent" />
-              </div>
-              <CardTitle>Comportamento Térmico</CardTitle>
-              <CardDescription>Fundações Massivas</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
-                Simulação e controle de temperatura em blocos de fundação para evitar fissuração de
-                origem térmica. Cálculo de adições e necessidade de resfriamento.
-              </p>
-              <ul className="space-y-2 font-medium text-slate-700">
-                <StandardListItem>Modelagem térmica preditiva</StandardListItem>
-                <StandardListItem>Especificação de gelo/nitrogênio</StandardListItem>
-                <StandardListItem>Prevenção de RAA e DEF</StandardListItem>
-              </ul>
-            </CardContent>
-          </Card>
-
-          <Card className="hover:border-accent transition-colors">
-            <CardHeader>
-              <div className="w-12 h-12 rounded-lg bg-green-100 flex items-center justify-center mb-4">
-                <Leaf className="h-6 w-6 text-green-600" />
-              </div>
-              <CardTitle>Sustentabilidade (ESG)</CardTitle>
-              <CardDescription>Redução da Pegada de Carbono</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="text-sm text-muted-foreground mb-4">
-                Estudos específicos desde a participação na concepção do projeto estrutural até a
-                aplicação do concreto, visando:
-              </p>
-              <ul className="space-y-2 font-medium text-slate-700">
-                <StandardListItem>Redução das emissões de CO2 na estrutura</StandardListItem>
-                <StandardListItem>Menor volume de concreto</StandardListItem>
-                <StandardListItem>Menor peso estrutural</StandardListItem>
-                <StandardListItem>Menor quantidade de aço</StandardListItem>
-                <StandardListItem>Aumento de área útil da edificação</StandardListItem>
-                <StandardListItem>Menor área de fôrmas</StandardListItem>
-                <StandardListItem>Redução da mão de obra para aplicação</StandardListItem>
-                <StandardListItem>Maior durabilidade e vida útil da estrutura</StandardListItem>
-                <StandardListItem>Uso otimizado de adições</StandardListItem>
-              </ul>
-            </CardContent>
-          </Card>
-        </div>
+        {loading ? (
+          <div className="flex flex-col items-center justify-center py-16 text-slate-500">
+            <Loader2 className="h-8 w-8 animate-spin mb-4 text-primary" />
+            <p>Carregando serviços...</p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
+            {services.map((service) => {
+              const Icon = (service.icon && ICON_MAP[service.icon]) || LineChart
+              const topics = service.topics ? service.topics.split('\n').filter(Boolean) : []
+              return (
+                <Card key={service.id} className="hover:border-accent transition-colors">
+                  <CardHeader>
+                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center mb-4">
+                      <Icon className="h-6 w-6 text-primary" />
+                    </div>
+                    <CardTitle>{service.title}</CardTitle>
+                    {service.description && (
+                      <CardDescription>{service.description}</CardDescription>
+                    )}
+                  </CardHeader>
+                  {topics.length > 0 && (
+                    <CardContent>
+                      <ul className="space-y-2 font-medium text-slate-700">
+                        {topics.map((topic, idx) => (
+                          <StandardListItem key={idx}>{topic.trim()}</StandardListItem>
+                        ))}
+                      </ul>
+                    </CardContent>
+                  )}
+                </Card>
+              )
+            })}
+          </div>
+        )}
 
         <div className="bg-slate-900 rounded-2xl p-8 md:p-12 text-white flex flex-col md:flex-row items-center justify-between gap-8">
           <div className="max-w-2xl">
