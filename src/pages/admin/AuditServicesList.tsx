@@ -59,7 +59,7 @@ export default function AuditServicesList() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold text-slate-800 tracking-tight">
-            Serviços de Consultoria
+            Serviços para Concreteiras
           </h1>
           <p className="text-slate-500 mt-1">
             Gerencie os serviços de consultoria exibidos na página de Concreteiras.
