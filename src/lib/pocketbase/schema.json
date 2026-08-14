@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-08-14T00:04:38.776Z",
+  "generatedAt": "2026-08-14T00:22:55.897Z",
   "collections": [
     {
       "name": "users",
@@ -609,6 +609,58 @@
         }
       ],
       "indexes": ["CREATE UNIQUE INDEX idx_custom_icons_name ON custom_icons (name)"]
+    },
+    {
+      "name": "page_settings",
+      "type": "base",
+      "apiRules": {
+        "list": "",
+        "view": "",
+        "create": "@request.auth.id != ''",
+        "update": "@request.auth.id != ''",
+        "delete": "@request.auth.id != ''"
+      },
+      "fields": [
+        {
+          "name": "page",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "title",
+          "type": "text",
+          "required": true,
+          "system": false
+        },
+        {
+          "name": "description",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "subtitle",
+          "type": "text",
+          "required": false,
+          "system": false
+        },
+        {
+          "name": "created",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate"]
+        },
+        {
+          "name": "updated",
+          "type": "autodate",
+          "required": false,
+          "system": false,
+          "autodateTriggers": ["onCreate", "onUpdate"]
+        }
+      ],
+      "indexes": ["CREATE UNIQUE INDEX idx_page_settings_page ON page_settings (page)"]
     }
   ]
 }

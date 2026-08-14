@@ -4,8 +4,13 @@ import { Building2, Check, Loader2 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { getBuilderServices, type BuilderService } from '@/services/builder-services'
+import { getPageSettings } from '@/services/page-settings'
 import { useRealtime } from '@/hooks/use-realtime'
 import { getLucideIcon } from '@/lib/lucide-icons'
+
+const FALLBACK_TITLE = 'Engenharia de Estruturas Otimizadas'
+const FALLBACK_DESCRIPTION =
+  'Aumente a durabilidade, reduza seções estruturais e evite patologias com soluções inteligentes de concreto.'
 
 function StandardListItem({ children }: { children: React.ReactNode }) {
   return (
@@ -19,6 +24,8 @@ function StandardListItem({ children }: { children: React.ReactNode }) {
 export default function Construtoras() {
   const [services, setServices] = useState<BuilderService[]>([])
   const [loading, setLoading] = useState(true)
+  const [title, setTitle] = useState(FALLBACK_TITLE)
+  const [description, setDescription] = useState(FALLBACK_DESCRIPTION)
 
   const loadData = () => {
     getBuilderServices()
@@ -28,6 +35,12 @@ export default function Construtoras() {
   }
 
   useEffect(() => {
+    getPageSettings('construtoras').then((settings) => {
+      if (settings) {
+        if (settings.title) setTitle(settings.title)
+        if (settings.description) setDescription(settings.description)
+      }
+    })
     loadData()
   }, [])
 
@@ -43,12 +56,8 @@ export default function Construtoras() {
             <Building2 className="h-4 w-4" />
             Para Construtoras
           </div>
-          <h1 className="text-4xl font-bold mb-4">Engenharia de Estruturas Otimizadas</h1>
-          <p className="text-lg text-muted-foreground">
-            Aumente a durabilidade, reduza seções estruturais e mitigue riscos técnicos. Nossa
-            consultoria apoia construtoras na especificação e controle do concreto ideal para cada
-            desafio.
-          </p>
+          <h1 className="text-4xl font-bold mb-4">{title}</h1>
+          <p className="text-lg text-muted-foreground">{description}</p>
         </div>
 
         {loading ? (

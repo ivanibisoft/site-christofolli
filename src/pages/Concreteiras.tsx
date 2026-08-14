@@ -10,11 +10,20 @@ import {
 import { Card, CardContent } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { getAuditServices, type AuditService } from '@/services/audit-services'
+import { getPageSettings } from '@/services/page-settings'
 import { useRealtime } from '@/hooks/use-realtime'
+
+const FALLBACK_TITLE = 'Consultoria Técnica, Operacional e Administrativa'
+const FALLBACK_DESCRIPTION =
+  'Uma avaliação 360º da sua central dosadora, desde a qualidade das matérias-primas até a entrega do concreto na obra.'
+const FALLBACK_SUBTITLE = 'Escopo dos Serviços de Consultoria'
 
 export default function Concreteiras() {
   const [modules, setModules] = useState<AuditService[]>([])
   const [loading, setLoading] = useState(true)
+  const [title, setTitle] = useState(FALLBACK_TITLE)
+  const [description, setDescription] = useState(FALLBACK_DESCRIPTION)
+  const [subtitle, setSubtitle] = useState(FALLBACK_SUBTITLE)
 
   const loadData = () => {
     getAuditServices()
@@ -24,6 +33,13 @@ export default function Concreteiras() {
   }
 
   useEffect(() => {
+    getPageSettings('concreteiras').then((settings) => {
+      if (settings) {
+        if (settings.title) setTitle(settings.title)
+        if (settings.description) setDescription(settings.description)
+        if (settings.subtitle) setSubtitle(settings.subtitle)
+      }
+    })
     loadData()
   }, [])
 
@@ -39,19 +55,12 @@ export default function Concreteiras() {
             <Factory className="h-4 w-4" />
             Para Concreteiras
           </div>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            Consultoria Técnica, Operacional e Administrativa
-          </h1>
-          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
-            Uma avaliação 360º da sua central dosadora visando identificar oportunidades de
-            melhoria, redução de custos e aumento de produtividade.
-          </p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-6">{title}</h1>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">{description}</p>
         </div>
 
         <div className="bg-white rounded-2xl shadow-subtle p-8 border border-slate-100 mb-12">
-          <h3 className="text-2xl font-bold mb-6 text-primary border-b pb-4">
-            Escopo dos Serviços de Consultoria
-          </h3>
+          <h3 className="text-2xl font-bold mb-6 text-primary border-b pb-4">{subtitle}</h3>
 
           {loading ? (
             <div className="flex flex-col items-center justify-center py-16 text-slate-500">

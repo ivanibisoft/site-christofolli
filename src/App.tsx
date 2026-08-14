@@ -27,6 +27,7 @@ import AuditServiceForm from './pages/admin/AuditServiceForm'
 import BuilderServicesList from './pages/admin/BuilderServicesList'
 import BuilderServiceForm from './pages/admin/BuilderServiceForm'
 import CustomIconsList from './pages/admin/CustomIconsList'
+import PageSettingsPage from './pages/admin/PageSettings'
 import TimelineList from './pages/admin/TimelineList'
 import TimelineForm from './pages/admin/TimelineForm'
 import CategoriesList from './pages/admin/CategoriesList'
@@ -72,6 +73,7 @@ const App = () => (
             <Route path="builder-services/new" element={<BuilderServiceForm />} />
             <Route path="builder-services/:id" element={<BuilderServiceForm />} />
             <Route path="custom-icons" element={<CustomIconsList />} />
+            <Route path="page-settings" element={<PageSettingsPage />} />
             <Route path="timeline" element={<TimelineList />} />{' '}
             <Route path="timeline/new" element={<TimelineForm />} />
             <Route path="timeline/:id" element={<TimelineForm />} />

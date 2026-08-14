@@ -15,6 +15,7 @@ import {
   Users,
   HardHat,
   Palette,
+  Layout,
 } from 'lucide-react'
 
 import { useAuth } from '@/hooks/use-auth'
@@ -29,6 +30,7 @@ const navigation = [
   { name: 'Resultados Estatísticos', href: '/admin/statistical-results', icon: BarChart3 },
   { name: 'Serviços para Construtoras', href: '/admin/builder-services', icon: HardHat },
   { name: 'Ícones', href: '/admin/custom-icons', icon: Palette },
+  { name: 'Configurações das Páginas', href: '/admin/page-settings', icon: Layout },
   { name: 'Trajetória', href: '/admin/timeline', icon: Clock },
   { name: 'Serviços para Concreteiras', href: '/admin/audit-services', icon: ClipboardList },
   { name: 'Categorias', href: '/admin/categories', icon: Tag },
