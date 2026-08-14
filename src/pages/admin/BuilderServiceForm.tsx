@@ -3,7 +3,7 @@ import { useNavigate, useParams, Link } from 'react-router-dom'
 import { z } from 'zod'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ArrowLeft, Save, Loader2 } from 'lucide-react'
+import { ArrowLeft, Save, Loader2, Check, ChevronsUpDown } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Textarea } from '@/components/ui/textarea'
@@ -15,12 +15,24 @@ import {
   FormLabel,
   FormMessage,
 } from '@/components/ui/form'
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+} from '@/components/ui/command'
+import { cn } from '@/lib/utils'
 import { useToast } from '@/hooks/use-toast'
 import {
   getBuilderService,
   createBuilderService,
   updateBuilderService,
 } from '@/services/builder-services'
+import { getCustomIcons, type CustomIcon } from '@/services/custom-icons'
+import { getLucideIcon } from '@/lib/lucide-icons'
 import { extractFieldErrors } from '@/lib/pocketbase/errors'
 
 const formSchema = z.object({
@@ -39,6 +51,8 @@ export default function BuilderServiceForm() {
 
   const [loading, setLoading] = useState(!!isEditing)
   const [saving, setSaving] = useState(false)
+  const [icons, setIcons] = useState<CustomIcon[]>([])
+  const [iconOpen, setIconOpen] = useState(false)
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -50,6 +64,10 @@ export default function BuilderServiceForm() {
       order: 0,
     },
   })
+
+  useEffect(() => {
+    getCustomIcons().then(setIcons).catch(console.error)
+  }, [])
 
   useEffect(() => {
     if (isEditing) {
@@ -111,6 +129,10 @@ export default function BuilderServiceForm() {
       </div>
     )
   }
+
+  const selectedIconName = form.watch('icon')
+  const selectedIcon = icons.find((i) => i.name === selectedIconName)
+  const SelectedLucideIcon = getLucideIcon(selectedIconName)
 
   return (
     <div className="max-w-3xl mx-auto space-y-6 pb-12 animate-in slide-in-from-bottom-4 duration-500">
@@ -199,14 +221,70 @@ export default function BuilderServiceForm() {
                   name="icon"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel className="text-slate-800">Ícone (Lucide)</FormLabel>
-                      <FormControl>
-                        <Input
-                          placeholder="Ex: Flask, Thermometer, Leaf..."
-                          className="bg-slate-50 focus:bg-white"
-                          {...field}
-                        />
-                      </FormControl>
+                      <FormLabel className="text-slate-800">Ícone</FormLabel>
+                      <Popover open={iconOpen} onOpenChange={setIconOpen}>
+                        <PopoverTrigger asChild>
+                          <FormControl>
+                            <Button
+                              type="button"
+                              variant="outline"
+                              role="combobox"
+                              className={cn(
+                                'w-full justify-between bg-slate-50 focus:bg-white font-normal',
+                                !field.value && 'text-slate-400',
+                              )}
+                            >
+                              <span className="flex items-center gap-2 min-w-0">
+                                {field.value ? (
+                                  <>
+                                    <SelectedLucideIcon className="h-4 w-4 shrink-0 text-primary" />
+                                    <span className="truncate">
+                                      {selectedIcon?.label ?? field.value}
+                                    </span>
+                                  </>
+                                ) : (
+                                  'Selecione um ícone'
+                                )}
+                              </span>
+                              <ChevronsUpDown className="h-4 w-4 shrink-0 opacity-50" />
+                            </Button>
+                          </FormControl>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          className="w-[var(--radix-popover-trigger-width)] p-0"
+                          align="start"
+                        >
+                          <Command>
+                            <CommandInput placeholder="Buscar ícone..." />
+                            <CommandList>
+                              <CommandEmpty>Nenhum ícone encontrado.</CommandEmpty>
+                              <CommandGroup>
+                                {icons.map((icon) => {
+                                  const Icon = getLucideIcon(icon.name)
+                                  return (
+                                    <CommandItem
+                                      key={icon.id}
+                                      value={`${icon.name} ${icon.label}`}
+                                      onSelect={() => {
+                                        field.onChange(icon.name)
+                                        setIconOpen(false)
+                                      }}
+                                      className="gap-2"
+                                    >
+                                      <Icon className="h-4 w-4 text-primary" />
+                                      <span className="font-mono text-xs">{icon.name}</span>
+                                      <span className="text-slate-500 text-xs">— {icon.label}</span>
+                                      {field.value === icon.name && (
+                                        <Check className="h-4 w-4 ml-auto" />
+                                      )}
+                                    </CommandItem>
+                                  )
+                                })}
+                              </CommandGroup>
+                            </CommandList>
+                          </Command>
+                        </PopoverContent>
+                      </Popover>
                       <FormMessage />
                     </FormItem>
                   )}

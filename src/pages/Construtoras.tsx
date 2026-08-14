@@ -1,19 +1,11 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
-import { Building2, Check, Loader2, FlaskConical, Thermometer, Leaf, LineChart } from 'lucide-react'
-import { LucideIcon } from 'lucide-react'
+import { Building2, Check, Loader2 } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 import { getBuilderServices, type BuilderService } from '@/services/builder-services'
 import { useRealtime } from '@/hooks/use-realtime'
-
-const ICON_MAP: Record<string, LucideIcon> = {
-  Flask: FlaskConical,
-  FlaskConical,
-  Thermometer,
-  Leaf,
-  LineChart,
-}
+import { getLucideIcon } from '@/lib/lucide-icons'
 
 function StandardListItem({ children }: { children: React.ReactNode }) {
   return (
@@ -67,7 +59,7 @@ export default function Construtoras() {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16">
             {services.map((service) => {
-              const Icon = (service.icon && ICON_MAP[service.icon]) || LineChart
+              const Icon = getLucideIcon(service.icon)
               const topics = service.topics ? service.topics.split('\n').filter(Boolean) : []
               return (
                 <Card key={service.id} className="hover:border-accent transition-colors">
