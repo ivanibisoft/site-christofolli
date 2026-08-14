@@ -28,10 +28,10 @@ const navigation = [
   { name: 'Publicações', href: '/admin/publications', icon: FileText },
   { name: 'Galeria', href: '/admin/gallery', icon: ImageIcon },
   { name: 'Resultados Estatísticos', href: '/admin/statistical-results', icon: BarChart3 },
-  { name: 'Serviços para Construtoras', href: '/admin/builder-services', icon: HardHat },
   { name: 'Ícones', href: '/admin/custom-icons', icon: Palette },
   { name: 'Configurações das Páginas', href: '/admin/page-settings', icon: Layout },
   { name: 'Trajetória', href: '/admin/timeline', icon: Clock },
+  { name: 'Serviços para Construtoras', href: '/admin/builder-services', icon: HardHat },
   { name: 'Serviços para Concreteiras', href: '/admin/audit-services', icon: ClipboardList },
   { name: 'Categorias', href: '/admin/categories', icon: Tag },
 
